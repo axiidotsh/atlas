@@ -38,6 +38,7 @@ export default function RootLayout({
         fontSerif.variable,
         fontMono.variable
       )}
+      suppressHydrationWarning
     >
       <body
         className={cn(
