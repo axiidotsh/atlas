@@ -1,0 +1,58 @@
+'use client';
+
+import { sessionKeyAtom } from '@/atoms/ui-atoms';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { Provider as JotaiProvider, useAtomValue } from 'jotai';
+import {
+  CircleCheckIcon,
+  CircleXIcon,
+  InfoIcon,
+  Loader2Icon,
+  TriangleAlertIcon,
+} from 'lucide-react';
+import { ThemeProvider } from 'next-themes';
+import { useState } from 'react';
+import { Toaster } from './ui/sonner';
+import { TooltipProvider } from './ui/tooltip';
+
+export function Providers({ children }: { children: React.ReactNode }) {
+  const [queryClient] = useState(
+    () =>
+      new QueryClient({
+        defaultOptions: {
+          queries: {
+            staleTime: 60 * 1000,
+            refetchOnWindowFocus: false,
+          },
+        },
+      })
+  );
+  const sessionKey = useAtomValue(sessionKeyAtom);
+  const isMobile = useIsMobile();
+
+  return (
+    <QueryClientProvider client={queryClient}>
+      <JotaiProvider key={sessionKey}>
+        <ThemeProvider
+          attribute="class"
+          defaultTheme="system"
+          enableSystem
+          disableTransitionOnChange
+        >
+          <TooltipProvider>{children}</TooltipProvider>
+        </ThemeProvider>
+        <Toaster
+          icons={{
+            success: <CircleCheckIcon className="size-4 text-green-500" />,
+            error: <CircleXIcon className="size-4 text-red-500" />,
+            info: <InfoIcon className="size-4 text-blue-500" />,
+            warning: <TriangleAlertIcon className="size-4 text-yellow-500" />,
+            loading: <Loader2Icon className="size-4 animate-spin" />,
+          }}
+          position={isMobile ? 'top-center' : 'bottom-right'}
+        />
+      </JotaiProvider>
+    </QueryClientProvider>
+  );
+}
