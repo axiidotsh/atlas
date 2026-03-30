@@ -9,23 +9,17 @@ export const MODES = [
 
 export type Mode = (typeof MODES)[number] | null;
 
-const STORAGE_OPTIONS = {
-  getOnInit: true,
-} as const;
-
-const modeStorage = createJSONStorage<Mode>(() => localStorage);
-const queryStorage = createJSONStorage<string>(() => localStorage);
+const modeStorage = createJSONStorage<Mode>();
+const queryStorage = createJSONStorage<string>();
 
 export const modeAtom = atomWithStorage<Mode>(
   'chat-mode',
   null,
-  modeStorage,
-  STORAGE_OPTIONS
+  modeStorage
 );
 
 export const queryAtom = atomWithStorage<string>(
   'chat-query',
   '',
-  queryStorage,
-  STORAGE_OPTIONS
+  queryStorage
 );
