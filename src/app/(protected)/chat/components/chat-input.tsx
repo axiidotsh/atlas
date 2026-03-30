@@ -12,12 +12,12 @@ export const ChatInput = () => {
   const [query, setQuery] = useAtom(queryAtom);
 
   return (
-    <div className="border-muted bg-muted/10 flex flex-col gap-2 rounded-t-2xl border-6 border-b-0 p-1">
+    <div className="dark:border-accent/30 border-accent bg-muted/10 flex flex-col gap-2 rounded-t-2xl border-6 border-b-0 p-1">
       <Textarea
         value={query}
         onChange={(e) => setQuery(e.target.value)}
         placeholder="Ask me anything"
-        className="h-20 w-2xl resize-none border-0 bg-transparent shadow-none ring-0!"
+        className="h-20 w-2xl resize-none border-0 bg-transparent! shadow-none ring-0!"
       />
       <div className="flex items-center justify-between gap-2">
         <div className="flex items-center">

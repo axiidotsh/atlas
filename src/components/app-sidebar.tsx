@@ -80,16 +80,16 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 )}
               >
                 <div className="flex items-center gap-2">
-                  <div className="relative -ml-0.25 size-4.5 shrink-0">
+                  <div className="relative size-4.5 shrink-0">
                     <PlaceholderLogo
                       className={cn(
-                        'absolute inset-0 transition-opacity duration-200',
+                        'absolute inset-0 -ml-0.5 size-5! transition-opacity duration-200',
                         !open && 'group-hover/header:opacity-0'
                       )}
                     />
                     <PanelLeftIcon
                       className={cn(
-                        'absolute inset-0 transition-opacity duration-200',
+                        '-ml-0.125 absolute inset-0 transition-opacity duration-200',
                         open
                           ? 'opacity-0'
                           : 'opacity-0 group-hover/header:opacity-100'
@@ -105,7 +105,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   open ? 'ml-2 w-8 opacity-100' : 'w-0 opacity-0'
                 )}
               >
-                <SidebarTrigger className="cursor-pointer" />
+                <SidebarTrigger className="hover:bg-accent! cursor-pointer" />
               </div>
             </div>
           </SidebarMenuItem>

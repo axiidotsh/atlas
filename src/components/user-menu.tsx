@@ -5,9 +5,14 @@ import {
   ChevronsUpDown,
   CreditCard,
   LogOut,
+  Monitor,
+  Moon,
   Settings2Icon,
   SettingsIcon,
+  Sun,
+  SunMoon,
 } from 'lucide-react';
+import { useTheme } from 'next-themes';
 
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
@@ -16,7 +21,12 @@ import {
   DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
+  DropdownMenuSubContent,
+  DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import {
@@ -26,8 +36,35 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 
+type ThemeOption = 'light' | 'dark' | 'system';
+
+interface ThemeMenuOption {
+  icon: typeof Sun;
+  label: string;
+  value: ThemeOption;
+}
+
+const THEME_OPTIONS: ThemeMenuOption[] = [
+  {
+    icon: Sun,
+    label: 'Light',
+    value: 'light',
+  },
+  {
+    icon: Moon,
+    label: 'Dark',
+    value: 'dark',
+  },
+  {
+    icon: Monitor,
+    label: 'System',
+    value: 'system',
+  },
+];
+
 export const UserMenu = () => {
   const { isMobile } = useSidebar();
+  const { theme = 'system', setTheme } = useTheme();
 
   const user = {
     avatar: 'https://github.com/axiidotsh.png',
@@ -83,6 +120,32 @@ export const UserMenu = () => {
                 <Settings2Icon />
                 Personalization
               </DropdownMenuItem>
+              <DropdownMenuSub>
+                <DropdownMenuSubTrigger>
+                  <SunMoon />
+                  Theme
+                </DropdownMenuSubTrigger>
+                <DropdownMenuSubContent>
+                  <DropdownMenuRadioGroup
+                    value={theme}
+                    onValueChange={(value) => setTheme(value as ThemeOption)}
+                  >
+                    {THEME_OPTIONS.map((option) => {
+                      const Icon = option.icon;
+
+                      return (
+                        <DropdownMenuRadioItem
+                          key={option.value}
+                          value={option.value}
+                        >
+                          <Icon />
+                          {option.label}
+                        </DropdownMenuRadioItem>
+                      );
+                    })}
+                  </DropdownMenuRadioGroup>
+                </DropdownMenuSubContent>
+              </DropdownMenuSub>
               <DropdownMenuItem>
                 <CreditCard />
                 Billing
