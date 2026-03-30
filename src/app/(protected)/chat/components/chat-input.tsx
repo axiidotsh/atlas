@@ -7,6 +7,7 @@ import { ArrowUpIcon, PaperclipIcon } from 'lucide-react';
 import { queryAtom } from '../atoms';
 import { AdAccountSelector } from './adaccount-selector';
 import { ModeSelector } from './mode-selector';
+import { TokenUsage } from './token-usage';
 
 export const ChatInput = () => {
   const [query, setQuery] = useAtom(queryAtom);
@@ -25,6 +26,7 @@ export const ChatInput = () => {
           <AdAccountSelector />
         </div>
         <div className="flex items-center gap-2">
+          <TokenUsage usedTokens={20} maxTokens={100} />
           <Button
             aria-label="Attach files"
             size="icon-sm"
