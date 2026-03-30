@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { useAtom } from 'jotai';
-import { ArrowUpIcon, PaperclipIcon } from 'lucide-react';
+import { ArrowUpIcon } from 'lucide-react';
 import { queryAtom } from '../atoms';
 import { AdAccountSelector } from './adaccount-selector';
 import { ModeSelector } from './mode-selector';
@@ -27,14 +27,6 @@ export const ChatInput = () => {
         </div>
         <div className="flex items-center gap-2">
           <TokenUsage usedTokens={20} maxTokens={100} />
-          <Button
-            aria-label="Attach files"
-            size="icon-sm"
-            variant="ghost"
-            className="text-muted-foreground"
-          >
-            <PaperclipIcon />
-          </Button>
           <Button aria-label="Send message" size="icon-sm">
             <ArrowUpIcon />
           </Button>

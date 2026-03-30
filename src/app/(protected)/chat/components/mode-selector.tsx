@@ -5,22 +5,25 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { cn } from '@/utils/utils';
 import { useAtom } from 'jotai';
 import {
   ClipboardListIcon,
   GlobeIcon,
   ImagePlusIcon,
+  PaperclipIcon,
   PlusIcon,
   TelescopeIcon,
   XIcon,
 } from 'lucide-react';
+import { useState } from 'react';
 import { Mode, modeAtom, MODES } from '../atoms';
 
 export const ModeSelector = () => {
   const [mode, setMode] = useAtom(modeAtom);
+  const [isOpen, setIsOpen] = useState(false);
 
   function handleModeChange(value: Mode) {
     setMode(value);
@@ -48,45 +51,53 @@ export const ModeSelector = () => {
   }
 
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size={mode ? 'sm' : 'icon-sm'}
-          className={cn(
-            'text-muted-foreground rounded-full',
-            mode && 'bg-muted flex items-center gap-1 rounded-full p-1 pr-3'
-          )}
-        >
-          {mode ? (
-            <>
-              <div className="relative flex size-5 items-center justify-center">
-                <span className="transition-opacity group-hover/button:opacity-0">
-                  {renderModeIcon(mode)}
-                </span>
-                <span
-                  onPointerDown={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    handleModeChange(null);
-                  }}
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                  }}
-                  className="bg-border pointer-events-none absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover/button:pointer-events-auto group-hover/button:opacity-100"
-                >
-                  <XIcon className="size-3.5" />
-                </span>
-              </div>
-              <span className="text-xs">{formatMode(mode)}</span>
-            </>
-          ) : (
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <div className="flex items-center gap-1">
+        <DropdownMenuTrigger asChild>
+          <Button
+            variant="ghost"
+            size="icon-sm"
+            className="text-muted-foreground rounded-full"
+          >
             <PlusIcon />
-          )}
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-full">
+          </Button>
+        </DropdownMenuTrigger>
+        {mode ? (
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => setIsOpen(true)}
+            className="dark:bg-accent/50! bg-accent/60! rounded-full p-1 pr-3"
+          >
+            <div className="relative flex size-5 items-center justify-center">
+              <span className="transition-opacity group-hover/button:opacity-0">
+                {renderModeIcon(mode)}
+              </span>
+              <span
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  handleModeChange(null);
+                }}
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                }}
+                className="bg-accent pointer-events-none absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover/button:pointer-events-auto group-hover/button:opacity-100"
+              >
+                <XIcon className="size-3.5" />
+              </span>
+            </div>
+            <span className="text-xs">{formatMode(mode)}</span>
+          </Button>
+        ) : null}
+      </div>
+      <DropdownMenuContent className="w-56">
+        <DropdownMenuItem>
+          <PaperclipIcon className="size-3.5" />
+          Attach files & images
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
         {MODES.map((mode) => (
           <DropdownMenuItem key={mode} onSelect={() => handleModeChange(mode)}>
             {renderModeIcon(mode)}
