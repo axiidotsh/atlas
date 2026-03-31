@@ -18,10 +18,10 @@ export const AdAccountSelector = () => {
         <Button
           variant="ghost"
           size="sm"
-          className="text-muted-foreground font-normal"
+          className="text-muted-foreground text-xs font-normal"
         >
           Select Ad Accounts
-          <ChevronsUpDownIcon />
+          <ChevronsUpDownIcon className="size-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

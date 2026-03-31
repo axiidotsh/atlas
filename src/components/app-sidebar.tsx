@@ -10,7 +10,6 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
-  SidebarRail,
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
@@ -23,6 +22,7 @@ import {
   SquarePenIcon,
 } from 'lucide-react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { PlaceholderLogo } from './icons';
 import { UserMenu } from './user-menu';
@@ -57,10 +57,22 @@ const CHATS = Array.from({ length: 100 }, (_, i) => ({
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open, setOpen } = useSidebar();
+  const pathname = usePathname();
 
   const transitionClassname = `transition-opacity duration-200 ease-out ${
     open ? 'opacity-100' : 'pointer-events-none opacity-0'
   }`;
+
+  function isNavItemActive(href: string) {
+    if (href === '/chat') {
+      return pathname === href || pathname.startsWith(`${href}/`);
+    }
+    return pathname === href;
+  }
+
+  function isChatActive(chatId: string) {
+    return pathname === `/chat/${chatId}`;
+  }
 
   return (
     <Sidebar collapsible="icon" {...props}>
@@ -117,7 +129,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {NAV_ITEMS.map((navItem) => (
               <SidebarMenuItem key={navItem.label}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isNavItemActive(navItem.href)}
+                >
                   <Link href={navItem.href}>
                     <navItem.icon />
                     <span className={cn(transitionClassname)}>
@@ -135,7 +150,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {CHATS.map((chat) => (
               <SidebarMenuItem key={chat.id}>
-                <SidebarMenuButton asChild>
+                <SidebarMenuButton asChild isActive={isChatActive(chat.id)}>
                   <Link href={`/chat/${chat.id}`}>
                     <span>{chat.title}</span>
                   </Link>
@@ -148,7 +163,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarFooter>
         <UserMenu />
       </SidebarFooter>
-      <SidebarRail />
     </Sidebar>
   );
 }

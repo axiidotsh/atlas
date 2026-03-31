@@ -15,7 +15,7 @@ export const TokenUsage = ({ usedTokens, maxTokens }: TokenUsageProps) => {
   return (
     <HoverCard openDelay={0} closeDelay={0}>
       <HoverCardTrigger>
-        <CircularProgress value={usedTokens} maxValue={maxTokens} size={18} />
+        <CircularProgress value={usedTokens} maxValue={maxTokens} size={16} />
       </HoverCardTrigger>
       <HoverCardContent>
         <div className="flex flex-col gap-2">

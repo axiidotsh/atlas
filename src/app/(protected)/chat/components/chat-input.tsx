@@ -23,23 +23,25 @@ export const ChatInput = () => {
           campaigns, ad sets and ads
         </span>
       )}
-      <div className="dark:border-accent/30 border-accent bg-muted/10 flex flex-col gap-2 rounded-t-2xl border-6 border-b-0 p-1">
-        <Textarea
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Ask me anything"
-          className="h-20 w-2xl resize-none border-0 bg-transparent! shadow-none ring-0!"
-        />
-        <div className="flex items-center justify-between gap-2">
-          <div className="flex items-center">
-            <ModeSelector />
-            <AdAccountSelector />
-          </div>
-          <div className="flex items-center gap-2">
-            <TokenUsage usedTokens={20} maxTokens={100} />
-            <Button aria-label="Send message" size="icon-sm">
-              <ArrowUpIcon />
-            </Button>
+      <div className="bg-accent dark:bg-accent/30 rounded-t-[1.25rem] p-1.5 pb-0">
+        <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
+          <Textarea
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Ask me anything"
+            className="h-20 w-2xl resize-none border-0 bg-transparent! shadow-none ring-0!"
+          />
+          <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center">
+              <ModeSelector />
+              <AdAccountSelector />
+            </div>
+            <div className="flex items-center gap-3">
+              <TokenUsage usedTokens={20} maxTokens={100} />
+              <Button aria-label="Send message" size="icon-sm">
+                <ArrowUpIcon />
+              </Button>
+            </div>
           </div>
         </div>
       </div>
