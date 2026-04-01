@@ -10,16 +10,18 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarSeparator,
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { cn } from '@/utils/utils';
 import {
+  BlocksIcon,
   CircleGaugeIcon,
   ClipboardListIcon,
   ImagePlusIcon,
+  MessageCirclePlusIcon,
   PanelLeftIcon,
-  SquarePenIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -31,7 +33,7 @@ const NAV_ITEMS = [
   {
     label: 'New Chat',
     href: '/chat',
-    icon: SquarePenIcon,
+    icon: MessageCirclePlusIcon,
   },
   {
     label: 'Metrics',
@@ -44,16 +46,60 @@ const NAV_ITEMS = [
     icon: ClipboardListIcon,
   },
   {
-    label: 'Studio',
+    label: 'Creative Studio',
     href: '/studio',
     icon: ImagePlusIcon,
   },
+  {
+    label: 'Campaign Builder',
+    href: '/campaign-builder',
+    icon: BlocksIcon,
+  },
 ];
 
-const CHATS = Array.from({ length: 100 }, (_, i) => ({
-  id: String(i + 1),
-  title: `Chat ${i + 1}`,
-}));
+const CHATS = [
+  { id: '1', title: 'Q2 launch checklist' },
+  { id: '2', title: 'Fixing the auth callback bug' },
+  {
+    id: '3',
+    title: 'Homepage hero copy ideas for the new marketing push',
+  },
+  { id: '4', title: 'Weekly metrics review' },
+  {
+    id: '5',
+    title: 'Prisma migration rollback plan after the staging failure',
+  },
+  { id: '6', title: 'Drafting the customer update' },
+  { id: '7', title: 'Design feedback for the sidebar' },
+  {
+    id: '8',
+    title: 'Interview prep for the frontend role with Sarah',
+  },
+  { id: '9', title: 'Support reply for billing issue' },
+  { id: '10', title: 'Campaign launch timing' },
+  { id: '11', title: 'Refactor the reports page' },
+  {
+    id: '12',
+    title: 'Onboarding flow edge cases from the latest user testing',
+  },
+  { id: '13', title: 'Call notes from Acme' },
+  { id: '14', title: 'Ideas for the empty state' },
+  {
+    id: '15',
+    title: 'Webhook retry investigation for the failed deliveries',
+  },
+  { id: '16', title: 'Release notes for v1.8.0' },
+  {
+    id: '17',
+    title: 'Pricing page experiments and headline variants',
+  },
+  { id: '18', title: 'Planning next sprint' },
+  { id: '19', title: 'Team retro follow-up' },
+  {
+    id: '20',
+    title: 'Content calendar for April and the early May drafts',
+  },
+] as const;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open, setOpen } = useSidebar();
@@ -125,7 +171,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         {/* nav items */}
-        <SidebarGroup>
+        <SidebarGroup className="bg-sidebar sticky top-0 z-10">
           <SidebarMenu>
             {NAV_ITEMS.map((navItem) => (
               <SidebarMenuItem key={navItem.label}>
@@ -146,7 +192,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarGroup>
         {/* chats */}
         <SidebarGroup className={cn(transitionClassname)}>
-          <SidebarGroupLabel className="mt-0!">Your Chats</SidebarGroupLabel>
+          <SidebarGroupLabel className="sticky mt-0!">
+            Your Chats
+          </SidebarGroupLabel>
           <SidebarMenu>
             {CHATS.map((chat) => (
               <SidebarMenuItem key={chat.id}>
@@ -160,6 +208,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenu>
         </SidebarGroup>
       </SidebarContent>
+      <SidebarSeparator className="mx-0" />
       <SidebarFooter>
         <UserMenu />
       </SidebarFooter>

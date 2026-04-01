@@ -56,7 +56,7 @@ export default function ChatPage() {
                 onClick={() => setQuery(prompt)}
                 className="hover:bg-muted/60 focus-visible:ring-ring/50 flex w-full cursor-pointer items-start px-2 py-4 text-left transition-colors outline-none focus-visible:ring-3"
               >
-                <span className="text-sm leading-6 text-balance">{prompt}</span>
+                <span className="text-sm leading-6">{prompt}</span>
               </button>
               {index < activePreset.prompts.length - 1 ? <Separator /> : null}
             </div>

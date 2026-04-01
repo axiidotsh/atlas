@@ -9,7 +9,9 @@ export default function ProtectedLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset>{children}</SidebarInset>
+      <SidebarInset className="mx-auto w-full max-w-2xl px-4">
+        {children}
+      </SidebarInset>
     </SidebarProvider>
   );
 }
