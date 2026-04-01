@@ -5,6 +5,7 @@ import { AdAccountSelector } from '@/app/(protected)/chat/components/adaccount-s
 import { ModeSelector } from '@/app/(protected)/chat/components/mode-selector';
 import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
 import { ChatInput } from '@/components/chat-input';
+import { usePathname } from 'next/navigation';
 import { useAtom } from 'jotai';
 import { ReactNode } from 'react';
 
@@ -18,13 +19,15 @@ export const ChatComposer = ({
   placeholder,
 }: ChatComposerProps) => {
   const [query, setQuery] = useAtom(queryAtom);
+  const pathname = usePathname();
+  const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
 
   return (
     <ChatInput
       value={query}
       onValueChange={setQuery}
       placeholder={placeholder}
-      caption={caption}
+      caption={isChatDetailPage ? undefined : caption}
       leftActions={
         <>
           <ModeSelector />

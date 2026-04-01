@@ -1,4 +1,22 @@
 import type { MockChat } from '@/mock-data/types';
+import { MOCK_STUDIO_IMAGES } from '@/mock-data/studio-images';
+
+function getStudioImageSrc(imageId: string) {
+  const image = MOCK_STUDIO_IMAGES.find((entry) => entry.id === imageId);
+
+  if (!image) {
+    throw new Error(`Missing studio image: ${imageId}`);
+  }
+
+  return image.src;
+}
+
+const LAUNCH_DASHBOARD_IMAGE = getStudioImageSrc('creative_1');
+const AUTH_LOOP_TRACE_IMAGE = getStudioImageSrc('creative_2');
+const SIDEBAR_STATE_IMAGE = getStudioImageSrc('creative_3');
+const ONBOARDING_FLOW_IMAGE = getStudioImageSrc('creative_4');
+const RELEASE_HIGHLIGHTS_IMAGE = getStudioImageSrc('creative_5');
+const CONTENT_CALENDAR_IMAGE = getStudioImageSrc('creative_6');
 
 export const MOCK_CHATS: MockChat[] = [
   {
@@ -14,18 +32,42 @@ export const MOCK_CHATS: MockChat[] = [
         id: '1-assistant-1',
         role: 'assistant',
         content:
-          'I would break it into tracking, creative QA, budget pacing, audience validation, and post-launch monitoring so the team can move in order.',
+          `# Launch checklist
+
+![Launch dashboard preview](${LAUNCH_DASHBOARD_IMAGE})
+
+## Pre-launch
+- Confirm analytics events and conversion tracking on the final landing page.
+- Verify UTMs, naming, and audience splits before any spend goes live.
+  - Meta: pixel and CAPI event mapping
+  - Google: conversion actions and destination URLs
+- Review creative exports, crop sizes, and final approvals.
+
+### Rollout table
+| Area | Owner | Status |
+| --- | --- | --- |
+| Tracking | Analytics | Ready |
+| Creative | Design | Ready |
+| Budget | Media | Pending |
+
+#### Launch order
+1. Freeze final changes.
+2. Launch the first account.
+3. Confirm logs, spend, and conversion signals.
+
+I would treat this like a small release: **tracking first**, then creative QA, then budget guardrails. That way the team can tell if a performance drop is caused by setup or by the campaign itself.`,
       },
       {
         id: '1-user-2',
         role: 'user',
-        content: 'Make that more useful for a team working across Meta and Google.',
+        content:
+          '**Make this more useful for a team working across Meta and Google.**\n\n- We need channel-specific checks.\n- The handoff should be easy to paste into Slack.',
       },
       {
         id: '1-assistant-2',
         role: 'assistant',
         content:
-          'I would add channel-specific checks for conversion actions, UTMs, naming consistency, and approval status so both platforms are covered before launch.',
+          '### Meta and Google version\n- **Meta:** pixel or CAPI events, catalog health, and ad approvals.\n- **Google:** conversion actions, bidding setup, and final destination URLs.\n- **Shared:** naming consistency, owner assignment, launch time, and the first readout window.\n\nIf you want, I can turn this into a copy-paste launch doc with sections for owner, go or no-go, and rollback notes.',
       },
     ],
   },
@@ -42,23 +84,40 @@ export const MOCK_CHATS: MockChat[] = [
         id: '2-assistant-1',
         role: 'assistant',
         content:
-          'The first things I would inspect are callback URL mismatches, cookie scope, and whether middleware is catching the provider return route.',
+          `## Callback triage
+
+![Auth loop trace](${AUTH_LOOP_TRACE_IMAGE})
+
+- Callback URL mismatch between the provider and the deployed origin.
+- Cookie scope or secure flag differences in staging.
+- Middleware or route guards catching the return path too early.
+
+### Fast checks
+1. Compare local vs staging origins.
+2. Verify secure-cookie behavior.
+3. Look for redirect loops in logs.
+   - Check repeated 302s.
+   - Confirm the callback route is excluded.
+
+| Signal | Local | Staging |
+| --- | --- | --- |
+| Callback path | Pass | Fail |
+| Cookie scope | Stable | Suspicious |
+| Redirects | One | Repeating |
+
+If local works with the same provider settings, I would compare the deployment layer first: \`NEXTAUTH_URL\`, proxy headers, and any redirect rules around the callback route.`,
       },
       {
         id: '2-user-2',
         role: 'user',
-        content: 'The loop only happens in staging.',
-      },
-      {
-        id: '2-user-3',
-        role: 'user',
-        content: 'Local works fine with the same provider config.',
+        content:
+          '**The loop only happens in staging.**\n\n- Local works fine.\n- The provider config is the same.\n- The failure shows up right after Google returns.',
       },
       {
         id: '2-assistant-2',
         role: 'assistant',
         content:
-          'That makes environment-specific host settings the most likely cause, especially callback origins, secure-cookie behavior, and proxy headers in staging.',
+          '### What I would check next\n- Confirm the callback path is exempt from middleware.\n- Compare browser cookies between local and staging.\n- Check whether the staging host is rewriting the callback URL.\n- Look at the server logs for a repeated redirect chain.\n\n> When auth works locally but fails in staging, the host, proxy, or cookie layer is usually the real problem.',
       },
     ],
   },
@@ -75,18 +134,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '3-assistant-1',
         role: 'assistant',
         content:
-          'I would test one direction around attribution clarity, one around creative speed, and one around better spend decisions for growth teams.',
+          '### Three sharper directions\n- **See what moves revenue**\n- **Creative that earns its budget**\n- **Clarity for every media decision**\n\n#### How I would test them\n1. Lead with the shortest option.\n2. Pair it with a more explanatory subhead.\n   - Version A: confidence\n   - Version B: clarity\n3. Use the winner in the hero and keep the others for ads.\n\n| Option | Tone | Fit |\n| --- | --- | --- |\n| See what moves revenue | Direct | Strong |\n| Creative that earns its budget | Premium | Strong |\n| Clarity for every media decision | Analytical | Medium |\n\nI would keep the hero short, premium, and specific. The strongest versions promise an outcome instead of describing the product.',
       },
       {
         id: '3-user-2',
         role: 'user',
-        content: 'Keep them short and a little more premium.',
+        content:
+          '**Keep them short and a little more premium.**\n\n- Less marketing fluff\n- More confidence\n- No long sentences',
       },
       {
         id: '3-assistant-2',
         role: 'assistant',
         content:
-          'A tighter premium set could be "See what moves revenue", "Creative that earns its budget", and "Clarity for every media decision."',
+          '### Refined set\n- **Make spend clearer**\n- **See the signal sooner**\n- **Decisions with less guesswork**\n\nIf you want a slightly more elevated tone, I would also test a version that leans into trust, such as **The clearer way to spend**.',
       },
     ],
   },
@@ -103,18 +163,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '4-assistant-1',
         role: 'assistant',
         content:
-          'The strongest movement is higher click-through on prospecting, softer blended ROAS on remarketing, and a clear spend shift toward the best creative cluster.',
+          '#### Weekly readout\n- Click-through improved on prospecting.\n- Remarketing ROAS softened.\n- Spend moved toward the strongest creative cluster.\n\n##### What changed\n1. Top-of-funnel got stronger.\n2. Mid-funnel stayed flat.\n3. Efficiency lagged behind volume.\n   - Watch blended ROAS.\n   - Watch frequency.\n\n| Metric | Last week | This week |\n| --- | --- | --- |\n| CTR | 1.8% | 2.2% |\n| ROAS | 2.4x | 2.1x |\n| Spend share | 41% | 54% |\n\nThe main story is that top-of-funnel engagement looks healthier, but the efficiency gains are not yet flowing through the entire funnel.',
       },
       {
         id: '4-user-2',
         role: 'user',
-        content: 'Turn that into a short note I can drop into Slack.',
+        content:
+          '**Turn that into a short note I can drop into Slack.**\n\n- Keep it tight\n- No jargon\n- Sound confident',
       },
       {
         id: '4-assistant-2',
         role: 'assistant',
         content:
-          'This week we saw stronger top-of-funnel engagement, weaker remarketing efficiency, and more spend concentrating behind the leading creative set.',
+          '### Slack-ready note\nThis week we saw stronger top-of-funnel engagement, weaker remarketing efficiency, and a larger share of spend moving behind the top creative set.\n\n### What I would watch next\n- Whether the prospecting lift holds after the learning window\n- Whether remarketing recovers once pacing stabilizes\n- Whether the creative winner keeps outpacing the rest',
       },
     ],
   },
@@ -131,7 +192,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '5-assistant-1',
         role: 'assistant',
         content:
-          'Freeze deploys, snapshot the database, revert app code that depends on the new schema, and only then apply the rollback or restore path.',
+          '##### Rollback plan\n1. Freeze deploys.\n2. Snapshot the database before changing anything else.\n3. Revert app code that depends on the new schema.\n4. Confirm the exact migration state before applying a rollback path.\n   - If the change is additive, you may be able to restore with less risk.\n   - If the change is destructive, stop and inspect first.\n\n| Step | Goal | Risk |\n| --- | --- | --- |\n| Snapshot | Preserve data | Low |\n| Diff | Understand drift | Low |\n| Rollback | Restore state | Medium |\n\nIf the migration partially applied, I would not rush the rollback. The safe move is to compare the live schema to the expected one, document each difference, and protect data before touching anything irreversible.',
       },
       {
         id: '5-user-2',
@@ -142,7 +203,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '5-assistant-2',
         role: 'assistant',
         content:
-          'In that case I would compare the live schema to the expected state first, document each partial change, and avoid a blind rollback until data safety is confirmed.',
+          '### Safer recovery path\n- Check the schema diff first.\n- Identify whether the change is additive or destructive.\n- Restore or rollback only after the data risk is clear.\n\nIf the change touched existing columns, I would handle it as a data safety incident rather than a normal deploy rollback.',
       },
     ],
   },
@@ -159,18 +220,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '6-assistant-1',
         role: 'assistant',
         content:
-          'I would keep the tone transparent, explain that quality concerns changed the schedule, and give a concrete next window plus what is still shipping.',
+          '###### Customer update draft\nWe are taking a little more time on the release so we can verify the quality of the final experience before shipping it broadly. The schedule moved because the team wanted one more validation pass, and the next window is now more reliable than the earlier target.\n\n#### What the note should do\n- Acknowledge the delay plainly\n- Show that quality mattered\n- Give a concrete next window\n- Avoid sounding defensive\n  - Do not over-explain internal process.\n  - Keep the tone factual.\n\n| Audience | Message |\n| --- | --- |\n| Customers | Clear, calm, factual |\n| Enterprise | Direct, operational |\n\nFor enterprise customers, I would keep the note concise, specific, and focused on reliability.',
       },
       {
         id: '6-user-2',
         role: 'user',
-        content: 'Make it suitable for enterprise customers.',
+        content:
+          '**Make it suitable for enterprise customers.**\n\n- More direct\n- Less casual\n- Focus on stability',
       },
       {
         id: '6-assistant-2',
         role: 'assistant',
         content:
-          'I would use more direct operational language, emphasize stability and validation, and avoid casual phrasing so it feels credible for enterprise stakeholders.',
+          '### Enterprise-friendly version\nI would use direct operational language, emphasize validation and stability, and avoid casual phrasing.\n\nFor example: **We are extending the release window to complete final validation and protect production reliability.** That keeps the message calm, factual, and credible.',
       },
     ],
   },
@@ -187,7 +249,28 @@ export const MOCK_CHATS: MockChat[] = [
         id: '7-assistant-1',
         role: 'assistant',
         content:
-          'The primary structure works, but the recent chats section could use stronger active-state contrast and slightly clearer grouping from the main nav.',
+          `### What still feels off
+
+![Sidebar state comparison](${SIDEBAR_STATE_IMAGE})
+
+- The active state could be stronger.
+- The recent chats section needs clearer separation from primary navigation.
+- The collapsed state is understandable, but the brand mark and toggle compete a bit.
+
+#### Visual hierarchy
+1. Make the active item unmistakable.
+2. Separate recent chats from primary nav.
+3. Reduce the weight of the collapse affordance.
+   - tighter spacing
+   - clearer hover state
+
+| Region | Issue | Priority |
+| --- | --- | --- |
+| Primary nav | Weak active state | High |
+| Recent chats | Grouping ambiguity | Medium |
+| Collapse | Competing controls | Medium |
+
+I would not redesign the whole sidebar yet. A tighter visual hierarchy and a cleaner hover treatment would probably solve most of the friction.`,
       },
       {
         id: '7-user-2',
@@ -198,7 +281,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '7-assistant-2',
         role: 'assistant',
         content:
-          'Mostly yes, but the brand and collapse affordance compete a bit, so a clearer hover reveal or icon transition would make it feel more intentional.',
+          '### Collapsed state\nMostly yes, but I would make the interaction more intentional.\n\nA better version would:\n- show a clearer hover reveal\n- sharpen the icon alignment\n- reduce the visual weight of the collapse affordance\n\nThat way the collapsed mode feels deliberate instead of merely compact.',
       },
     ],
   },
@@ -215,18 +298,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '8-assistant-1',
         role: 'assistant',
         content:
-          'I would focus on architecture tradeoffs, debugging stories, accessibility judgment, and one example where you improved maintainability under pressure.',
+          '### What to prepare\n- One architecture story\n- One debugging story\n- One accessibility example\n- One maintainability win under pressure\n\n#### Answer structure\n1. State the user problem.\n2. Explain the technical tradeoff.\n3. Show the choice you made.\n4. Close with the impact.\n   - user benefit\n   - team benefit\n\n| Topic | What to show |\n| --- | --- |\n| Architecture | Boundary thinking |\n| Debugging | Process and signal |\n| Accessibility | User empathy |\n\nI would make sure each answer shows judgment, not just implementation detail. Sarah will probably care about how you trade off speed, product sense, and technical quality.',
       },
       {
         id: '8-user-2',
         role: 'user',
-        content: 'She cares a lot about product sense too.',
+        content:
+          'She cares a lot about product sense too.\n\n- how you think about users\n- why a solution matters\n- how you explain tradeoffs',
       },
       {
         id: '8-assistant-2',
         role: 'assistant',
         content:
-          'Then I would prep a story that shows how you balanced engineering quality with user impact rather than treating the implementation as purely technical.',
+          '### Strong product-sense answer shape\n1. State the user problem.\n2. Explain the technical tradeoff.\n3. Show what you chose and why.\n4. Close with the impact on the user or team.\n\nIf you want, I can also turn this into a mock interview script with short follow-up questions.',
       },
     ],
   },
@@ -243,18 +327,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '9-assistant-1',
         role: 'assistant',
         content:
-          'I would acknowledge the issue clearly, explain the refund path in plain language, and give them one concrete next step if the duplicate charge remains pending.',
+          '### Draft reply\nI am sorry for the confusion here. I can see how frustrating a duplicate charge would be, and I would want the same answer quickly if it happened to me.\n\n#### What the reply should do\n- Acknowledge the issue immediately.\n- Explain the next step in plain language.\n- Avoid over-explaining internal process.\n\n| Customer need | Reply style |\n| --- | --- |\n| Wants reassurance | Empathetic |\n| Wants action | Clear |\n| Wants speed | Concise |\n\nWe are checking the payment records now and will confirm the refund path as soon as possible. If the second charge is still pending, it may drop off automatically, but I do not want to guess before we verify it.',
       },
       {
         id: '9-user-2',
         role: 'user',
-        content: 'Keep it concise and empathetic.',
+        content:
+          '**Keep it concise and empathetic.**\n\n- Acknowledge the issue\n- Explain the next step\n- Do not over-explain internal process',
       },
       {
         id: '9-assistant-2',
         role: 'assistant',
         content:
-          'Absolutely. I would keep it short, own the inconvenience, and avoid over-explaining internal process unless they ask for it.',
+          '### Tight version\nThanks for flagging this. I am sorry for the duplicate charge and I am checking it now.\n\nIf the second payment is still pending, it may disappear automatically. If not, we will make sure the refund path is handled promptly.',
       },
     ],
   },
@@ -271,23 +356,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '10-assistant-1',
         role: 'assistant',
         content:
-          'If the assets are approved, I would launch early in the business day so pacing stabilizes before peak traffic and the team has time to watch delivery.',
+          '### Launch timing\nIf the assets are approved, I would launch early in the business day so pacing has time to stabilize before peak traffic. That gives the team a clearer first read and more room to adjust before the day ends.\n\n#### Why morning works\n- More time for the learning window\n- More time for manual budget shifts\n- More time to catch delivery issues\n  - faster fix if tracking breaks\n  - easier same-day readout\n\n| Window | Readout speed | Risk |\n| --- | --- | --- |\n| Morning | High | Low |\n| Midday | Medium | Medium |\n| Evening | Low | Higher |\n\nA morning launch is still the safest option when the team needs same-day signal.',
       },
       {
         id: '10-user-2',
         role: 'user',
-        content: 'Assume we need same-day readouts.',
-      },
-      {
-        id: '10-user-3',
-        role: 'user',
-        content: 'We also need time for quick budget shifts.',
+        content:
+          'Assume we need same-day readouts.\n\n- We need quick signal\n- We may shift budget fast\n- The team is on standby',
       },
       {
         id: '10-assistant-2',
         role: 'assistant',
         content:
-          'Then an early morning launch is the safest option because it gives you enough signal by afternoon to adjust spend without compressing the learning window.',
+          '### Best fit under those constraints\nAn early morning launch is still the safest choice. It gives you enough signal by afternoon to make changes without compressing the testing window.\n\nIf you want, I can also sketch a simple launch-day schedule with check-ins at 10, 2, and 5.',
       },
     ],
   },
@@ -304,7 +385,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '11-assistant-1',
         role: 'assistant',
         content:
-          'I would separate data shaping from presentation, centralize chart config, and use typed section components so the page can scale without prop drift.',
+          '### Refactor plan\n- Separate data shaping from presentation.\n- Centralize chart configuration.\n- Use typed section components so the page stays predictable.\n\nI would optimize for clear boundaries instead of trying to finish the whole refactor in one pass. That keeps the work easier to review and easier to extend later.',
       },
       {
         id: '11-user-2',
@@ -315,7 +396,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '11-assistant-2',
         role: 'assistant',
         content:
-          'Then the priority should be clear boundaries, reusable primitives, and predictable data contracts even if that means a slightly larger initial refactor.',
+          '### Maintainability first\nThat means:\n- fewer props passing through multiple layers\n- reusable primitives for repeated sections\n- stable data contracts between fetch logic and UI\n\nIf the team can understand the page structure in one read, the refactor is probably in a good place.',
       },
     ],
   },
@@ -332,7 +413,20 @@ export const MOCK_CHATS: MockChat[] = [
         id: '12-assistant-1',
         role: 'assistant',
         content:
-          'The main friction points were account verification timing, unclear invite acceptance errors, and a weak success cue after workspace creation.',
+          `### Main edge cases
+
+![Onboarding flow snapshot](${ONBOARDING_FLOW_IMAGE})
+
+- Verification timing creates uncertainty.
+- Invite acceptance errors are not descriptive enough.
+- The success state after workspace creation is too quiet.
+
+### Severity
+- **Blockers:** verification timing and invite failures
+- **Medium:** missing or weak success cue
+- **Lower:** copy polish and minor state transitions
+
+The biggest risk is not that the flow breaks completely. It is that users lose confidence before they finish.`,
       },
       {
         id: '12-user-2',
@@ -343,7 +437,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '12-assistant-2',
         role: 'assistant',
         content:
-          'The blockers are verification timing and invite failures, while the missing success cue is lower severity because it creates hesitation rather than hard drop-off.',
+          '### Grouped version\n**High severity**\n- Verification timing\n- Invite acceptance failures\n\n**Medium severity**\n- Weak success cue after workspace creation\n\n**Low severity**\n- Copy polish\n- Microcopy and visual feedback\n\nThat grouping should make the fix plan much easier to discuss with product and engineering.',
       },
     ],
   },
@@ -360,18 +454,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '13-assistant-1',
         role: 'assistant',
         content:
-          'I would organize them into goals, blockers, requests, and follow-ups so each function can see what matters without digging through the transcript.',
+          '### Scan-friendly summary\n- Goals: consolidate reporting and make dashboards easier to trust.\n- Blockers: approval from the analytics team and cleanup of older naming conventions.\n- Requests: more seat flexibility, multi-brand visibility, and executive-ready exports.\n- Follow-ups: send a revised timeline and confirm the next review date.\n\nI would keep the summary tight so the team can skim it in under a minute.',
       },
       {
         id: '13-user-2',
         role: 'user',
-        content: 'Also highlight anything that sounds expansion-related.',
+        content:
+          'Also highlight anything that sounds expansion-related.\n\n- More seats\n- Multi-brand reporting\n- Executive dashboards',
       },
       {
         id: '13-assistant-2',
         role: 'assistant',
         content:
-          'I would call out mentions of multi-brand reporting, more seats, and executive dashboards because those usually indicate broader adoption potential.',
+          '### Expansion signals\nI would call out:\n- multi-brand reporting\n- more seats\n- executive dashboards\n- broader reporting access across teams\n\nThose usually suggest the account is moving beyond a single-team use case and could justify a larger rollout motion.',
       },
     ],
   },
@@ -388,7 +483,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '14-assistant-1',
         role: 'assistant',
         content:
-          'A strong empty state should orient the user, show the first meaningful action, and include one example so the product feels useful immediately.',
+          '### Empty-state direction\nA good empty state should do three jobs at once:\n- explain where the user is\n- show the first useful action\n- give one example so the product feels tangible\n\nI would keep the tone product-led and restrained. The goal is to reduce uncertainty, not to entertain.',
       },
       {
         id: '14-user-2',
@@ -399,7 +494,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '14-assistant-2',
         role: 'assistant',
         content:
-          'Then the copy should focus on what they can accomplish next, with restrained tone and a clear CTA tied to the primary workflow.',
+          '### Copy direction\n- Focus on the next task\n- Use one clear CTA\n- Keep the example realistic\n\nA strong line might be: **Start by creating your first workspace, then invite your team and add your first campaign.**',
       },
     ],
   },
@@ -416,18 +511,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '15-assistant-1',
         role: 'assistant',
         content:
-          'I would compare retry timestamps to provider error codes, verify idempotency handling, and check whether slow downstream writes are causing timeouts.',
+          '### Investigation order\n1. Compare retry timestamps with provider error codes.\n2. Verify idempotency handling on the receiver.\n3. Check whether slow downstream writes are pushing requests over the timeout.\n4. Look for worker saturation during large imports.\n\n### Likely pattern\nIf retries spike after imports, I would suspect queue pressure or database contention before I suspect the provider itself.',
       },
       {
         id: '15-user-2',
         role: 'user',
-        content: 'Retries spike after large imports.',
+        content:
+          'Retries spike after large imports.\n\n- More traffic than usual\n- Worker queue backs up\n- Webhook latency climbs',
       },
       {
         id: '15-assistant-2',
         role: 'assistant',
         content:
-          'That points to queue pressure or database contention, so I would inspect worker saturation and write latency during import windows first.',
+          '### What I would inspect first\n- worker concurrency\n- database write latency\n- request timeout settings\n- whether duplicate deliveries are being acknowledged correctly\n\nA small log sample can help a lot here, especially if you can line up the retry bursts with the import jobs.',
       },
     ],
   },
@@ -444,7 +540,23 @@ export const MOCK_CHATS: MockChat[] = [
         id: '16-assistant-1',
         role: 'assistant',
         content:
-          'I would group them into improvements, fixes, and smaller quality-of-life changes so customers get the value quickly without a long changelog.',
+          `### v1.8.0 release notes
+
+![Release highlights](${RELEASE_HIGHLIGHTS_IMAGE})
+
+**Improvements**
+- Faster report loading on larger workspaces
+- Cleaner navigation in the sidebar
+- Better empty states for first-time users
+
+**Fixes**
+- Resolved a few edge cases in onboarding
+- Improved webhook reliability under load
+
+**Quality of life**
+- Better copy in a few high-traffic screens
+
+I would keep the language customer-facing and focus on outcomes instead of implementation details.`,
       },
       {
         id: '16-user-2',
@@ -455,7 +567,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '16-assistant-2',
         role: 'assistant',
         content:
-          'Then I would focus on outcomes and usability rather than implementation details or internal component names.',
+          '### Better tone\nThat means:\n- describe what improved for the user\n- avoid component names and internal architecture\n- keep the language concise and friendly\n\nFor example, instead of saying a module was refactored, I would say the experience is faster and more reliable.',
       },
     ],
   },
@@ -472,18 +584,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '17-assistant-1',
         role: 'assistant',
         content:
-          'I would test options centered on faster payback, clearer reporting, and more confident media decisions depending on the audience segment.',
+          '### Headline variants\n- **Spend with more confidence**\n- **See what drives return**\n- **Faster decisions for paid media teams**\n\nI would bias the test toward performance marketers, because they care more about clarity, speed, and spend efficiency than broad branding language.',
       },
       {
         id: '17-user-2',
         role: 'user',
-        content: 'Prioritize performance marketers over general marketers.',
+        content:
+          '**Prioritize performance marketers over general marketers.**\n\n- More direct language\n- More emphasis on efficiency\n- Less generic marketing tone',
       },
       {
         id: '17-assistant-2',
         role: 'assistant',
         content:
-          'Then the strongest variants should speak directly to spend efficiency, attribution confidence, and faster optimization loops.',
+          '### Better fit for that audience\n- **Know what earns its budget**\n- **Move spend with better signal**\n- **Performance clarity for paid media**\n\nIf you want, I can also sketch the supporting subheads so each headline has a cleaner argument underneath it.',
       },
     ],
   },
@@ -500,23 +613,19 @@ export const MOCK_CHATS: MockChat[] = [
         id: '18-assistant-1',
         role: 'assistant',
         content:
-          'I would anchor the sprint around one reliability theme, one activation theme, and a smaller polish lane so impact stays focused.',
+          '### Sprint shape\nI would anchor the sprint around three lanes:\n- one reliability theme\n- one activation theme\n- one small polish lane\n\nWith six engineers and higher support load, I would leave real buffer for interruptions instead of planning everyone to full utilization. That makes the sprint easier to survive if production issues come up.',
       },
       {
         id: '18-user-2',
         role: 'user',
-        content: 'We only have six engineers available.',
-      },
-      {
-        id: '18-user-3',
-        role: 'user',
-        content: 'Support load is also higher than normal.',
+        content:
+          'We only have six engineers available.\n\n- Support load is high\n- Interruptions are likely\n- Capacity is tighter than usual',
       },
       {
         id: '18-assistant-2',
         role: 'assistant',
         content:
-          'With that constraint, I would reduce active themes further and leave explicit capacity for interruptions instead of planning every engineer to full utilization.',
+          '### Practical adjustment\nI would trim the active themes further and assign explicit coverage for support, bug triage, and on-call follow-up.\n\nA healthier plan is to ship less with more confidence than to overload the sprint and lose momentum halfway through.',
       },
     ],
   },
@@ -533,7 +642,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '19-assistant-1',
         role: 'assistant',
         content:
-          'I would convert them into owners, deadlines, and success signals so the retro creates visible change instead of just a recap.',
+          '### Action items\n- Assign owners.\n- Set deadlines.\n- Define a clear success signal for each follow-up.\n\nI would keep the retro output short enough that people can actually finish it, because a long follow-up list usually dies in the next busy week.',
       },
       {
         id: '19-user-2',
@@ -544,7 +653,7 @@ export const MOCK_CHATS: MockChat[] = [
         id: '19-assistant-2',
         role: 'assistant',
         content:
-          'Then I would cap it at three changes and choose the ones with the clearest operational impact rather than trying to address every frustration at once.',
+          '### Good limit\nI would cap it at three changes:\n1. one reliability improvement\n2. one process improvement\n3. one communication improvement\n\nThat gives the team enough structure to make progress without turning the retro into a second project.',
       },
     ],
   },
@@ -561,18 +670,35 @@ export const MOCK_CHATS: MockChat[] = [
         id: '20-assistant-1',
         role: 'assistant',
         content:
-          'I would balance product education, proof points, and launch support so the publishing rhythm stays useful without feeling repetitive.',
+          `### Lightweight calendar
+
+![Content calendar preview](${CONTENT_CALENDAR_IMAGE})
+
+I would balance:
+- product education
+- proof points
+- launch support
+
+### Suggested rhythm
+- Week 1: product explainer
+- Week 2: customer proof
+- Week 3: feature highlight
+- Week 4: launch support
+- Early May: follow-up piece and repurpose one strong post
+
+That mix keeps the calendar useful without feeling repetitive.`,
       },
       {
         id: '20-user-2',
         role: 'user',
-        content: 'Include space for one customer story.',
+        content:
+          'Include space for one customer story.\n\n- Use it as the proof piece\n- Place it where the calendar needs variety\n- Keep it close to a product angle',
       },
       {
         id: '20-assistant-2',
         role: 'assistant',
         content:
-          'That works well in the middle of the calendar because it breaks up the product-heavy pieces and gives the plan a stronger proof element.',
+          '### Best placement\nI would put the customer story in the middle of the calendar. That breaks up the product-heavy pieces and gives the sequence a stronger credibility point.\n\nIf you want, I can turn the whole plan into a week-by-week draft with specific post ideas.',
       },
     ],
   },

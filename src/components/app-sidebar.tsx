@@ -67,14 +67,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }`;
 
   function isNavItemActive(href: string) {
-    if (href === '/chat') {
-      return pathname === href || pathname.startsWith(`${href}/`);
-    }
     return pathname === href;
-  }
-
-  function isChatActive(chatId: string) {
-    return pathname === `/chat/${chatId}`;
   }
 
   return (
@@ -157,7 +150,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           <SidebarMenu>
             {MOCK_CHATS.map((chat) => (
               <SidebarMenuItem key={chat.id}>
-                <SidebarMenuButton asChild isActive={isChatActive(chat.id)}>
+                <SidebarMenuButton
+                  asChild
+                  isActive={isNavItemActive(`/chat/${chat.id}`)}
+                >
                   <Link href={`/chat/${chat.id}`}>
                     <span>{chat.title}</span>
                   </Link>

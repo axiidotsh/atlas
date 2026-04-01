@@ -33,7 +33,7 @@ export const ChatInput = ({
           {caption}
         </span>
       )}
-      <div className="bg-accent dark:bg-accent/30 rounded-t-[1.25rem] p-1.5 pb-0">
+      <div className="bg-chat-input-border rounded-t-[1.25rem] p-1.5 pb-0">
         <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
           <Textarea
             value={value}
@@ -56,7 +56,11 @@ export const ChatInput = ({
             </div>
             <div className="flex items-center gap-3">
               {rightActions}
-              <Button aria-label="Send message" size="icon-sm" onClick={onSubmit}>
+              <Button
+                aria-label="Send message"
+                size="icon-sm"
+                onClick={onSubmit}
+              >
                 <ArrowUpIcon />
               </Button>
             </div>
