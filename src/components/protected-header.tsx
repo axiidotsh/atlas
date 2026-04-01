@@ -1,8 +1,8 @@
 'use client';
 
+import { ChatShareDialog } from '@/components/chat-share-dialog';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
-import { useBrowserShare } from '@/hooks/use-browser-share';
 import { MOCK_CHATS } from '@/mock-data/chats';
 import { cn } from '@/utils/utils';
 import { PanelLeftIcon, Share2Icon } from 'lucide-react';
@@ -35,6 +35,7 @@ function getHeaderState(pathname: string) {
 
   if (isChatDetailPage && secondSegment) {
     return {
+      chatId: secondSegment,
       isChatDetailPage,
       title: getChatTitle(secondSegment),
     };
@@ -42,12 +43,14 @@ function getHeaderState(pathname: string) {
 
   if (!firstSegment) {
     return {
+      chatId: null,
       isChatDetailPage,
       title: '',
     };
   }
 
   return {
+    chatId: null,
     isChatDetailPage,
     title:
       PAGE_TITLES[firstSegment] ??
@@ -58,21 +61,10 @@ function getHeaderState(pathname: string) {
 export const ProtectedHeader = () => {
   const pathname = usePathname();
   const { toggleSidebar } = useSidebar();
-  const { share } = useBrowserShare();
-  const { isChatDetailPage, title } = getHeaderState(pathname);
+  const { chatId, isChatDetailPage, title } = getHeaderState(pathname);
 
   if (!title) {
     return null;
-  }
-
-  async function handleShare() {
-    await share({
-      title,
-      text: title,
-      url: window.location.href,
-      fallbackSuccessMessage: 'Chat link copied to clipboard',
-      errorMessage: 'Failed to share chat',
-    });
   }
 
   return (
@@ -96,17 +88,13 @@ export const ProtectedHeader = () => {
         <div className="min-w-0 flex-1">
           <p className="truncate text-sm font-medium">{title}</p>
         </div>
-        {isChatDetailPage ? (
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={handleShare}
-            className="shrink-0"
-          >
-            <Share2Icon />
-            <span>Share</span>
-          </Button>
+        {isChatDetailPage && chatId ? (
+          <ChatShareDialog chatId={chatId}>
+            <Button type="button" variant="outline" size="sm" className="shrink-0">
+              <Share2Icon />
+              <span>Share</span>
+            </Button>
+          </ChatShareDialog>
         ) : null}
       </div>
     </header>
