@@ -9,7 +9,7 @@ export default function ChatLayout({
   return (
     <div className="flex flex-1 flex-col">
       <div className="flex-1">{children}</div>
-      <div className="flex justify-center">
+      <div className="sticky bottom-0 flex justify-center">
         <ChatInput
           caption={
             <>
