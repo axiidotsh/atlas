@@ -2,39 +2,30 @@
 
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { useAtom } from 'jotai';
 import { ArrowUpIcon, PaperclipIcon } from 'lucide-react';
 import { ReactNode } from 'react';
-import { queryAtom } from '../atoms';
-import { AdAccountSelector } from './adaccount-selector';
-import { ModeSelector } from './mode-selector';
-import { TokenUsage } from './token-usage';
-
-interface ConfigProps {
-  modeSelector: boolean;
-  adaccountSelector: boolean;
-  tokenCounter: boolean;
-  attachment: boolean;
-}
 
 interface ChatInputProps {
+  value: string;
+  onValueChange: (value: string) => void;
+  onSubmit?: () => void;
   placeholder?: string;
   caption?: ReactNode;
-  config?: ConfigProps;
+  leftActions?: ReactNode;
+  rightActions?: ReactNode;
+  shouldShowAttachment?: boolean;
 }
 
 export const ChatInput = ({
+  value,
+  onValueChange,
+  onSubmit,
   placeholder,
   caption,
-  config = {
-    modeSelector: true,
-    adaccountSelector: true,
-    tokenCounter: true,
-    attachment: true,
-  },
+  leftActions,
+  rightActions,
+  shouldShowAttachment = false,
 }: ChatInputProps) => {
-  const [query, setQuery] = useAtom(queryAtom);
-
   return (
     <div className="flex w-full flex-col gap-3">
       {caption && (
@@ -45,15 +36,15 @@ export const ChatInput = ({
       <div className="bg-accent dark:bg-accent/30 rounded-t-[1.25rem] p-1.5 pb-0">
         <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
           <Textarea
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
+            value={value}
+            onChange={(e) => onValueChange(e.target.value)}
             placeholder={placeholder || 'Ask me anything'}
             className="h-20 resize-none border-0 bg-transparent! shadow-none ring-0!"
           />
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center">
-              {config.modeSelector && <ModeSelector />}
-              {!config.modeSelector && config.attachment && (
+              {leftActions}
+              {shouldShowAttachment && (
                 <Button
                   variant="ghost"
                   size="icon-sm"
@@ -62,13 +53,10 @@ export const ChatInput = ({
                   <PaperclipIcon />
                 </Button>
               )}
-              {config.adaccountSelector && <AdAccountSelector />}
             </div>
             <div className="flex items-center gap-3">
-              {config.tokenCounter && (
-                <TokenUsage usedTokens={20} maxTokens={100} />
-              )}
-              <Button aria-label="Send message" size="icon-sm">
+              {rightActions}
+              <Button aria-label="Send message" size="icon-sm" onClick={onSubmit}>
                 <ArrowUpIcon />
               </Button>
             </div>

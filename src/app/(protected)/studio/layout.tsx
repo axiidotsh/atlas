@@ -1,4 +1,4 @@
-import { ChatInput } from '../chat/components/chat-input';
+import { StudioComposer } from '@/app/(protected)/studio/components/studio-composer';
 
 export default function StudioLayout({
   children,
@@ -9,15 +9,9 @@ export default function StudioLayout({
     <div className="flex flex-1 flex-col">
       <div className="flex-1">{children}</div>
       <div className="sticky bottom-0 flex justify-center">
-        <ChatInput
+        <StudioComposer
           caption="Provide specific details and attach references for better results"
           placeholder="Describe what you want to create"
-          config={{
-            adaccountSelector: false,
-            modeSelector: false,
-            tokenCounter: true,
-            attachment: true,
-          }}
         />
       </div>
     </div>

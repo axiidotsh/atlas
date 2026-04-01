@@ -1,5 +1,5 @@
+import { ChatComposer } from '@/app/(protected)/chat/components/chat-composer';
 import { Kbd } from '@/components/ui/kbd';
-import { ChatInput } from './components/chat-input';
 
 export default function ChatLayout({
   children,
@@ -10,7 +10,7 @@ export default function ChatLayout({
     <div className="flex flex-1 flex-col">
       <div className="flex-1">{children}</div>
       <div className="sticky bottom-0 flex justify-center">
-        <ChatInput
+        <ChatComposer
           caption={
             <>
               Use <Kbd className="bg-accent/50">@</Kbd> to tag specific ad

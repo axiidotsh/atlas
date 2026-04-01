@@ -24,6 +24,9 @@ export const TokenUsage = ({ usedTokens, maxTokens }: TokenUsageProps) => {
             <span className="text-muted-foreground text-xs">40k / 128k</span>
           </div>
           <Progress value={usedTokens} max={maxTokens} />
+          <p className="text-muted-foreground mt-2 text-xs">
+            Your tokens will refresh in 20 days
+          </p>
         </div>
       </HoverCardContent>
     </HoverCard>
