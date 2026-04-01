@@ -169,9 +169,9 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent>
+      <SidebarContent className="gap-0">
         {/* nav items */}
-        <SidebarGroup className="bg-sidebar sticky top-0 z-10">
+        <SidebarGroup className="bg-sidebar sticky top-0 z-10 pb-0">
           <SidebarMenu>
             {NAV_ITEMS.map((navItem) => (
               <SidebarMenuItem key={navItem.label}>
@@ -189,12 +189,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-        </SidebarGroup>
-        {/* chats */}
-        <SidebarGroup className={cn(transitionClassname)}>
-          <SidebarGroupLabel className="sticky mt-0!">
+          <SidebarGroupLabel
+            className={cn('mt-4! truncate', transitionClassname)}
+          >
             Your Chats
           </SidebarGroupLabel>
+        </SidebarGroup>
+        {/* chats */}
+        <SidebarGroup className={cn('pt-0', transitionClassname)}>
           <SidebarMenu>
             {CHATS.map((chat) => (
               <SidebarMenuItem key={chat.id}>
