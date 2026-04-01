@@ -10,7 +10,13 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { MOCK_AD_ACCOUNTS } from '@/mock-data/ad-data';
+import type { AdPlatform } from '@/mock-data/types';
 import { ChevronsUpDownIcon } from 'lucide-react';
+
+function getPlatformIcon(platform: AdPlatform) {
+  return platform === 'google' ? GoogleAdsLogo : MetaLogo;
+}
 
 export const AdAccountSelector = () => {
   return (
@@ -28,18 +34,16 @@ export const AdAccountSelector = () => {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Ad Accounts</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          <MetaLogo />
-          Wod Armour
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <MetaLogo />
-          Dar Global
-        </DropdownMenuItem>
-        <DropdownMenuItem>
-          <GoogleAdsLogo />
-          Hyperice
-        </DropdownMenuItem>
+        {MOCK_AD_ACCOUNTS.map((adAccount) => {
+          const PlatformIcon = getPlatformIcon(adAccount.platform);
+
+          return (
+            <DropdownMenuItem key={adAccount.id}>
+              <PlatformIcon />
+              {adAccount.name}
+            </DropdownMenuItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

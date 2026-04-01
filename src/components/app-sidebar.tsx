@@ -14,6 +14,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { MOCK_CHATS } from '@/mock-data/chats';
 import { cn } from '@/utils/utils';
 import {
   CircleGaugeIcon,
@@ -56,50 +57,6 @@ const NAV_ITEMS = [
     icon: MegaphoneIcon,
   },
 ];
-
-const CHATS = [
-  { id: '1', title: 'Q2 launch checklist' },
-  { id: '2', title: 'Fixing the auth callback bug' },
-  {
-    id: '3',
-    title: 'Homepage hero copy ideas for the new marketing push',
-  },
-  { id: '4', title: 'Weekly metrics review' },
-  {
-    id: '5',
-    title: 'Prisma migration rollback plan after the staging failure',
-  },
-  { id: '6', title: 'Drafting the customer update' },
-  { id: '7', title: 'Design feedback for the sidebar' },
-  {
-    id: '8',
-    title: 'Interview prep for the frontend role with Sarah',
-  },
-  { id: '9', title: 'Support reply for billing issue' },
-  { id: '10', title: 'Campaign launch timing' },
-  { id: '11', title: 'Refactor the reports page' },
-  {
-    id: '12',
-    title: 'Onboarding flow edge cases from the latest user testing',
-  },
-  { id: '13', title: 'Call notes from Acme' },
-  { id: '14', title: 'Ideas for the empty state' },
-  {
-    id: '15',
-    title: 'Webhook retry investigation for the failed deliveries',
-  },
-  { id: '16', title: 'Release notes for v1.8.0' },
-  {
-    id: '17',
-    title: 'Pricing page experiments and headline variants',
-  },
-  { id: '18', title: 'Planning next sprint' },
-  { id: '19', title: 'Team retro follow-up' },
-  {
-    id: '20',
-    title: 'Content calendar for April and the early May drafts',
-  },
-] as const;
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const { open, setOpen } = useSidebar();
@@ -198,7 +155,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* chats */}
         <SidebarGroup className={cn('pt-0', transitionClassname)}>
           <SidebarMenu>
-            {CHATS.map((chat) => (
+            {MOCK_CHATS.map((chat) => (
               <SidebarMenuItem key={chat.id}>
                 <SidebarMenuButton asChild isActive={isChatActive(chat.id)}>
                   <Link href={`/chat/${chat.id}`}>
