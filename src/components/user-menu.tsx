@@ -3,6 +3,7 @@
 import {
   Bell,
   ChevronsUpDown,
+  CircleQuestionMarkIcon,
   CreditCard,
   LogOut,
   Monitor,
@@ -120,6 +121,18 @@ export const UserMenu = () => {
                 <Settings2Icon />
                 Personalization
               </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CreditCard />
+                Billing
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <Bell />
+                Notifications
+              </DropdownMenuItem>
+              <DropdownMenuItem>
+                <CircleQuestionMarkIcon />
+                FAQs
+              </DropdownMenuItem>
               <DropdownMenuSub>
                 <DropdownMenuSubTrigger>
                   <SunMoon />
@@ -146,14 +159,6 @@ export const UserMenu = () => {
                   </DropdownMenuRadioGroup>
                 </DropdownMenuSubContent>
               </DropdownMenuSub>
-              <DropdownMenuItem>
-                <CreditCard />
-                Billing
-              </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Bell />
-                Notifications
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem variant="destructive">
