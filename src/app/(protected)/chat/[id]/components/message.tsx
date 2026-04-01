@@ -1,15 +1,17 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import { useBrowserShare } from '@/hooks/use-browser-share';
 import type { MockChatMessage } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
 import {
+  CheckIcon,
   CopyIcon,
   DownloadIcon,
   PencilIcon,
   RotateCcwIcon,
 } from 'lucide-react';
-import { toast } from 'sonner';
+import { useEffect, useState } from 'react';
 import { Streamdown } from 'streamdown';
 import 'streamdown/styles.css';
 
@@ -27,21 +29,38 @@ interface ActionProps {
 
 export const Message = ({ message }: ChatMessageProps) => {
   const isUserMessage = message.role === 'user';
+  const [isCopied, setIsCopied] = useState(false);
+  const { copyText } = useBrowserShare();
+
+  useEffect(() => {
+    if (!isCopied) {
+      return;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setIsCopied(false);
+    }, 2000);
+
+    return () => {
+      window.clearTimeout(timeoutId);
+    };
+  }, [isCopied]);
 
   async function copyMessage() {
-    try {
-      await navigator.clipboard.writeText(message.content);
-      toast.success('Copied message to clipboad');
-    } catch (err) {
-      console.log(err);
-      toast.error('Failed to copy message to clipboad');
+    const isCopySuccessful = await copyText(message.content, {
+      successMessage: 'Copied message to clipboard',
+      errorMessage: 'Failed to copy message to clipboard',
+    });
+
+    if (isCopySuccessful) {
+      setIsCopied(true);
     }
   }
 
   const actions: ActionProps[] = [
     {
       title: 'Copy message',
-      icon: CopyIcon,
+      icon: isCopied ? CheckIcon : CopyIcon,
       handler: copyMessage,
     },
     {

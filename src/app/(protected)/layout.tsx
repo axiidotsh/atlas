@@ -1,4 +1,5 @@
 import { AppSidebar } from '@/components/app-sidebar';
+import { ProtectedHeader } from '@/components/protected-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 
 export default function ProtectedLayout({
@@ -9,8 +10,11 @@ export default function ProtectedLayout({
   return (
     <SidebarProvider>
       <AppSidebar />
-      <SidebarInset className="mx-auto w-full max-w-3xl px-4">
-        {children}
+      <SidebarInset className="w-full">
+        <ProtectedHeader />
+        <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
+          {children}
+        </div>
       </SidebarInset>
     </SidebarProvider>
   );

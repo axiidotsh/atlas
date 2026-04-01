@@ -10,7 +10,11 @@ export default function StudioLayout({
       <div className="flex-1">{children}</div>
       <div className="sticky bottom-0 flex justify-center">
         <StudioComposer
-          caption="Provide specific details and attach references for better results"
+          caption={
+            <p className="hidden md:block">
+              Provide specific details and attach references for better results
+            </p>
+          }
           placeholder="Describe what you want to create"
         />
       </div>

@@ -59,7 +59,7 @@ const NAV_ITEMS = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const { open, setOpen } = useSidebar();
+  const { open, setOpen, setOpenMobile } = useSidebar();
   const pathname = usePathname();
 
   const transitionClassname = `transition-opacity duration-200 ease-out ${
@@ -68,6 +68,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
 
   function isNavItemActive(href: string) {
     return pathname === href;
+  }
+
+  function handleNavigate() {
+    setOpenMobile(false);
   }
 
   return (
@@ -129,7 +133,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   asChild
                   isActive={isNavItemActive(navItem.href)}
                 >
-                  <Link href={navItem.href}>
+                  <Link href={navItem.href} onClick={handleNavigate}>
                     <navItem.icon />
                     <span className={cn(transitionClassname)}>
                       {navItem.label}
@@ -154,7 +158,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                   asChild
                   isActive={isNavItemActive(`/chat/${chat.id}`)}
                 >
-                  <Link href={`/chat/${chat.id}`}>
+                  <Link href={`/chat/${chat.id}`} onClick={handleNavigate}>
                     <span>{chat.title}</span>
                   </Link>
                 </SidebarMenuButton>

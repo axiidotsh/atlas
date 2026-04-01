@@ -12,10 +12,10 @@ export default function ChatLayout({
       <div className="sticky bottom-0 flex justify-center">
         <ChatComposer
           caption={
-            <>
+            <p className="hidden md:block">
               Use <Kbd className="bg-accent/50">@</Kbd> to tag specific ad
               accounts, campaigns, ad sets and ads
-            </>
+            </p>
           }
         />
       </div>
