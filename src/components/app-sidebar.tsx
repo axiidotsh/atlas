@@ -16,10 +16,10 @@ import {
 } from '@/components/ui/sidebar';
 import { cn } from '@/utils/utils';
 import {
-  BlocksIcon,
   CircleGaugeIcon,
   ClipboardListIcon,
   ImagePlusIcon,
+  MegaphoneIcon,
   MessageCirclePlusIcon,
   PanelLeftIcon,
 } from 'lucide-react';
@@ -53,7 +53,7 @@ const NAV_ITEMS = [
   {
     label: 'Campaign Builder',
     href: '/campaign-builder',
-    icon: BlocksIcon,
+    icon: MegaphoneIcon,
   },
 ];
 

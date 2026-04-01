@@ -1,5 +1,6 @@
 'use client';
 
+import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -27,9 +28,18 @@ export const AdAccountSelector = () => {
       <DropdownMenuContent>
         <DropdownMenuLabel>My Ad Accounts</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem>Wod Armour</DropdownMenuItem>
-        <DropdownMenuItem>Dar Global</DropdownMenuItem>
-        <DropdownMenuItem>Hyperice</DropdownMenuItem>
+        <DropdownMenuItem>
+          <MetaLogo />
+          Wod Armour
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <MetaLogo />
+          Dar Global
+        </DropdownMenuItem>
+        <DropdownMenuItem>
+          <GoogleAdsLogo />
+          Hyperice
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
