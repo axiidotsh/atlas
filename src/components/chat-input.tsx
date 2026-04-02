@@ -3,7 +3,7 @@
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { ArrowUpIcon, PaperclipIcon } from 'lucide-react';
-import { ReactNode } from 'react';
+import { ReactNode, Ref } from 'react';
 
 interface ChatInputProps {
   value: string;
@@ -14,6 +14,7 @@ interface ChatInputProps {
   leftActions?: ReactNode;
   rightActions?: ReactNode;
   shouldShowAttachment?: boolean;
+  textareaRef?: Ref<HTMLTextAreaElement>;
 }
 
 export const ChatInput = ({
@@ -25,6 +26,7 @@ export const ChatInput = ({
   leftActions,
   rightActions,
   shouldShowAttachment = false,
+  textareaRef,
 }: ChatInputProps) => {
   return (
     <div className="flex w-full flex-col gap-3">
@@ -36,6 +38,8 @@ export const ChatInput = ({
       <div className="bg-chat-input-border rounded-t-[1.25rem] p-1.5 pb-0">
         <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
           <Textarea
+            autoFocus
+            ref={textareaRef}
             value={value}
             onChange={(e) => onValueChange(e.target.value)}
             placeholder={placeholder || 'Ask me anything'}

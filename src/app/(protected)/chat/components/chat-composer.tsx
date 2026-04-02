@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/mention';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
+import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
 import {
   MOCK_AD_ACCOUNTS,
   MOCK_AD_SETS,
@@ -20,7 +21,7 @@ import {
 import { useAtom } from 'jotai';
 import { ArrowUpIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { ReactNode } from 'react';
+import { ReactNode, useRef } from 'react';
 import { AdAccountSelector } from './adaccount-selector';
 import { ModeSelector } from './mode-selector';
 import { TokenUsage } from './token-usage';
@@ -34,6 +35,9 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
   const [query, setQuery] = useAtom(queryAtom);
   const pathname = usePathname();
   const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
+  const inputRef = useRef<HTMLTextAreaElement>(null);
+
+  useFocusOnSlash(inputRef);
 
   const data = [
     ...MOCK_AD_ACCOUNTS.map((item) => ({ ...item, type: 'ad-account' })),
@@ -49,11 +53,7 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
       .join(' ');
   }
 
-  function getMentionLabel(item: {
-    id: string;
-    name: string;
-    type: string;
-  }) {
+  function getMentionLabel(item: { id: string; name: string; type: string }) {
     return `${item.name} [${item.id}] (${item.type})`;
   }
 
@@ -74,6 +74,8 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
           <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
             <MentionInput asChild>
               <Textarea
+                autoFocus
+                ref={inputRef}
                 placeholder={placeholder || 'Ask me anything'}
                 value={query}
                 className="h-20 resize-none border-0 bg-transparent! shadow-none ring-0!"
