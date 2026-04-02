@@ -80,7 +80,7 @@ export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
           </DialogDescription>
         </DialogHeader>
         <div className="min-w-0 space-y-3">
-          <div className="bg-muted border-border/50 flex flex-col rounded-xl border">
+          <div className="bg-muted border-border/50 dark:border-border flex flex-col rounded-xl border">
             {visibilities.map((visibility, i) => {
               const isLast = i === visibilities.length - 1;
               const isActive =
@@ -110,7 +110,9 @@ export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
                       </span>
                     </div>
                   </button>
-                  {!isLast && <Separator className="bg-border/50" />}
+                  {!isLast && (
+                    <Separator className="bg-border/50 dark:bg-border" />
+                  )}
                 </Fragment>
               );
             })}
@@ -119,7 +121,7 @@ export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
             <div
               aria-hidden={!isPublic}
               className={cn(
-                'border-border/50 bg-muted/50 min-w-0 rounded-md border px-4 py-2 transition-opacity',
+                'border-border/50 dark:border-border bg-muted/50 min-w-0 rounded-md border px-4 py-2 transition-opacity',
                 isPublic ? 'opacity-100' : 'invisible opacity-0'
               )}
             >

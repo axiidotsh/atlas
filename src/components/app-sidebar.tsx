@@ -23,11 +23,13 @@ import {
   MegaphoneIcon,
   MessageCirclePlusIcon,
   PanelLeftIcon,
+  SearchIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { PlaceholderLogo } from './icons';
+import { Input } from './ui/input';
 import { UserMenu } from './user-menu';
 
 const NAV_ITEMS = [
@@ -52,8 +54,8 @@ const NAV_ITEMS = [
     icon: ImagePlusIcon,
   },
   {
-    label: 'Campaign Builder',
-    href: '/campaign-builder',
+    label: 'Campaign Launcher',
+    href: '/campaign-launcher',
     icon: MegaphoneIcon,
   },
 ];
@@ -148,6 +150,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
           >
             Your Chats
           </SidebarGroupLabel>
+          <div className={cn('mb-2 px-2 pb-1', transitionClassname)}>
+            <div className="flex items-center border-b">
+              <SearchIcon className="text-muted-foreground size-4" />
+              <Input
+                className="rounded-none border-0 bg-transparent! shadow-none ring-0!"
+                placeholder="Search your chats..."
+              />
+            </div>
+          </div>
         </SidebarGroup>
         {/* chats */}
         <SidebarGroup className={cn('pt-0', transitionClassname)}>

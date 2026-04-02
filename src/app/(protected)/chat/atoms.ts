@@ -17,5 +17,8 @@ export const modeAtom = atomWithStorage<Mode>('chat-mode', null, modeStorage);
 export const queryAtom = atomWithStorage<string>(
   'chat-query',
   '',
-  queryStorage
+  queryStorage,
+  {
+    getOnInit: true,
+  }
 );
