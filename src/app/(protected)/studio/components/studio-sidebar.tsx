@@ -1,8 +1,10 @@
 'use client';
 
-import { getStudioProject } from '@/app/(protected)/studio/utils';
+import {
+  getAspectRatio,
+  getStudioProject,
+} from '@/app/(protected)/studio/utils';
 import { SearchBar } from '@/components/search-bar';
-import { Badge } from '@/components/ui/badge';
 import {
   Sidebar,
   SidebarContent,
@@ -14,6 +16,7 @@ import {
 import { cn } from '@/utils/utils';
 import { useParams, usePathname } from 'next/navigation';
 import { useState } from 'react';
+import { AspectRatioBadge } from './aspect-ratio-badge';
 
 export const StudioSidebar = ({
   ...props
@@ -61,30 +64,35 @@ export const StudioSidebar = ({
       <SidebarContent
         className={cn('flex flex-col gap-4 px-3 pb-4', transitionClassname)}
       >
-        {project.images.map((image) => (
-          <button
-            key={image.id}
-            className="hover:bg-foreground/10 cursor-pointer space-y-2 rounded-2xl p-1 transition-colors duration-300"
-          >
-            <div
-              style={{ aspectRatio: image.aspectRatio }}
-              className="bg-muted relative h-auto w-full overflow-hidden rounded-xl border"
+        {project.images.map((image) => {
+          const aspectRatio = getAspectRatio(image.aspectRatio);
+
+          return (
+            <button
+              key={image.id}
+              className="hover:bg-foreground/10 cursor-pointer space-y-2 rounded-2xl p-1 transition-colors duration-300"
             >
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img
-                src={image.src}
-                alt={image.title}
-                className="size-full object-cover"
-              />
-            </div>
-            <div className="flex items-center gap-2 px-1 pb-1">
-              <p className="line-clamp-1 text-left text-sm">{image.title}</p>
-              <Badge variant="secondary" className="border-border/50 border">
-                {image.aspectRatio}
-              </Badge>
-            </div>
-          </button>
-        ))}
+              <div
+                style={{ aspectRatio: image.aspectRatio }}
+                className="bg-muted relative h-auto w-full overflow-hidden rounded-xl border"
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={image.src}
+                  alt={image.title}
+                  className="size-full object-cover"
+                />
+              </div>
+              <div className="flex items-center gap-2 px-1 pb-1">
+                <p className="line-clamp-1 text-left text-sm">{image.title}</p>
+                <AspectRatioBadge
+                  icon={aspectRatio.icon}
+                  label={aspectRatio.label}
+                />
+              </div>
+            </button>
+          );
+        })}
       </SidebarContent>
     </Sidebar>
   );
