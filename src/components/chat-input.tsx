@@ -47,7 +47,6 @@ export const ChatInput = ({
           />
           <div className="flex items-center justify-between gap-2">
             <div className="flex items-center">
-              {leftActions}
               {shouldShowAttachment && (
                 <Button
                   variant="ghost"
@@ -57,6 +56,7 @@ export const ChatInput = ({
                   <PaperclipIcon />
                 </Button>
               )}
+              {leftActions}
             </div>
             <div className="flex items-center gap-3">
               {rightActions}

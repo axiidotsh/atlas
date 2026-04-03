@@ -160,7 +160,8 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               onChange={setChatQuery}
               placeholder="Search your chats..."
               variant="ghost"
-              className="pl-0"
+              size="sm"
+              containerClassName="pl-0"
             />
           </div>
         </SidebarGroup>

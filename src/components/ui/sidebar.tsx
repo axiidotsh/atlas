@@ -31,6 +31,13 @@ const SIDEBAR_WIDTH_MOBILE = '18rem';
 const SIDEBAR_WIDTH_ICON = '3rem';
 const SIDEBAR_KEYBOARD_SHORTCUT = 'b';
 
+interface SidebarProps extends React.ComponentProps<'div'> {
+  side?: 'left' | 'right';
+  variant?: 'sidebar' | 'floating' | 'inset';
+  collapsible?: 'offcanvas' | 'icon' | 'none';
+  mobileContentProps?: Omit<React.ComponentProps<typeof SheetContent>, 'side'>;
+}
+
 type SidebarContextProps = {
   state: 'expanded' | 'collapsed';
   open: boolean;
@@ -56,6 +63,7 @@ function SidebarProvider({
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
+  mobileBreakpoint = 768,
   className,
   style,
   children,
@@ -64,8 +72,9 @@ function SidebarProvider({
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  mobileBreakpoint?: number;
 }) {
-  const isMobile = useIsMobile();
+  const isMobile = useIsMobile(mobileBreakpoint);
   const [openMobile, setOpenMobile] = React.useState(false);
 
   // This is the internal state of the sidebar.
@@ -152,16 +161,15 @@ function Sidebar({
   side = 'left',
   variant = 'sidebar',
   collapsible = 'offcanvas',
+  mobileContentProps,
   className,
   children,
   dir,
   ...props
-}: React.ComponentProps<'div'> & {
-  side?: 'left' | 'right';
-  variant?: 'sidebar' | 'floating' | 'inset';
-  collapsible?: 'offcanvas' | 'icon' | 'none';
-}) {
+}: SidebarProps) {
   const { isMobile, state, openMobile, setOpenMobile } = useSidebar();
+  const { className: mobileContentClassName, ...restMobileContentProps } =
+    mobileContentProps ?? {};
 
   if (collapsible === 'none') {
     return (
@@ -186,12 +194,16 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className={cn(
+            'bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden',
+            mobileContentClassName
+          )}
           style={
             {
               '--sidebar-width': SIDEBAR_WIDTH_MOBILE,
             } as React.CSSProperties
           }
+          {...restMobileContentProps}
           side={side}
         >
           <SheetHeader className="sr-only">

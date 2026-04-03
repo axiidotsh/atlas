@@ -5,7 +5,8 @@ import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
 import { ChatInput } from '@/components/chat-input';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
 import { useAtom } from 'jotai';
-import { ReactNode, useRef } from 'react';
+import { type ReactNode, useRef } from 'react';
+import { AspectRatioSelector } from './aspect-ratio-selector';
 
 interface StudioComposerProps {
   caption?: ReactNode;
@@ -27,6 +28,7 @@ export const StudioComposer = ({
       onValueChange={setQuery}
       placeholder={placeholder}
       caption={caption}
+      leftActions={<AspectRatioSelector />}
       shouldShowAttachment
       textareaRef={inputRef}
       rightActions={<TokenUsage usedTokens={20} maxTokens={100} />}

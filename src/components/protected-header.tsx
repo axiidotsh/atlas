@@ -79,7 +79,7 @@ export const ProtectedHeader = ({
     <header
       className={cn(
         'bg-background/95 border-border/50 sticky top-0 z-20 border-b backdrop-blur',
-        !isChatDetailPage && 'md:hidden'
+        !isChatDetailPage && 'lg:hidden'
       )}
     >
       <div className="flex min-h-14 w-full items-center gap-3 px-3 md:px-6">
@@ -88,7 +88,7 @@ export const ProtectedHeader = ({
           variant="ghost"
           size="icon-sm"
           onClick={onLeftSidebarToggle}
-          className={cn('shrink-0', isChatDetailPage && 'md:hidden')}
+          className={cn('shrink-0', isChatDetailPage && 'lg:hidden')}
         >
           <PanelLeftIcon />
           <span className="sr-only">Open left sidebar</span>

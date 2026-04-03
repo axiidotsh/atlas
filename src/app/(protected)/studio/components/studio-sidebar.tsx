@@ -36,7 +36,14 @@ export const StudioSidebar = ({
   }
 
   return (
-    <Sidebar side="right" collapsible="icon" {...props}>
+    <Sidebar
+      side="right"
+      collapsible="icon"
+      mobileContentProps={{
+        onOpenAutoFocus: (event) => event.preventDefault(),
+      }}
+      {...props}
+    >
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem className="px-1">
