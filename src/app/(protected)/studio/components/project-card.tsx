@@ -100,14 +100,14 @@ export const ProjectCard = ({ id, title, coverImage }: ProjectCardProps) => {
             variant="secondary"
             size="icon-xs"
             className={cn(
-              'absolute top-2 right-2 opacity-0 group-hover:opacity-100',
-              'data-open:opacity-100'
+              'absolute top-2 right-2 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100'
             )}
           >
             <EllipsisIcon />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent
+          align="end"
           onCloseAutoFocus={(e) => {
             if (!shouldKeepInputFocusedRef.current) {
               return;
