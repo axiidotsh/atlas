@@ -1,8 +1,10 @@
 import type { MockChat } from '@/mock-data/types';
-import { MOCK_STUDIO_IMAGES } from '@/mock-data/studio-images';
+import { MOCK_STUDIO_PROJECTS } from '@/mock-data/studio-projects';
 
 function getStudioImageSrc(imageId: string) {
-  const image = MOCK_STUDIO_IMAGES.find((entry) => entry.id === imageId);
+  const image = MOCK_STUDIO_PROJECTS.flatMap((project) => project.images).find(
+    (entry) => entry.id === imageId,
+  );
 
   if (!image) {
     throw new Error(`Missing studio image: ${imageId}`);

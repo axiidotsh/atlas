@@ -16,8 +16,16 @@ export interface MockChat {
 
 export interface MockStudioImage {
   id: string;
-  name: string;
+  title: string;
   src: string;
+  aspectRatio: string;
+}
+
+export interface MockStudioProject {
+  id: string;
+  title: string;
+  coverImage: string;
+  images: MockStudioImage[];
 }
 
 export interface MockAdAccount {

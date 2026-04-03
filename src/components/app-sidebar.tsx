@@ -23,13 +23,12 @@ import {
   MegaphoneIcon,
   MessageCirclePlusIcon,
   PanelLeftIcon,
-  SearchIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
 import { PlaceholderLogo } from './icons';
-import { Input } from './ui/input';
+import { SearchBar } from './search-bar';
 import { UserMenu } from './user-menu';
 
 const NAV_ITEMS = [
@@ -61,6 +60,7 @@ const NAV_ITEMS = [
 ];
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const [chatQuery, setChatQuery] = React.useState('');
   const { open, setOpen, setOpenMobile } = useSidebar();
   const pathname = usePathname();
 
@@ -69,7 +69,11 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   }`;
 
   function isNavItemActive(href: string) {
-    return pathname === href;
+    if (href === '/chat') {
+      return pathname === href;
+    }
+
+    return pathname.startsWith(href);
   }
 
   function handleNavigate() {
@@ -151,13 +155,13 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
             Your Chats
           </SidebarGroupLabel>
           <div className={cn('mb-2 px-2 pb-1', transitionClassname)}>
-            <div className="flex items-center border-b">
-              <SearchIcon className="text-muted-foreground size-4" />
-              <Input
-                className="rounded-none border-0 bg-transparent! shadow-none ring-0!"
-                placeholder="Search your chats..."
-              />
-            </div>
+            <SearchBar
+              value={chatQuery}
+              onChange={setChatQuery}
+              placeholder="Search your chats..."
+              variant="ghost"
+              className="pl-0"
+            />
           </div>
         </SidebarGroup>
         {/* chats */}

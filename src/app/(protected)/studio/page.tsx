@@ -1,34 +1,27 @@
-import { buttonVariants } from '@/components/ui/button';
-import { MOCK_STUDIO_IMAGES } from '@/mock-data/studio-images';
-import { cn } from '@/utils/utils';
-import Link from 'next/link';
+'use client';
+
+import { SearchBar } from '@/components/search-bar';
+import { MOCK_STUDIO_PROJECTS } from '@/mock-data/studio-projects';
+import { useState } from 'react';
+import { ProjectCard } from './components/project-card';
 
 export default function StudioPage() {
+  const [projectQuery, setProjectQuery] = useState('');
+
   return (
-    <div className="flex flex-col gap-6 py-20">
-      <div className="flex items-center justify-between">
-        <h1 className="text-xl font-semibold">Your Creations</h1>
-        <Link
-          href="/studio/all"
-          className={cn(
-            buttonVariants({
-              variant: 'link',
-              size: 'xs',
-            })
-          )}
-        >
-          View all
-        </Link>
+    <div className="flex flex-col gap-8 py-6 sm:py-14 2xl:py-20">
+      <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-center sm:gap-2">
+        <h1 className="text-xl font-semibold">Your Projects</h1>
+        <SearchBar
+          value={projectQuery}
+          onChange={setProjectQuery}
+          placeholder="Search your projects..."
+          containerClassName="sm:max-w-72"
+        />
       </div>
-      <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4">
-        {MOCK_STUDIO_IMAGES.map((image) => (
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            key={image.id}
-            src={image.src}
-            alt={image.name}
-            className="size-full rounded-lg border object-cover shadow"
-          />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {MOCK_STUDIO_PROJECTS.map((project) => (
+          <ProjectCard key={project.id} {...project} />
         ))}
       </div>
     </div>

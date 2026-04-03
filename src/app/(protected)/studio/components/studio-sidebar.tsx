@@ -1,0 +1,84 @@
+'use client';
+
+import { getStudioProject } from '@/app/(protected)/studio/utils';
+import { SearchBar } from '@/components/search-bar';
+import { Badge } from '@/components/ui/badge';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarHeader,
+  SidebarMenu,
+  SidebarMenuItem,
+  useSidebar,
+} from '@/components/ui/sidebar';
+import { cn } from '@/utils/utils';
+import { useParams, usePathname } from 'next/navigation';
+import { useState } from 'react';
+
+export const StudioSidebar = ({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) => {
+  const { open } = useSidebar();
+  const [query, setQuery] = useState('');
+  const pathname = usePathname();
+  const params = useParams<{ id?: string }>();
+
+  const projectId = typeof params.id === 'string' ? params.id : undefined;
+  const isStudioProjectPage = /^\/studio\/[^/]+$/.test(pathname);
+  const project = projectId ? getStudioProject(projectId) : undefined;
+
+  const transitionClassname = `transition-opacity duration-200 ease-out ${
+    open ? 'opacity-100' : 'pointer-events-none opacity-0'
+  }`;
+
+  if (!isStudioProjectPage || !project) {
+    return null;
+  }
+
+  return (
+    <Sidebar side="right" collapsible="icon" {...props}>
+      <SidebarHeader>
+        <SidebarMenu>
+          <SidebarMenuItem className="px-1">
+            <SearchBar
+              value={query}
+              onChange={setQuery}
+              placeholder="Search project images..."
+              variant="ghost"
+              size="sm"
+              containerClassName={cn(!open && 'hidden')}
+            />
+          </SidebarMenuItem>
+        </SidebarMenu>
+      </SidebarHeader>
+      <SidebarContent
+        className={cn('flex flex-col gap-4 px-3 pb-4', transitionClassname)}
+      >
+        {project.images.map((image) => (
+          <button
+            key={image.id}
+            className="hover:bg-foreground/10 cursor-pointer space-y-2 rounded-2xl p-1 transition-colors duration-300"
+          >
+            <div
+              style={{ aspectRatio: image.aspectRatio }}
+              className="bg-muted relative h-auto w-full overflow-hidden rounded-xl border"
+            >
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={image.src}
+                alt={image.title}
+                className="size-full object-cover"
+              />
+            </div>
+            <div className="flex items-center gap-2 px-1 pb-1">
+              <p className="line-clamp-1 text-left text-sm">{image.title}</p>
+              <Badge variant="secondary" className="border-border/50 border">
+                {image.aspectRatio}
+              </Badge>
+            </div>
+          </button>
+        ))}
+      </SidebarContent>
+    </Sidebar>
+  );
+};
