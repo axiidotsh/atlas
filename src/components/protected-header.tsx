@@ -35,7 +35,7 @@ function getStudioTitle(projectId: string) {
   return getStudioConversation(projectId)?.title ?? 'Creative Studio';
 }
 
-function getHeaderState(pathname: string) {
+export function getHeaderState(pathname: string) {
   const segments = pathname.split('/').filter(Boolean);
   const [firstSegment, secondSegment] = segments;
 
@@ -107,7 +107,7 @@ export const ProtectedHeader = ({
         !isDetailPage && 'lg:hidden'
       )}
     >
-      <div className="flex min-h-14 w-full items-center gap-3 px-3 md:px-6">
+      <div className="flex h-14 w-full items-center gap-3 px-3 md:px-6">
         <Button
           type="button"
           variant="ghost"

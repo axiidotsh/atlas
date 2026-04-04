@@ -2,12 +2,15 @@
 
 import { StudioSidebar } from '@/app/(protected)/studio/components/studio-sidebar';
 import { AppSidebar } from '@/components/app-sidebar';
-import { ProtectedHeader } from '@/components/protected-header';
+import { getHeaderState, ProtectedHeader } from '@/components/protected-header';
+import { ScrollToBottom } from '@/components/scroll-to-bottom';
 import {
   SidebarInset,
   SidebarProvider,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { usePathname } from 'next/navigation';
+import { StickToBottom } from 'use-stick-to-bottom';
 
 interface ProtectedLayoutShellProps {
   children: React.ReactNode;
@@ -17,16 +20,34 @@ const SIDEBAR_MOBILE_BREAKPOINT = 1024;
 
 const ProtectedLayoutContent = ({ children }: ProtectedLayoutShellProps) => {
   const { toggleSidebar: toggleLeftSidebar } = useSidebar();
+  const pathname = usePathname();
+
+  const { isDetailPage } = getHeaderState(pathname);
+
+  const contentClassName = 'mx-auto flex w-full max-w-3xl flex-1 flex-col px-4';
+
+  const content = isDetailPage ? (
+    <StickToBottom
+      className="relative h-[calc(100vh-3.5625rem)]"
+      resize="smooth"
+      initial="instant"
+    >
+      <StickToBottom.Content className={contentClassName}>
+        {children}
+      </StickToBottom.Content>
+      <ScrollToBottom />
+    </StickToBottom>
+  ) : (
+    <div className={contentClassName}>{children}</div>
+  );
 
   return (
     <>
       <AppSidebar />
       <SidebarProvider mobileBreakpoint={SIDEBAR_MOBILE_BREAKPOINT}>
-        <SidebarInset className="w-full">
+        <SidebarInset>
           <ProtectedHeader onLeftSidebarToggle={toggleLeftSidebar} />
-          <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col px-4">
-            {children}
-          </div>
+          {content}
         </SidebarInset>
         <StudioSidebar />
       </SidebarProvider>

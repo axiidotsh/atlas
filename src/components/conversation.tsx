@@ -1,5 +1,5 @@
-import { Message } from '@/app/(protected)/chat/[id]/components/message';
 import type { MockChatMessage } from '@/mock-data/types';
+import { Message } from './message';
 
 interface ChatFlowProps {
   messages: MockChatMessage[];

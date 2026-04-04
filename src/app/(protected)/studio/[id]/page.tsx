@@ -1,4 +1,4 @@
-import { Conversation } from '@/app/(protected)/chat/[id]/components/conversation';
+import { Conversation } from '@/components/conversation';
 import { notFound } from 'next/navigation';
 import { getStudioProject } from '../utils';
 
