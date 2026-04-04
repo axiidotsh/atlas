@@ -7,7 +7,6 @@ import {
 import { formatCampaignStatus } from '@/app/(protected)/metrics/campaign-performance.config';
 import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
-import { Card } from '@/components/ui/card';
 import {
   Table,
   TableBody,
@@ -44,26 +43,23 @@ function getStatusClassName(status: CampaignStatus) {
 export const CampaignPerformanceTable = () => {
   const campaigns = useAtomValue(filteredCampaignPerformanceRowsAtom);
   const visibleColumnIds = useAtomValue(campaignPerformanceVisibleColumnsAtom);
+
   const visibleColumnIdSet = new Set(visibleColumnIds);
   const isAdAccountVisible = visibleColumnIdSet.has('adAccount');
   const isStatusVisible = visibleColumnIdSet.has('status');
   const visibleMetrics = MOCK_METRICS.filter((metric) =>
     visibleColumnIdSet.has(metric.id)
   );
+
   const columnCount =
     1 +
     Number(isAdAccountVisible) +
     Number(isStatusVisible) +
     visibleMetrics.length;
-  const minimumTableWidth =
-    20 +
-    (isAdAccountVisible ? 16 : 0) +
-    (isStatusVisible ? 10 : 0) +
-    visibleMetrics.length * 10;
 
   return (
-    <Card className="dark:bg-muted bg-card gap-0 overflow-hidden py-0">
-      <Table style={{ minWidth: `${minimumTableWidth}rem` }}>
+    <div className="dark:bg-muted bg-card overflow-hidden rounded-xl border">
+      <Table>
         <TableHeader className="dark:bg-card bg-muted">
           <TableRow>
             <TableHead className="dark:bg-card bg-muted md:after:bg-border/80 h-14 min-w-80 px-5 text-sm font-semibold md:sticky md:left-0 md:z-20 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
@@ -158,6 +154,6 @@ export const CampaignPerformanceTable = () => {
           })}
         </TableBody>
       </Table>
-    </Card>
+    </div>
   );
 };

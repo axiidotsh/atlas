@@ -64,9 +64,9 @@ export const DateRangePicker = ({
         >
           <CalendarIcon />
           {formattedDateRange ? (
-            formattedDateRange
+            <span className="truncate">{formattedDateRange}</span>
           ) : (
-            <span>Pick a date</span>
+            <span className="truncate">Pick a date</span>
           )}
         </Button>
       </PopoverTrigger>

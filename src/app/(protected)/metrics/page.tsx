@@ -247,7 +247,9 @@ export default function MetricsPage() {
             </ButtonGroup>
           </div>
         </div>
-        <CampaignPerformanceTable />
+        <div className="grid">
+          <CampaignPerformanceTable />
+        </div>
       </section>
     </div>
   );
