@@ -12,12 +12,16 @@ import {
 import { useBrowserShare } from '@/hooks/use-browser-share';
 import { cn } from '@/utils/utils';
 import { GlobeIcon, LockIcon } from 'lucide-react';
-import { Fragment, type ReactNode, useEffect, useState } from 'react';
+import { Fragment, type ReactNode, useState } from 'react';
 import { Separator } from './ui/separator';
 
-interface ChatShareDialogProps {
-  chatId: string;
+interface ShareDialogProps {
   children: ReactNode;
+  copyErrorMessage: string;
+  copySuccessMessage: string;
+  description: string;
+  sharePath: string;
+  title: string;
 }
 
 interface VisibilityProps {
@@ -27,15 +31,17 @@ interface VisibilityProps {
   handler: () => void;
 }
 
-export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
+export const ShareDialog = ({
+  children,
+  copyErrorMessage,
+  copySuccessMessage,
+  description,
+  sharePath,
+  title,
+}: ShareDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [isPublic, setIsPublic] = useState(false);
-  const [shareUrl, setShareUrl] = useState('');
   const { copyText } = useBrowserShare();
-
-  useEffect(() => {
-    setShareUrl(`${window.location.origin}/chat/${chatId}`);
-  }, [chatId]);
 
   async function handleAction() {
     if (!isPublic) {
@@ -43,13 +49,11 @@ export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
       return;
     }
 
-    if (!shareUrl) {
-      return;
-    }
+    const shareUrl = new URL(sharePath, window.location.origin).toString();
 
     await copyText(shareUrl, {
-      successMessage: 'Public chat link copied to clipboard',
-      errorMessage: 'Failed to copy chat link',
+      successMessage: copySuccessMessage,
+      errorMessage: copyErrorMessage,
     });
   }
 
@@ -73,16 +77,13 @@ export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
       <DialogTrigger asChild>{children}</DialogTrigger>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Share chat</DialogTitle>
-          <DialogDescription>
-            Make this chat public or private. Public chats can be viewed by
-            anyone with the link.
-          </DialogDescription>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
         </DialogHeader>
         <div className="min-w-0 space-y-3">
           <div className="bg-muted border-border/50 dark:border-border flex flex-col rounded-xl border">
-            {visibilities.map((visibility, i) => {
-              const isLast = i === visibilities.length - 1;
+            {visibilities.map((visibility, index) => {
+              const isLast = index === visibilities.length - 1;
               const isActive =
                 (visibility.title.toLowerCase() === 'private' && !isPublic) ||
                 (visibility.title.toLowerCase() === 'public' && isPublic);
@@ -126,13 +127,12 @@ export const ChatShareDialog = ({ chatId, children }: ChatShareDialogProps) => {
               )}
             >
               <p className="text-muted-foreground block max-w-full truncate text-sm">
-                {shareUrl || 'Public chat link'}
+                {sharePath}
               </p>
             </div>
             <Button
               type="button"
               onClick={handleAction}
-              disabled={isPublic && !shareUrl}
               className="shrink-0"
             >
               {isPublic ? 'Copy link' : 'Create public link'}

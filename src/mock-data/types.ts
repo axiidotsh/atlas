@@ -25,6 +25,7 @@ export interface MockStudioProject {
   id: string;
   title: string;
   coverImage: string;
+  messages: MockChatMessage[];
   images: MockStudioImage[];
 }
 

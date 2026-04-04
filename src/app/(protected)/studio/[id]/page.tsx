@@ -1,5 +1,5 @@
+import { Conversation } from '@/app/(protected)/chat/[id]/components/conversation';
 import { notFound } from 'next/navigation';
-import { Project } from '../components/project';
 import { getStudioProject } from '../utils';
 
 interface ProjectPageProps {
@@ -16,5 +16,5 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  return <Project {...project} />;
+  return <Conversation messages={project.messages} />;
 }
