@@ -1,5 +1,6 @@
 import { getStudioConversation } from '@/mock-data/conversations';
 import {
+  CropIcon,
   RectangleVerticalIcon,
   SmartphoneIcon,
   SquareIcon,
@@ -18,6 +19,11 @@ interface StudioAspectRatioOption {
 }
 
 export const STUDIO_ASPECT_RATIO_OPTIONS: StudioAspectRatioOption[] = [
+  {
+    value: 'auto',
+    label: 'Auto',
+    icon: CropIcon,
+  },
   {
     value: '1:1',
     label: '1:1',

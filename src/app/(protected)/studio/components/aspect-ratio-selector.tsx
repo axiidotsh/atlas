@@ -40,7 +40,7 @@ export const AspectRatioSelector = () => {
           className="text-muted-foreground gap-1.5 text-xs font-normal"
         >
           <selectedAspectRatio.icon className="size-3.5" />
-          Aspect ratio {selectedAspectRatio.label}
+          Aspect ratio: {selectedAspectRatio.label}
           <ChevronsUpDownIcon className="size-3" />
         </Button>
       </DropdownMenuTrigger>

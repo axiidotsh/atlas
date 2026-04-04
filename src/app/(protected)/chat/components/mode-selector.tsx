@@ -62,35 +62,59 @@ export const ModeSelector = () => {
             <PlusIcon />
           </Button>
         </DropdownMenuTrigger>
-        {mode ? (
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setIsOpen(true)}
-            className="dark:bg-accent/50! bg-accent/60! rounded-full p-1 pr-3"
-          >
-            <div className="relative flex size-5 items-center justify-center">
-              <span className="transition-opacity group-hover/button:opacity-0">
+        {mode && (
+          <>
+            {/* Mobile View */}
+            <div className="dark:bg-accent/50 bg-accent/60 flex items-center rounded-full p-1 sm:hidden">
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => setIsOpen(true)}
+                className="rounded-full"
+                aria-label={`Open ${formatMode(mode)} mode`}
+              >
                 {renderModeIcon(mode)}
-              </span>
-              <span
-                onPointerDown={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                  handleModeChange(null);
-                }}
-                onClick={(e) => {
-                  e.preventDefault();
-                  e.stopPropagation();
-                }}
-                className="bg-accent pointer-events-none absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover/button:pointer-events-auto group-hover/button:opacity-100"
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon-xs"
+                onClick={() => handleModeChange(null)}
+                className="rounded-full"
+                aria-label={`Clear ${formatMode(mode)} mode`}
               >
                 <XIcon className="size-3.5" />
-              </span>
+              </Button>
             </div>
-            <span className="text-xs">{formatMode(mode)}</span>
-          </Button>
-        ) : null}
+            {/* Desktop View */}
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setIsOpen(true)}
+              className="dark:bg-accent/50! bg-accent/60! hidden rounded-full p-1 pr-3 sm:flex"
+            >
+              <div className="relative flex size-5 items-center justify-center">
+                <span className="transition-opacity group-hover/button:opacity-0">
+                  {renderModeIcon(mode)}
+                </span>
+                <span
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleModeChange(null);
+                  }}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                  className="bg-accent pointer-events-none absolute inset-0 flex items-center justify-center rounded-full opacity-0 transition-opacity group-hover/button:pointer-events-auto group-hover/button:opacity-100"
+                >
+                  <XIcon className="size-3.5" />
+                </span>
+              </div>
+              <span className="text-xs">{formatMode(mode)}</span>
+            </Button>
+          </>
+        )}
       </div>
       <DropdownMenuContent className="w-56">
         <DropdownMenuItem>

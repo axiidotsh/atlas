@@ -27,11 +27,12 @@ export const AdAccountSelector = () => {
           size="sm"
           className="text-muted-foreground text-xs font-normal"
         >
-          Select Ad Accounts
+          <span className="sm:hidden">Ad Accounts</span>
+          <span className="hidden sm:inline">Select Ad Accounts</span>
           <ChevronsUpDownIcon className="size-3" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent>
+      <DropdownMenuContent className="min-w-48">
         <DropdownMenuLabel>My Ad Accounts</DropdownMenuLabel>
         <DropdownMenuSeparator />
         {MOCK_AD_ACCOUNTS.map((adAccount) => {

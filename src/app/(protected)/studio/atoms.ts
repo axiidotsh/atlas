@@ -4,6 +4,7 @@ const studioQueryStorage = createJSONStorage<string>();
 const studioAspectRatioStorage = createJSONStorage<StudioAspectRatio>();
 
 export const STUDIO_ASPECT_RATIOS = [
+  'auto',
   '1:1',
   '4:5',
   '3:4',
@@ -24,7 +25,7 @@ export const studioQueryAtom = atomWithStorage<string>(
 
 export const studioAspectRatioAtom = atomWithStorage<StudioAspectRatio>(
   'studio-aspect-ratio',
-  '1:1',
+  'auto',
   studioAspectRatioStorage,
   {
     getOnInit: true,
