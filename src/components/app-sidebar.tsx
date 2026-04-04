@@ -27,6 +27,7 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
+import { ChatActionsDropdown } from '@/components/chat-actions-dropdown';
 import { PlaceholderLogo } from './icons';
 import { SearchBar } from './search-bar';
 import { UserMenu } from './user-menu';
@@ -179,6 +180,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                     <span>{chat.title}</span>
                   </Link>
                 </SidebarMenuButton>
+                <ChatActionsDropdown chatTitle={chat.title} />
               </SidebarMenuItem>
             ))}
           </SidebarMenu>

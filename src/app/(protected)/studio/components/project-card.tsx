@@ -1,20 +1,9 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+import { ProjectCardActionsDropdown } from '@/app/(protected)/studio/components/project-card-actions-dropdown';
 import { cn } from '@/utils/utils';
-import {
-  EllipsisIcon,
-  ImageOffIcon,
-  PencilIcon,
-  Trash2Icon,
-  XIcon,
-} from 'lucide-react';
+import { ImageOffIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
@@ -114,49 +103,25 @@ export const ProjectCard = ({
 
   return (
     <div className="group relative">
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button
-            variant="outline"
-            size="icon-xs"
-            className={cn(
-              'absolute top-2 right-2 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100'
-            )}
-          >
-            <EllipsisIcon />
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent
-          align="end"
-          onCloseAutoFocus={(e) => {
-            if (!shouldKeepInputFocusedRef.current) {
-              return;
-            }
+      <ProjectCardActionsDropdown
+        onCloseAutoFocus={(event) => {
+          if (!shouldKeepInputFocusedRef.current) {
+            return;
+          }
 
-            e.preventDefault();
-            shouldKeepInputFocusedRef.current = false;
+          event.preventDefault();
+          shouldKeepInputFocusedRef.current = false;
 
-            requestAnimationFrame(() => {
-              inputRef.current?.focus();
-              inputRef.current?.select();
-            });
-          }}
-        >
-          <DropdownMenuItem
-            onSelect={() => {
-              shouldKeepInputFocusedRef.current = true;
-              setIsEditing(true);
-            }}
-          >
-            <PencilIcon />
-            Rename
-          </DropdownMenuItem>
-          <DropdownMenuItem variant="destructive">
-            <Trash2Icon />
-            Delete
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+          requestAnimationFrame(() => {
+            inputRef.current?.focus();
+            inputRef.current?.select();
+          });
+        }}
+        onRename={() => {
+          shouldKeepInputFocusedRef.current = true;
+          setIsEditing(true);
+        }}
+      />
       {isEditing ? (
         <div className={cardClassName}>{cardContent}</div>
       ) : (
