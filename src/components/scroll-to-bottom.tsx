@@ -13,7 +13,7 @@ export const ScrollToBottom = () => {
     !isAtBottom && (
       <div className="absolute inset-x-auto bottom-40 flex w-full justify-center">
         <Button
-          variant="secondary"
+          variant="outline"
           size="icon-sm"
           className="rounded-full"
           onClick={() =>
