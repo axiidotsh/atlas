@@ -13,7 +13,6 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { cn } from '@/utils/utils';
 import { useParams, usePathname } from 'next/navigation';
 import { useState } from 'react';
 import { AspectRatioBadge } from './aspect-ratio-badge';
@@ -32,10 +31,6 @@ export const StudioSidebar = ({
   const filteredImages = project?.images.filter((image) =>
     image.title.toLowerCase().includes(query.trim().toLowerCase())
   );
-
-  const transitionClassname = `transition-opacity duration-200 ease-out ${
-    open ? 'opacity-100' : 'pointer-events-none opacity-0'
-  }`;
 
   if (!isStudioProjectPage || !project) {
     return null;
@@ -58,14 +53,11 @@ export const StudioSidebar = ({
               placeholder="Search project images..."
               variant="ghost"
               size="sm"
-              containerClassName={cn(!open && 'hidden')}
             />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
-      <SidebarContent
-        className={cn('flex flex-col gap-4 px-3 pb-4', transitionClassname)}
-      >
+      <SidebarContent className="flex flex-col gap-4 px-3 pb-4">
         {filteredImages?.map((image) => {
           const aspectRatio = getAspectRatio(image.aspectRatio);
 

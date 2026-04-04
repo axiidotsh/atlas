@@ -8,7 +8,13 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/utils/utils';
-import { EllipsisIcon, PencilIcon, Trash2Icon, XIcon } from 'lucide-react';
+import {
+  EllipsisIcon,
+  ImageOffIcon,
+  PencilIcon,
+  Trash2Icon,
+  XIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
@@ -54,7 +60,7 @@ export const ProjectCard = ({
   }, [isEditing]);
 
   const cardClassName =
-    'bg-card border-border/30 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300';
+    'bg-card border-border/50 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300';
 
   const cardContent = (
     <>
@@ -65,11 +71,13 @@ export const ProjectCard = ({
             <img
               src={previewImage}
               alt=""
-              className="size-full object-cover transition-transform duration-300"
+              className="border-border/50 size-full border-b object-cover transition-transform duration-300"
             />
           </>
         ) : (
-          <div className="bg-muted size-full" />
+          <div className="bg-muted border-border/50 flex size-full items-center justify-center border-b">
+            <ImageOffIcon className="text-muted-foreground size-5" />
+          </div>
         )}
       </div>
       <div className="relative px-4 py-3 pr-12">
@@ -109,7 +117,7 @@ export const ProjectCard = ({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            variant="secondary"
+            variant="outline"
             size="icon-xs"
             className={cn(
               'absolute top-2 right-2 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100'
