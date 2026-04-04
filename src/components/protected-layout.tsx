@@ -28,7 +28,7 @@ const ProtectedLayoutContent = ({ children }: ProtectedLayoutShellProps) => {
 
   const content = isDetailPage ? (
     <StickToBottom
-      className="relative h-[calc(100vh-3.5625rem)]"
+      className="relative h-[calc(100svh-3.5625rem)]"
       resize="smooth"
       initial="instant"
     >

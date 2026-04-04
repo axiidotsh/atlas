@@ -5,6 +5,7 @@ import {
   HoverCardTrigger,
 } from '@/components/ui/hover-card';
 import { Progress } from '@/components/ui/progress';
+import { useState } from 'react';
 
 interface TokenUsageProps {
   usedTokens: number;
@@ -12,9 +13,11 @@ interface TokenUsageProps {
 }
 
 export const TokenUsage = ({ usedTokens, maxTokens }: TokenUsageProps) => {
+  const [open, setOpen] = useState(false);
+
   return (
-    <HoverCard openDelay={0} closeDelay={0}>
-      <HoverCardTrigger>
+    <HoverCard open={open} onOpenChange={setOpen} openDelay={0} closeDelay={0}>
+      <HoverCardTrigger onClick={() => setOpen(true)}>
         <CircularProgress value={usedTokens} maxValue={maxTokens} size={16} />
       </HoverCardTrigger>
       <HoverCardContent>

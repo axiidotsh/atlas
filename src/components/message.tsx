@@ -95,7 +95,7 @@ export const Message = ({ message }: ChatMessageProps) => {
           isUserMessage && 'bg-muted rounded-2xl px-4 py-3 shadow-xs'
         )}
       >
-        <Streamdown className="[&_img]:cursor-pointer [&_li]:pl-4 [&_ol]:list-inside [&_ul]:list-inside">
+        <Streamdown className="[&_img]:cursor-pointer [&_ol]:list-outside [&_ol]:pl-8 [&_ul]:list-outside [&_ul]:pl-8">
           {message.content}
         </Streamdown>
       </div>
