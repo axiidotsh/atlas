@@ -1,5 +1,5 @@
 import { Conversation } from '@/app/(protected)/chat/[id]/components/conversation';
-import { MOCK_CHATS } from '@/mock-data/chats';
+import { getStandardConversation } from '@/mock-data/conversations';
 import { notFound } from 'next/navigation';
 
 interface ChatPageProps {
@@ -8,13 +8,9 @@ interface ChatPageProps {
   }>;
 }
 
-function getMockChat(chatId: string) {
-  return MOCK_CHATS.find((chat) => chat.id === chatId);
-}
-
 export default async function ChatPage({ params }: ChatPageProps) {
   const { id } = await params;
-  const chat = getMockChat(id);
+  const chat = getStandardConversation(id);
 
   if (!chat) {
     notFound();

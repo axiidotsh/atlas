@@ -1,12 +1,13 @@
 'use client';
 
 import { SearchBar } from '@/components/search-bar';
-import { MOCK_STUDIO_PROJECTS } from '@/mock-data/studio-projects';
+import { getStudioConversations } from '@/mock-data/conversations';
 import { useState } from 'react';
 import { ProjectCard } from './components/project-card';
 
 export default function StudioPage() {
   const [projectQuery, setProjectQuery] = useState('');
+  const studioProjects = getStudioConversations();
 
   return (
     <div className="flex flex-col gap-8 py-6 sm:py-14 2xl:py-20">
@@ -20,7 +21,7 @@ export default function StudioPage() {
         />
       </div>
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {MOCK_STUDIO_PROJECTS.map((project) => (
+        {studioProjects.map((project) => (
           <ProjectCard key={project.id} {...project} />
         ))}
       </div>

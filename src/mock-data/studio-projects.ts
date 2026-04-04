@@ -1,4 +1,4 @@
-import type { MockChatMessage, MockStudioImage, MockStudioProject } from '@/mock-data/types';
+import type { MockChatMessage, MockConversation, MockStudioImage } from '@/mock-data/types';
 
 const recoveryLaunchImages: MockStudioImage[] = [
   {
@@ -412,7 +412,7 @@ Square social cut that reads quickly while still keeping the destination feel.`,
   },
 ];
 
-export const MOCK_STUDIO_PROJECTS: MockStudioProject[] = [
+const STUDIO_PROJECT_CONVERSATIONS = [
   {
     id: 'project_recovery_launch',
     title: 'Recovery Launch Portrait Study',
@@ -463,3 +463,9 @@ export const MOCK_STUDIO_PROJECTS: MockStudioProject[] = [
     images: travelEditorialImages,
   },
 ];
+
+export const MOCK_STUDIO_PROJECTS: MockConversation[] =
+  STUDIO_PROJECT_CONVERSATIONS.map((conversation) => ({
+    ...conversation,
+    type: 'studio',
+  }));

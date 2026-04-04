@@ -22,17 +22,23 @@ interface ProjectImageProps {
 interface ProjectCardProps {
   id: string;
   title: string;
-  coverImage: string;
+  coverImage?: string;
   images: ProjectImageProps[];
 }
 
 const TITLE_CLASS_NAME =
   'block w-full truncate bg-transparent p-0 text-sm font-medium leading-5 outline-none';
 
-export const ProjectCard = ({ id, title, coverImage }: ProjectCardProps) => {
+export const ProjectCard = ({
+  id,
+  title,
+  coverImage,
+  images,
+}: ProjectCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const shouldKeepInputFocusedRef = useRef(false);
+  const previewImage = coverImage ?? images[0]?.src;
 
   useEffect(() => {
     if (!isEditing) {
@@ -53,12 +59,18 @@ export const ProjectCard = ({ id, title, coverImage }: ProjectCardProps) => {
   const cardContent = (
     <>
       <div className="h-40 overflow-hidden">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={coverImage}
-          alt=""
-          className="size-full object-cover transition-transform duration-300"
-        />
+        {previewImage ? (
+          <>
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={previewImage}
+              alt=""
+              className="size-full object-cover transition-transform duration-300"
+            />
+          </>
+        ) : (
+          <div className="bg-muted size-full" />
+        )}
       </div>
       <div className="relative px-4 py-3 pr-12">
         {isEditing ? (

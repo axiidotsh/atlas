@@ -14,7 +14,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { MOCK_CHATS } from '@/mock-data/chats';
+import { getStandardConversations } from '@/mock-data/conversations';
 import { cn } from '@/utils/utils';
 import {
   CircleGaugeIcon,
@@ -63,6 +63,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [chatQuery, setChatQuery] = React.useState('');
   const { open, setOpen, setOpenMobile } = useSidebar();
   const pathname = usePathname();
+  const chats = getStandardConversations();
 
   const transitionClassname = `transition-opacity duration-200 ease-out ${
     open ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -168,7 +169,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         {/* chats */}
         <SidebarGroup className={cn('pt-0', transitionClassname)}>
           <SidebarMenu>
-            {MOCK_CHATS.map((chat) => (
+            {chats.map((chat) => (
               <SidebarMenuItem key={chat.id}>
                 <SidebarMenuButton
                   asChild

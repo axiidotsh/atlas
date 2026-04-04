@@ -1,4 +1,5 @@
 export type ChatMessageRole = 'user' | 'assistant';
+export type ConversationType = 'standard' | 'studio';
 
 export type AdPlatform = 'meta' | 'google';
 
@@ -8,26 +9,22 @@ export interface MockChatMessage {
   content: string;
 }
 
-export interface MockChat {
-  id: string;
-  title: string;
-  messages: MockChatMessage[];
-}
-
-export interface MockStudioImage {
+export interface MockConversationImage {
   id: string;
   title: string;
   src: string;
   aspectRatio: string;
 }
 
-export interface MockStudioProject {
+export interface MockConversation {
   id: string;
+  type: ConversationType;
   title: string;
-  coverImage: string;
   messages: MockChatMessage[];
-  images: MockStudioImage[];
+  images: MockConversationImage[];
+  coverImage?: string;
 }
+export type MockStudioImage = MockConversationImage;
 
 export interface MockAdAccount {
   id: string;

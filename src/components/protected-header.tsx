@@ -1,10 +1,12 @@
 'use client';
 
-import { getStudioProject } from '@/app/(protected)/studio/utils';
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
-import { MOCK_CHATS } from '@/mock-data/chats';
+import {
+  getStandardConversation,
+  getStudioConversation,
+} from '@/mock-data/conversations';
 import { cn } from '@/utils/utils';
 import { BookImageIcon, PanelLeftIcon, Share2Icon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -26,11 +28,11 @@ function formatSegmentTitle(segment: string) {
 }
 
 function getChatTitle(chatId: string) {
-  return MOCK_CHATS.find((chat) => chat.id === chatId)?.title ?? 'Chat';
+  return getStandardConversation(chatId)?.title ?? 'Chat';
 }
 
 function getStudioTitle(projectId: string) {
-  return getStudioProject(projectId)?.title ?? 'Creative Studio';
+  return getStudioConversation(projectId)?.title ?? 'Creative Studio';
 }
 
 function getHeaderState(pathname: string) {

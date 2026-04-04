@@ -1,7 +1,7 @@
-import type { MockChat } from '@/mock-data/types';
+import type { MockConversation, MockConversationImage } from '@/mock-data/types';
 import { MOCK_STUDIO_PROJECTS } from '@/mock-data/studio-projects';
 
-function getStudioImageSrc(imageId: string) {
+function getStudioImage(imageId: string): MockConversationImage {
   const image = MOCK_STUDIO_PROJECTS.flatMap((project) => project.images).find(
     (entry) => entry.id === imageId,
   );
@@ -10,17 +10,28 @@ function getStudioImageSrc(imageId: string) {
     throw new Error(`Missing studio image: ${imageId}`);
   }
 
-  return image.src;
+  return image;
 }
 
-const LAUNCH_DASHBOARD_IMAGE = getStudioImageSrc('creative_1');
-const AUTH_LOOP_TRACE_IMAGE = getStudioImageSrc('creative_2');
-const SIDEBAR_STATE_IMAGE = getStudioImageSrc('creative_3');
-const ONBOARDING_FLOW_IMAGE = getStudioImageSrc('creative_4');
-const RELEASE_HIGHLIGHTS_IMAGE = getStudioImageSrc('creative_5');
-const CONTENT_CALENDAR_IMAGE = getStudioImageSrc('creative_6');
+const LAUNCH_DASHBOARD_IMAGE = getStudioImage('creative_1');
+const AUTH_LOOP_TRACE_IMAGE = getStudioImage('creative_2');
+const SIDEBAR_STATE_IMAGE = getStudioImage('creative_3');
+const ONBOARDING_FLOW_IMAGE = getStudioImage('creative_4');
+const RELEASE_HIGHLIGHTS_IMAGE = getStudioImage('creative_5');
+const CONTENT_CALENDAR_IMAGE = getStudioImage('creative_6');
 
-export const MOCK_CHATS: MockChat[] = [
+const CHAT_IMAGES: Record<string, MockConversationImage[]> = {
+  '1': [LAUNCH_DASHBOARD_IMAGE],
+  '2': [AUTH_LOOP_TRACE_IMAGE],
+  '7': [SIDEBAR_STATE_IMAGE],
+  '12': [ONBOARDING_FLOW_IMAGE],
+  '16': [RELEASE_HIGHLIGHTS_IMAGE],
+  '20': [CONTENT_CALENDAR_IMAGE],
+};
+
+const STANDARD_CHAT_CONVERSATIONS: Array<
+  Pick<MockConversation, 'id' | 'title' | 'messages'>
+> = [
   {
     id: '1',
     title: 'Q2 launch checklist',
@@ -36,7 +47,7 @@ export const MOCK_CHATS: MockChat[] = [
         content:
           `# Launch checklist
 
-![Launch dashboard preview](${LAUNCH_DASHBOARD_IMAGE})
+![Launch dashboard preview](${LAUNCH_DASHBOARD_IMAGE.src})
 
 ## Pre-launch
 - Confirm analytics events and conversion tracking on the final landing page.
@@ -88,7 +99,7 @@ I would treat this like a small release: **tracking first**, then creative QA, t
         content:
           `## Callback triage
 
-![Auth loop trace](${AUTH_LOOP_TRACE_IMAGE})
+![Auth loop trace](${AUTH_LOOP_TRACE_IMAGE.src})
 
 - Callback URL mismatch between the provider and the deployed origin.
 - Cookie scope or secure flag differences in staging.
@@ -253,7 +264,7 @@ If local works with the same provider settings, I would compare the deployment l
         content:
           `### What still feels off
 
-![Sidebar state comparison](${SIDEBAR_STATE_IMAGE})
+![Sidebar state comparison](${SIDEBAR_STATE_IMAGE.src})
 
 - The active state could be stronger.
 - The recent chats section needs clearer separation from primary navigation.
@@ -417,7 +428,7 @@ I would not redesign the whole sidebar yet. A tighter visual hierarchy and a cle
         content:
           `### Main edge cases
 
-![Onboarding flow snapshot](${ONBOARDING_FLOW_IMAGE})
+![Onboarding flow snapshot](${ONBOARDING_FLOW_IMAGE.src})
 
 - Verification timing creates uncertainty.
 - Invite acceptance errors are not descriptive enough.
@@ -544,7 +555,7 @@ The biggest risk is not that the flow breaks completely. It is that users lose c
         content:
           `### v1.8.0 release notes
 
-![Release highlights](${RELEASE_HIGHLIGHTS_IMAGE})
+![Release highlights](${RELEASE_HIGHLIGHTS_IMAGE.src})
 
 **Improvements**
 - Faster report loading on larger workspaces
@@ -674,7 +685,7 @@ I would keep the language customer-facing and focus on outcomes instead of imple
         content:
           `### Lightweight calendar
 
-![Content calendar preview](${CONTENT_CALENDAR_IMAGE})
+![Content calendar preview](${CONTENT_CALENDAR_IMAGE.src})
 
 I would balance:
 - product education
@@ -705,3 +716,16 @@ That mix keeps the calendar useful without feeling repetitive.`,
     ],
   },
 ];
+
+export const MOCK_CHATS: MockConversation[] = STANDARD_CHAT_CONVERSATIONS.map(
+  (conversation) => {
+    const images = CHAT_IMAGES[conversation.id] ?? [];
+
+    return {
+      ...conversation,
+      type: 'standard',
+      images,
+      coverImage: images[0]?.src,
+    };
+  }
+);

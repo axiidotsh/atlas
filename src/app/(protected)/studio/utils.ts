@@ -1,4 +1,4 @@
-import { MOCK_STUDIO_PROJECTS } from '@/mock-data/studio-projects';
+import { getStudioConversation } from '@/mock-data/conversations';
 import {
   RectangleVerticalIcon,
   SmartphoneIcon,
@@ -8,7 +8,7 @@ import {
 import { STUDIO_ASPECT_RATIOS, StudioAspectRatio } from './atoms';
 
 export function getStudioProject(projectId: string) {
-  return MOCK_STUDIO_PROJECTS.find((project) => project.id === projectId);
+  return getStudioConversation(projectId);
 }
 
 interface StudioAspectRatioOption {
