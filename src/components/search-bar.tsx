@@ -13,6 +13,7 @@ interface SearchBarProps {
   containerClassName?: string;
   inputClassName?: string;
   autoFocus?: boolean;
+  shouldStopKeyDownPropagation?: boolean;
 }
 
 export const SearchBar = ({
@@ -24,6 +25,7 @@ export const SearchBar = ({
   containerClassName,
   inputClassName,
   autoFocus = false,
+  shouldStopKeyDownPropagation = false,
 }: SearchBarProps) => {
   return (
     <div
@@ -41,6 +43,11 @@ export const SearchBar = ({
         autoFocus={autoFocus}
         value={value}
         onChange={(e) => onChange(e.target.value)}
+        onKeyDown={(e) => {
+          if (shouldStopKeyDownPropagation && e.key !== 'Escape') {
+            e.stopPropagation();
+          }
+        }}
         className={cn(
           'rounded-none border-0 bg-transparent! shadow-none ring-0!',
           size === 'sm' && 'pl-1.5',

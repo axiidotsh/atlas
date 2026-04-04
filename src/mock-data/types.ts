@@ -2,6 +2,20 @@ export type ChatMessageRole = 'user' | 'assistant';
 export type ConversationType = 'standard' | 'studio';
 
 export type AdPlatform = 'meta' | 'google';
+export type CampaignStatus =
+  | 'ACTIVE'
+  | 'PAUSED'
+  | 'WITH_ISSUES'
+  | 'ENDED';
+export type CoreMetricId =
+  | 'impressions'
+  | 'clicks'
+  | 'spend'
+  | 'reach'
+  | 'revenue'
+  | 'ctr'
+  | 'cpc'
+  | 'roas';
 
 export interface MockChatMessage {
   id: string;
@@ -36,6 +50,8 @@ export interface MockCampaign {
   id: string;
   adAccountId: string;
   name: string;
+  status: CampaignStatus;
+  metrics: MockCampaignMetrics;
 }
 
 export interface MockAdSet {
@@ -48,4 +64,24 @@ export interface MockAd {
   id: string;
   adSetId: string;
   name: string;
+}
+
+export interface MockMetric {
+  id: CoreMetricId;
+  title: string;
+  description: string;
+  value: string;
+  percentageChange: number;
+  trend: 'positive' | 'negative' | 'neutral';
+}
+
+export interface MockCampaignMetrics {
+  impressions: string;
+  clicks: string;
+  spend: string;
+  reach: string;
+  revenue: string;
+  ctr: string;
+  cpc: string;
+  roas: string;
 }

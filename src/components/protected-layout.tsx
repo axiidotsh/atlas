@@ -24,7 +24,7 @@ const ProtectedLayoutContent = ({ children }: ProtectedLayoutShellProps) => {
 
   const { isDetailPage } = getHeaderState(pathname);
 
-  const contentClassName = 'mx-auto flex w-full max-w-3xl flex-1 flex-col px-4';
+  const contentClassName = 'mx-auto flex w-full flex-1 flex-col px-4';
 
   const content = isDetailPage ? (
     <StickToBottom

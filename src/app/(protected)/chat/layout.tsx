@@ -7,7 +7,7 @@ export default function ChatLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="mx-auto flex w-full max-w-3xl flex-1 flex-col">
       <div className="flex-1">{children}</div>
       <div className="sticky bottom-0 flex justify-center">
         <ChatComposer

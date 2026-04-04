@@ -1,7 +1,14 @@
+'use client';
+
 import { cva, type VariantProps } from 'class-variance-authority';
 import { Slot } from 'radix-ui';
 import * as React from 'react';
 
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { cn } from '@/utils/utils';
 
 const buttonVariants = cva(
@@ -41,19 +48,23 @@ const buttonVariants = cva(
   }
 );
 
-function Button({
+interface ButtonProps
+  extends React.ComponentProps<'button'>, VariantProps<typeof buttonVariants> {
+  asChild?: boolean;
+  tooltip?: React.ReactNode;
+}
+
+const Button = ({
   className,
   variant = 'default',
   size = 'default',
   asChild = false,
+  tooltip,
   ...props
-}: React.ComponentProps<'button'> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean;
-  }) {
+}: ButtonProps) => {
   const Comp = asChild ? Slot.Root : 'button';
 
-  return (
+  const button = (
     <Comp
       data-slot="button"
       data-variant={variant}
@@ -62,6 +73,16 @@ function Button({
       {...props}
     />
   );
-}
+  if (tooltip === undefined || tooltip === null || tooltip === false) {
+    return button;
+  }
+
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>{button}</TooltipTrigger>
+      <TooltipContent>{tooltip}</TooltipContent>
+    </Tooltip>
+  );
+};
 
 export { Button, buttonVariants };

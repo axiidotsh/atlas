@@ -21,8 +21,8 @@ import {
 import { useAtom } from 'jotai';
 import { ArrowUpIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { ReactNode, useRef } from 'react';
-import { AdAccountSelector } from './adaccount-selector';
+import { ReactNode, useRef, useState } from 'react';
+import { AdAccountSelector } from './ad-account-selector';
 import { ModeSelector } from './mode-selector';
 import { TokenUsage } from './token-usage';
 
@@ -33,6 +33,9 @@ interface ChatComposerProps {
 
 export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
   const [query, setQuery] = useAtom(queryAtom);
+  const [selectedAdAccountIds, setSelectedAdAccountIds] = useState<string[]>(
+    MOCK_AD_ACCOUNTS.map((adAccount) => adAccount.id)
+  );
   const pathname = usePathname();
   const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -84,7 +87,11 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center">
                 <ModeSelector />
-                <AdAccountSelector />
+                <AdAccountSelector
+                  selectedAdAccountIds={selectedAdAccountIds}
+                  onSelectedAdAccountIdsChange={setSelectedAdAccountIds}
+                  variant="ghost"
+                />
               </div>
               <div className="flex items-center gap-3">
                 <TokenUsage usedTokens={20} maxTokens={100} />
