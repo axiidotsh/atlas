@@ -54,7 +54,7 @@ const revenueEfficiencyChartConfig = {
   },
   spend: {
     label: 'Spend',
-    color: 'var(--chart-4)',
+    color: 'var(--chart-3)',
   },
 } satisfies ChartConfig;
 

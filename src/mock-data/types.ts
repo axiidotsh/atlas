@@ -7,6 +7,8 @@ export type CampaignStatus =
   | 'PAUSED'
   | 'WITH_ISSUES'
   | 'ENDED';
+export type PerformanceLevel = 'campaign' | 'adSet';
+export type CreativeMediaType = 'image' | 'video';
 export type CoreMetricId =
   | 'impressions'
   | 'clicks'
@@ -51,19 +53,28 @@ export interface MockCampaign {
   adAccountId: string;
   name: string;
   status: CampaignStatus;
-  metrics: MockCampaignMetrics;
+  metrics: MockPerformanceMetrics;
 }
 
 export interface MockAdSet {
   id: string;
   campaignId: string;
   name: string;
+  status: CampaignStatus;
+  metrics: MockPerformanceMetrics;
 }
 
 export interface MockAd {
   id: string;
   adSetId: string;
   name: string;
+  status: CampaignStatus;
+  headline: string;
+  primaryText: string;
+  destination: string;
+  metrics: MockPerformanceMetrics;
+  media: MockCreativeMedia[];
+  detailMetrics: MockAdDetailMetric[];
 }
 
 export interface MockMetric {
@@ -75,7 +86,7 @@ export interface MockMetric {
   trend: 'positive' | 'negative' | 'neutral';
 }
 
-export interface MockCampaignMetrics {
+export interface MockPerformanceMetrics {
   impressions: string;
   clicks: string;
   spend: string;
@@ -84,4 +95,21 @@ export interface MockCampaignMetrics {
   ctr: string;
   cpc: string;
   roas: string;
+}
+
+export type MockCampaignMetrics = MockPerformanceMetrics;
+
+export interface MockCreativeMedia {
+  id: string;
+  title: string;
+  type: CreativeMediaType;
+  src: string;
+  posterSrc?: string;
+  aspectRatio: string;
+}
+
+export interface MockAdDetailMetric {
+  id: string;
+  label: string;
+  value: string;
 }

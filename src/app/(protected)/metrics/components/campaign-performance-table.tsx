@@ -5,7 +5,10 @@ import {
   filteredCampaignPerformanceRowsAtom,
 } from '@/app/(protected)/metrics/atoms';
 import { formatCampaignStatus } from '@/app/(protected)/metrics/campaign-performance.config';
-import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
+import {
+  getCampaignPlatformIcon,
+  getCampaignStatusClassName,
+} from '@/app/(protected)/metrics/campaign-performance.utils';
 import { Badge } from '@/components/ui/badge';
 import {
   Table,
@@ -16,29 +19,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { MOCK_METRICS } from '@/mock-data/metrics';
-import type { AdPlatform, CampaignStatus } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
 import { useAtomValue } from 'jotai';
-
-function getPlatformIcon(platform: AdPlatform) {
-  return platform === 'google' ? GoogleAdsLogo : MetaLogo;
-}
-
-function getStatusClassName(status: CampaignStatus) {
-  if (status === 'ACTIVE') {
-    return 'border-primary/20 bg-primary/10 text-primary';
-  }
-
-  if (status === 'WITH_ISSUES') {
-    return 'border-destructive/20 bg-destructive/10 text-destructive';
-  }
-
-  if (status === 'PAUSED') {
-    return 'border-border bg-muted text-muted-foreground';
-  }
-
-  return 'border-border bg-secondary text-secondary-foreground';
-}
 
 export const CampaignPerformanceTable = () => {
   const campaigns = useAtomValue(filteredCampaignPerformanceRowsAtom);
@@ -58,7 +40,7 @@ export const CampaignPerformanceTable = () => {
     visibleMetrics.length;
 
   return (
-    <div className="dark:bg-muted bg-card overflow-hidden rounded-xl border">
+    <div className="dark:bg-muted bg-card overflow-auto rounded-xl border">
       <Table>
         <TableHeader className="dark:bg-card bg-muted">
           <TableRow>
@@ -97,7 +79,9 @@ export const CampaignPerformanceTable = () => {
             </TableRow>
           ) : null}
           {campaigns.map((campaign) => {
-            const PlatformIcon = getPlatformIcon(campaign.adAccount.platform);
+            const PlatformIcon = getCampaignPlatformIcon(
+              campaign.adAccount.platform
+            );
 
             return (
               <TableRow key={campaign.id} className="group">
@@ -106,7 +90,7 @@ export const CampaignPerformanceTable = () => {
                     <p className="text-foreground text-sm font-medium">
                       {campaign.name}
                     </p>
-                    <p className="text-muted-foreground text-[11px] tracking-[0.02em]">
+                    <p className="text-muted-foreground text-xs tracking-[0.02em]">
                       {campaign.id}
                     </p>
                   </div>
@@ -114,14 +98,7 @@ export const CampaignPerformanceTable = () => {
                 {isAdAccountVisible ? (
                   <TableCell className="min-w-64 px-5 py-4">
                     <div className="flex items-center gap-3">
-                      <PlatformIcon
-                        className={cn(
-                          'w-auto',
-                          campaign.adAccount.platform === 'google'
-                            ? 'h-4'
-                            : 'h-3'
-                        )}
-                      />
+                      <PlatformIcon className="size-4" />
                       <p className="text-foreground text-sm font-medium">
                         {campaign.adAccount.name}
                       </p>
@@ -134,7 +111,7 @@ export const CampaignPerformanceTable = () => {
                       variant="outline"
                       className={cn(
                         'capitalize',
-                        getStatusClassName(campaign.status)
+                        getCampaignStatusClassName(campaign.status)
                       )}
                     >
                       {formatCampaignStatus(campaign.status)}
