@@ -1,14 +1,8 @@
 'use client';
 
 import { queryAtom } from '@/app/(protected)/chat/atoms';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
-import {
-  Mention,
-  MentionContent,
-  MentionInput,
-  MentionItem,
-} from '@/components/ui/mention';
+import { Mention, MentionInput, MentionItem } from '@/components/ui/mention';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Textarea } from '@/components/ui/textarea';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
@@ -36,6 +30,7 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
   const [selectedAdAccountIds, setSelectedAdAccountIds] = useState<string[]>(
     MOCK_AD_ACCOUNTS.map((adAccount) => adAccount.id)
   );
+  const [mentionOpen, setMentionOpen] = useState(false);
   const pathname = usePathname();
   const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -66,6 +61,8 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
       className="w-full"
       inputValue={query}
       onInputValueChange={(value) => setQuery(value)}
+      open={mentionOpen}
+      onOpenChange={setMentionOpen}
     >
       <div className="flex w-full flex-col gap-3">
         {!isChatDetailPage && (
@@ -73,66 +70,63 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
             {caption}
           </span>
         )}
-        <div className="bg-chat-input-border rounded-t-[1.25rem] p-1.5 pb-0">
-          <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
-            <MentionInput asChild>
-              <Textarea
-                autoFocus
-                ref={inputRef}
-                placeholder={placeholder || 'Ask me anything'}
-                value={query}
-                className="h-20 resize-none border-0 bg-transparent! shadow-none ring-0!"
-              />
-            </MentionInput>
-            <div className="flex items-center justify-between gap-2">
-              <div className="flex items-center">
-                <ModeSelector />
-                <AdAccountSelector
-                  selectedAdAccountIds={selectedAdAccountIds}
-                  onSelectedAdAccountIdsChange={setSelectedAdAccountIds}
-                  variant="ghost"
+        <div className="relative">
+          {mentionOpen && (
+            <div className="bg-popover border-primary/20 dark:border-primary/10 absolute inset-x-0 bottom-full z-50 mx-auto w-11/12 overflow-hidden rounded-t-xl border border-b-0 pb-1.5">
+              <ScrollArea>
+                <div className="max-h-60 p-1">
+                  {data.map((item) => (
+                    <MentionItem
+                      key={item.id}
+                      label={getMentionLabel(item)}
+                      value={item.name + item.id}
+                      className="cursor-pointer rounded-md px-2.5 py-2"
+                    >
+                      <span className="truncate text-sm">{item.name}</span>
+                      <span className="text-muted-foreground ml-auto shrink-0 rounded-sm bg-transparent px-1.5 py-0.5 text-[11px] leading-none">
+                        {formatType(item.type)}
+                      </span>
+                    </MentionItem>
+                  ))}
+                </div>
+              </ScrollArea>
+            </div>
+          )}
+          <div className="bg-chat-input-border rounded-t-[1.25rem] p-1.5 pb-0">
+            <div className="bg-background border-primary/20 dark:border-primary/10 flex flex-col gap-2 rounded-t-2xl border border-b-0 p-1">
+              <MentionInput asChild>
+                <Textarea
+                  autoFocus
+                  ref={inputRef}
+                  placeholder={placeholder || 'Ask me anything'}
+                  value={query}
+                  className="h-20 resize-none border-0 bg-transparent! shadow-none ring-0!"
                 />
-              </div>
-              <div className="flex items-center gap-3">
-                <TokenUsage usedTokens={20} maxTokens={100} />
-                <Button
-                  aria-label="Send message"
-                  size="icon-sm"
-                  onClick={() => {}}
-                >
-                  <ArrowUpIcon />
-                </Button>
+              </MentionInput>
+              <div className="flex items-center justify-between gap-2">
+                <div className="flex items-center">
+                  <ModeSelector />
+                  <AdAccountSelector
+                    selectedAdAccountIds={selectedAdAccountIds}
+                    onSelectedAdAccountIdsChange={setSelectedAdAccountIds}
+                    variant="ghost"
+                  />
+                </div>
+                <div className="flex items-center gap-3">
+                  <TokenUsage usedTokens={20} maxTokens={100} />
+                  <Button
+                    aria-label="Send message"
+                    size="icon-sm"
+                    onClick={() => {}}
+                  >
+                    <ArrowUpIcon />
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-      <MentionContent align="start" strategy="fixed">
-        <ScrollArea>
-          <div className="max-h-80">
-            {data.map((item) => (
-              <MentionItem
-                key={item.id}
-                label={getMentionLabel(item)}
-                value={item.name + item.id}
-                className="max-w-160 cursor-pointer"
-              >
-                <div className="flex w-full flex-col gap-1">
-                  <div className="flex items-center justify-between gap-2">
-                    <span className="line-clamp-1 text-sm">{item.name}</span>
-                    <Badge className="dark:bg-primary/50">
-                      {formatType(item.type)}
-                    </Badge>
-                  </div>
-                  <span className="text-muted-foreground truncate text-xs">
-                    {item.id}
-                  </span>
-                </div>
-              </MentionItem>
-            ))}
-          </div>
-        </ScrollArea>
-      </MentionContent>
     </Mention>
   );
 };
