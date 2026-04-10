@@ -72,22 +72,29 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
         )}
         <div className="relative">
           {mentionOpen && (
-            <div className="bg-popover border-primary/20 dark:border-primary/10 absolute inset-x-0 bottom-full z-50 mx-auto w-11/12 overflow-hidden rounded-t-xl border border-b-0 pb-1.5">
+            <div className="bg-popover border-primary/20 dark:border-primary/10 = absolute inset-x-0 bottom-full z-50 mx-auto w-11/12 rounded-t-xl border border-b-0">
               <ScrollArea>
                 <div className="max-h-60 p-1">
-                  {data.map((item) => (
-                    <MentionItem
-                      key={item.id}
-                      label={getMentionLabel(item)}
-                      value={item.name + item.id}
-                      className="cursor-pointer rounded-md px-2.5 py-2"
-                    >
-                      <span className="truncate text-sm">{item.name}</span>
-                      <span className="text-muted-foreground ml-auto shrink-0 rounded-sm bg-transparent px-1.5 py-0.5 text-[11px] leading-none">
-                        {formatType(item.type)}
-                      </span>
-                    </MentionItem>
-                  ))}
+                  {data.map((item, i) => {
+                    const isLastItem = i === data.length - 1;
+
+                    return (
+                      <>
+                        <MentionItem
+                          key={item.id}
+                          label={getMentionLabel(item)}
+                          value={item.name + item.id}
+                          className="cursor-pointer rounded-md px-2.5 py-2"
+                        >
+                          <span className="truncate text-sm">{item.name}</span>
+                          <span className="text-muted-foreground ml-auto shrink-0 rounded-sm bg-transparent px-1.5 py-0.5 text-[11px] leading-none">
+                            {formatType(item.type)}
+                          </span>
+                        </MentionItem>
+                        {isLastItem && <div className="h-1 w-full" />}
+                      </>
+                    );
+                  })}
                 </div>
               </ScrollArea>
             </div>
