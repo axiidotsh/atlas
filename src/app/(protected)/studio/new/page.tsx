@@ -6,8 +6,8 @@ import { SparklesIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { FormProvider, useForm } from 'react-hook-form';
+import { AudienceSettingsSection } from './components/audience-settings-section';
 import { BrandIdentitySection } from './components/brand-identity-section';
-import { CampaignSettingsSection } from './components/campaign-settings-section';
 import { ColorPaletteSection } from './components/color-palette-section';
 import { CreativeDirectionSection } from './components/creative-direction-section';
 import { QuickStartSection } from './components/quick-start-section';
@@ -52,10 +52,10 @@ export default function NewProjectPage() {
     <div className="py-6 sm:py-14 2xl:py-20">
       <div className="mb-8 flex items-center gap-3">
         <div>
-          <h1 className="text-xl font-semibold">Create New Project</h1>
+          <h1 className="text-xl font-semibold">Create New Creative Project</h1>
           <p className="text-muted-foreground text-sm">
-            Describe your brand and we&apos;ll set up the rest, or configure
-            each detail manually.
+            Set up a creative project for multiple ads and variations, or
+            configure each detail manually.
           </p>
         </div>
       </div>
@@ -63,7 +63,6 @@ export default function NewProjectPage() {
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <QuickStartSection />
-
           <div className="relative flex items-center py-2">
             <div className="flex-1 border-t" />
             <span className="text-muted-foreground px-3 text-xs font-medium">
@@ -71,12 +70,11 @@ export default function NewProjectPage() {
             </span>
             <div className="flex-1 border-t" />
           </div>
-
           <div className="space-y-3">
             <BrandIdentitySection />
             <ColorPaletteSection />
             <CreativeDirectionSection />
-            <CampaignSettingsSection />
+            <AudienceSettingsSection />
           </div>
           <div className="bg-background sticky bottom-0 -mx-1 flex items-center justify-end gap-3 border-t px-1 py-4">
             <Button type="button" variant="outline" size="lg" asChild>
@@ -84,7 +82,7 @@ export default function NewProjectPage() {
             </Button>
             <Button type="submit" size="lg">
               <SparklesIcon className="size-4" />
-              Create Project
+              Create Creative Project
             </Button>
           </div>
         </form>

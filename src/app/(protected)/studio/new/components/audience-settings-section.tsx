@@ -34,14 +34,14 @@ function getAgeRangePresetLabel(ageRange: [number, number]) {
   );
 }
 
-export const CampaignSettingsSection = () => {
+export const AudienceSettingsSection = () => {
   const { control } = useFormContext<ProjectFormValues>();
   const [isCustomAgeRange, setIsCustomAgeRange] = useState(false);
 
   return (
     <CollapsibleSection
-      title="Campaign Settings"
-      description="Audience targeting details for your campaign"
+      title="Audience Settings"
+      description="Define the audience for the ads and variations in this project"
       icon={TargetIcon}
     >
       <Controller

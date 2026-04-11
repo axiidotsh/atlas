@@ -28,7 +28,7 @@ export const CollapsibleSection = ({
 
   return (
     <Collapsible open={isOpen} onOpenChange={setIsOpen}>
-      <div className="bg-muted border-border/50 overflow-hidden rounded-xl border">
+      <div className="bg-card dark:bg-muted border-border/50 overflow-hidden rounded-xl border">
         <CollapsibleTrigger className="dark:hover:bg-accent/20 hover:bg-accent/50 flex w-full cursor-pointer items-center gap-3 px-4 py-3.5 text-left transition-colors">
           {Icon && (
             <div className="bg-primary/10 text-primary flex size-8 shrink-0 items-center justify-center rounded-lg">

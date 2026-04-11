@@ -17,7 +17,7 @@ export const QuickStartSection = () => {
   const { control } = useFormContext<ProjectFormValues>();
 
   return (
-    <div className="bg-muted border-border/50 space-y-5 rounded-xl border p-5 shadow-sm">
+    <div className="bg-card dark:bg-muted border-border/50 space-y-5 rounded-xl border p-5 shadow-sm">
       <Controller
         name="name"
         control={control}
@@ -26,8 +26,9 @@ export const QuickStartSection = () => {
             <FieldLabel>Project Name</FieldLabel>
             <Input
               {...field}
-              placeholder="My Campaign"
+              placeholder="Spring Product Launch Creatives"
               aria-invalid={fieldState.invalid}
+              className="bg-background dark:bg-input/30"
             />
             {fieldState.invalid && <FieldError errors={[fieldState.error]} />}
           </Field>
@@ -40,16 +41,17 @@ export const QuickStartSection = () => {
           <Field>
             <FieldLabel className="flex items-center gap-1.5">
               <SparklesIcon className="text-primary size-3.5" />
-              Describe Your Brand or Campaign
+              Describe Your Brand or Creative Project
             </FieldLabel>
             <Textarea
               {...field}
-              placeholder="A luxury skincare brand targeting women 25-45. Minimalist aesthetic with gold accents, clean typography, and lifestyle photography..."
-              className="border-primary/20 bg-primary/[0.02] focus-visible:border-primary/40 focus-visible:ring-primary/20 min-h-32 resize-none text-base"
+              placeholder="A luxury skincare brand creating a spring launch creative project with paid social ads, retargeting variations, and minimalist lifestyle visuals..."
+              className="min-h-32 resize-none"
             />
             <FieldDescription>
-              We&apos;ll auto-populate the rest based on your description. You
-              can fine-tune in the sections below.
+              We&apos;ll auto-populate the project details based on your
+              description. You can fine-tune the ads and audience settings
+              below.
             </FieldDescription>
           </Field>
         )}
