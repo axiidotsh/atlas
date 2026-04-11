@@ -3,5 +3,5 @@ export default function StudioLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <div className="mx-auto w-full max-w-3xl">{children}</div>;
+  return <div className="mx-auto w-full max-w-5xl">{children}</div>;
 }

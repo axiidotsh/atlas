@@ -16,10 +16,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getStudioConversations } from '@/mock-data/conversations';
-import type { MockConversation } from '@/mock-data/types';
-import { ArrowUpDownIcon, FunnelIcon } from 'lucide-react';
+import { ArrowUpDownIcon, FunnelIcon, PlusIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
-import { CreateProjectDialog } from './components/create-project-dialog';
 import { ProjectCard } from './components/project-card';
 
 type StudioProjectSortOption = 'recent' | 'name-asc' | 'name-desc';
@@ -47,9 +46,7 @@ const RESET_MENU_ITEM_CLASS_NAME =
 
 export default function StudioPage() {
   const [projectQuery, setProjectQuery] = useState('');
-  const [studioProjects, setStudioProjects] = useState(() =>
-    getStudioConversations()
-  );
+  const [studioProjects] = useState(() => getStudioConversations());
   const [sortOption, setSortOption] =
     useState<StudioProjectSortOption>('recent');
   const [selectedAspectRatios, setSelectedAspectRatios] = useState<string[]>(
@@ -106,29 +103,16 @@ export default function StudioPage() {
     setShouldFilterHasImages(false);
   }
 
-  function createProject(projectName: string): MockConversation {
-    return {
-      id: crypto.randomUUID(),
-      type: 'studio',
-      title: projectName,
-      messages: [],
-      images: [],
-    };
-  }
-
-  function handleCreateProject(projectName: string) {
-    setStudioProjects((currentProjects) => [
-      createProject(projectName),
-      ...currentProjects,
-    ]);
-    setProjectQuery('');
-  }
-
   return (
     <div className="flex flex-col gap-4 py-6 sm:py-14 2xl:py-20">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Projects</h1>
-        <CreateProjectDialog onCreateProject={handleCreateProject} />
+        <Button asChild>
+          <Link href="/studio/new">
+            <PlusIcon />
+            New Project
+          </Link>
+        </Button>
       </div>
       <div className="flex gap-2">
         <SearchBar

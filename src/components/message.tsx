@@ -10,6 +10,7 @@ import {
   DownloadIcon,
   PencilIcon,
   RotateCcwIcon,
+  ShieldCheckIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { Streamdown } from 'streamdown';
@@ -80,6 +81,12 @@ export const Message = ({ message }: ChatMessageProps) => {
       handler: () => {},
       isAssistantOnly: true,
     },
+    {
+      title: 'Check response for accuracy',
+      icon: ShieldCheckIcon,
+      handler: () => {},
+      isAssistantOnly: true,
+    },
   ];
 
   return (
@@ -113,6 +120,7 @@ export const Message = ({ message }: ChatMessageProps) => {
               key={i}
               variant="ghost"
               size="icon-sm"
+              tooltip={action.title}
               className="text-muted-foreground"
               onClick={action.handler}
             >

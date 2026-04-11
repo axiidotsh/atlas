@@ -22,24 +22,25 @@ const ProtectedLayoutContent = ({ children }: ProtectedLayoutShellProps) => {
   const { toggleSidebar: toggleLeftSidebar } = useSidebar();
   const pathname = usePathname();
 
-  const { isDetailPage } = getHeaderState(pathname);
+  const { isDetailPage, detailKind } = getHeaderState(pathname);
 
-  const contentClassName = 'mx-auto flex w-full flex-1 flex-col px-4';
+  const contentClassName = 'mx-auto flex w-full flex-1 flex-col px-4 sm:px-8';
 
-  const content = isDetailPage ? (
-    <StickToBottom
-      className="relative h-[calc(100svh-3.5625rem)]"
-      resize="smooth"
-      initial="instant"
-    >
-      <StickToBottom.Content className={contentClassName}>
-        {children}
-      </StickToBottom.Content>
-      <ScrollToBottom />
-    </StickToBottom>
-  ) : (
-    <div className={contentClassName}>{children}</div>
-  );
+  const content =
+    isDetailPage && detailKind === 'chat' ? (
+      <StickToBottom
+        className="relative h-[calc(100svh-3.5625rem)]"
+        resize="smooth"
+        initial="instant"
+      >
+        <StickToBottom.Content className={contentClassName}>
+          {children}
+        </StickToBottom.Content>
+        <ScrollToBottom />
+      </StickToBottom>
+    ) : (
+      <div className={contentClassName}>{children}</div>
+    );
 
   return (
     <>
