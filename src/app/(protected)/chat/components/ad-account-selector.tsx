@@ -140,6 +140,7 @@ export const AdAccountSelector = ({
             onChange={setSearchQuery}
             placeholder="Search ad accounts..."
             size="sm"
+            containerClassName="bg-transparent border-0 ring-0! pl-1.5"
             shouldStopKeyDownPropagation
           />
         </div>

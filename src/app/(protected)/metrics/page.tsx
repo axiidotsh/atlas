@@ -14,7 +14,7 @@ import { BlocksIcon } from 'lucide-react';
 
 export default function MetricsPage() {
   return (
-    <div className="relative flex flex-col pt-6 pb-12">
+    <div className="relative flex flex-col pb-12">
       <MetricToolbar />
       <section className="mt-8 flex flex-col gap-6">
         <div className="flex items-center justify-between">

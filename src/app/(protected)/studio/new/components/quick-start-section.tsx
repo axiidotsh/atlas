@@ -46,7 +46,7 @@ export const QuickStartSection = () => {
             <Textarea
               {...field}
               placeholder="A luxury skincare brand creating a spring launch creative project with paid social ads, retargeting variations, and minimalist lifestyle visuals..."
-              className="min-h-32 resize-none"
+              className="bg-background dark:bg-input/30 min-h-32 resize-none"
             />
             <FieldDescription>
               We&apos;ll auto-populate the project details based on your
