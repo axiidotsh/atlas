@@ -5,7 +5,7 @@ import { cn } from '@/utils/utils';
 import { ImagePlusIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
-import type { ReferenceImageValue } from '../schema';
+import type { ReferenceImageValue } from '../../project-form';
 
 interface ImageUploadProps {
   images: ReferenceImageValue[];

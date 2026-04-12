@@ -8,7 +8,7 @@ import {
   AD_STYLE_PRESETS,
   VISUAL_GUIDELINE_PRESETS,
   type ProjectFormValues,
-} from '../schema';
+} from '../../project-form';
 import { ChipSelect } from './chip-select';
 import { CollapsibleSection } from './collapsible-section';
 

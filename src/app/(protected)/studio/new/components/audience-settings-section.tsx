@@ -5,7 +5,7 @@ import { Slider } from '@/components/ui/slider';
 import { TargetIcon } from 'lucide-react';
 import { useState } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
-import { GENDER_OPTIONS, type ProjectFormValues } from '../schema';
+import { GENDER_OPTIONS, type ProjectFormValues } from '../../project-form';
 import { ChipSelect } from './chip-select';
 import { CollapsibleSection } from './collapsible-section';
 import { TagInput } from './tag-input';

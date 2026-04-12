@@ -1,7 +1,10 @@
 'use client';
 
+import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
+import { type ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
+import { useSidebar } from '@/components/ui/sidebar';
 import {
   getStandardConversation,
   getStudioConversation,
@@ -9,6 +12,7 @@ import {
 import { cn } from '@/utils/utils';
 import { PanelLeftIcon, Share2Icon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
+import { useState } from 'react';
 
 function getChatTitle(chatId: string) {
   return getStandardConversation(chatId)?.title ?? 'Chat';
@@ -24,7 +28,7 @@ export function getChatDetailId(pathname: string) {
   return match?.[1] ?? null;
 }
 
-function getStudioDetailId(pathname: string) {
+export function getStudioDetailId(pathname: string) {
   const match = pathname.match(/^\/studio\/([^/]+)$/);
 
   if (match?.[1] === 'new') {
@@ -87,16 +91,60 @@ function getProtectedHeaderTitle(pathname: string) {
   return getFallbackTitle(pathname);
 }
 
-interface ProtectedHeaderProps {
-  onLeftSidebarToggle: () => void;
-}
-
-export const ProtectedHeader = ({
-  onLeftSidebarToggle,
-}: ProtectedHeaderProps) => {
+export const ProtectedHeader = () => {
+  const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
-  const detailId = getChatDetailId(pathname);
-  const title = getProtectedHeaderTitle(pathname);
+
+  const chatDetailId = getChatDetailId(pathname);
+  const studioDetailId = getStudioDetailId(pathname);
+
+  const studioProject = studioDetailId
+    ? getStudioConversation(studioDetailId)
+    : undefined;
+
+  const detailId = chatDetailId ?? studioDetailId;
+
+  const [studioProjectValuesById, setStudioProjectValuesById] = useState<
+    Record<string, ProjectFormValues>
+  >({});
+
+  const studioProjectValues = studioDetailId
+    ? studioProjectValuesById[studioDetailId]
+    : undefined;
+
+  function handleStudioProjectUpdate(values: ProjectFormValues) {
+    if (!studioDetailId) {
+      return;
+    }
+
+    setStudioProjectValuesById((currentValues) => ({
+      ...currentValues,
+      [studioDetailId]: values,
+    }));
+  }
+
+  const resolvedTitle =
+    studioProjectValues?.name ?? getProtectedHeaderTitle(pathname);
+
+  const resolvedShareConfig = chatDetailId
+    ? {
+        title: 'Share chat',
+        description:
+          'Make this chat public or private. Public chats can be viewed by anyone with the link.',
+        sharePath: `/chat/${chatDetailId}`,
+        copySuccessMessage: 'Public chat link copied to clipboard',
+        copyErrorMessage: 'Failed to copy chat link',
+      }
+    : studioDetailId
+      ? {
+          title: 'Share project',
+          description:
+            'Make this project public or private. Public projects can be viewed by anyone with the link.',
+          sharePath: `/studio/${studioDetailId}`,
+          copySuccessMessage: 'Public project link copied to clipboard',
+          copyErrorMessage: 'Failed to copy project link',
+        }
+      : null;
 
   return (
     <header
@@ -105,27 +153,33 @@ export const ProtectedHeader = ({
         !detailId && 'lg:hidden'
       )}
     >
-      <div className="flex h-14 w-full items-center gap-3 px-3 md:px-6">
+      <div className="flex h-14 w-full items-center gap-2 px-3 md:px-6">
         <Button
           type="button"
           variant="ghost"
           size="icon-sm"
-          onClick={onLeftSidebarToggle}
+          onClick={toggleSidebar}
           className="shrink-0 lg:hidden"
         >
           <PanelLeftIcon />
           <span className="sr-only">Open left sidebar</span>
         </Button>
         <div className="min-w-0 flex-1">
-          <p className="truncate text-sm font-medium">{title}</p>
+          <p className="truncate text-sm font-medium">{resolvedTitle}</p>
         </div>
-        {detailId ? (
+        {studioProject ? (
+          <StudioProjectSettingsSheet
+            initialValues={studioProjectValues ?? studioProject.settings}
+            onProjectUpdate={handleStudioProjectUpdate}
+          />
+        ) : null}
+        {resolvedShareConfig ? (
           <ShareDialog
-            title="Share chat"
-            description="Make this chat public or private. Public chats can be viewed by anyone with the link."
-            sharePath={`/chat/${detailId}`}
-            copySuccessMessage="Public chat link copied to clipboard"
-            copyErrorMessage="Failed to copy chat link"
+            title={resolvedShareConfig.title}
+            description={resolvedShareConfig.description}
+            sharePath={resolvedShareConfig.sharePath}
+            copySuccessMessage={resolvedShareConfig.copySuccessMessage}
+            copyErrorMessage={resolvedShareConfig.copyErrorMessage}
           >
             <Button
               type="button"

@@ -103,7 +103,6 @@ interface ReferenceImage {
 export const projectFormSchema = z.object({
   name: z.string().min(1, 'Project name is required').max(100),
   prompt: z.string().optional().default(''),
-
   referenceImages: z
     .array(
       z.object({
@@ -113,14 +112,10 @@ export const projectFormSchema = z.object({
       })
     )
     .default([]),
-
   primaryGoal: z.string().optional().default(''),
   voiceTones: z.array(z.string()).default([]),
   customVoiceTone: z.string().optional().default(''),
-
-  colorPalette: z
-    .array(z.string())
-    .default(DEFAULT_COLOR_PALETTE),
+  colorPalette: z.array(z.string()).default(DEFAULT_COLOR_PALETTE),
   logo: z
     .object({
       id: z.string(),
@@ -130,12 +125,10 @@ export const projectFormSchema = z.object({
     .nullable()
     .default(null),
   typography: z.string().optional().default(''),
-
   adStyles: z.array(z.string()).default([]),
   customAdStyle: z.string().optional().default(''),
   visualGuidelines: z.array(z.string()).default([]),
   customVisualGuideline: z.string().optional().default(''),
-
   ageRange: z.tuple([z.number(), z.number()]).default([18, 65]),
   gender: z.string().default('All'),
   interests: z.array(z.string()).default([]),
@@ -144,3 +137,46 @@ export const projectFormSchema = z.object({
 
 export type ProjectFormValues = z.infer<typeof projectFormSchema>;
 export type ReferenceImageValue = ReferenceImage;
+
+export const DEFAULT_PROJECT_FORM_VALUES: ProjectFormValues = {
+  name: '',
+  prompt: '',
+  referenceImages: [],
+  primaryGoal: '',
+  voiceTones: [],
+  customVoiceTone: '',
+  colorPalette: [...DEFAULT_COLOR_PALETTE],
+  logo: null,
+  typography: '',
+  adStyles: [],
+  customAdStyle: '',
+  visualGuidelines: [],
+  customVisualGuideline: '',
+  ageRange: [18, 65],
+  gender: 'All',
+  interests: [],
+  geography: [],
+};
+
+export function createProjectFormValues(
+  overrides: Partial<ProjectFormValues> = {}
+): ProjectFormValues {
+  return {
+    ...DEFAULT_PROJECT_FORM_VALUES,
+    ...overrides,
+    referenceImages: [...(overrides.referenceImages ?? [])],
+    voiceTones: [...(overrides.voiceTones ?? [])],
+    colorPalette: [
+      ...(overrides.colorPalette ?? DEFAULT_PROJECT_FORM_VALUES.colorPalette),
+    ],
+    adStyles: [...(overrides.adStyles ?? [])],
+    visualGuidelines: [...(overrides.visualGuidelines ?? [])],
+    ageRange: [...(overrides.ageRange ?? DEFAULT_PROJECT_FORM_VALUES.ageRange)] as [
+      number,
+      number,
+    ],
+    interests: [...(overrides.interests ?? [])],
+    geography: [...(overrides.geography ?? [])],
+    logo: overrides.logo ?? null,
+  };
+}

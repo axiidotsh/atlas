@@ -1,4 +1,4 @@
-import { Conversation } from '@/components/conversation';
+import { StudioProjectWorkspace } from '@/app/(protected)/studio/components/studio-project-workspace';
 import { notFound } from 'next/navigation';
 import { getStudioProject } from '../utils';
 
@@ -16,5 +16,5 @@ export default async function ProjectPage({ params }: ProjectPageProps) {
     notFound();
   }
 
-  return <Conversation messages={project.messages} />;
+  return <StudioProjectWorkspace project={project} />;
 }

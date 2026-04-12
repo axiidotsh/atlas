@@ -1,3 +1,5 @@
+import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
+
 export type ChatMessageRole = 'user' | 'assistant';
 export type ConversationType = 'standard' | 'studio';
 
@@ -32,15 +34,36 @@ export interface MockConversationImage {
   aspectRatio: string;
 }
 
-export interface MockConversation {
+export interface MockStudioImageSet {
   id: string;
-  type: ConversationType;
+  prompt: string;
+  images: MockConversationImage[];
+  createdAtLabel?: string;
+}
+
+interface MockBaseConversation {
+  id: string;
   title: string;
   messages: MockChatMessage[];
   images: MockConversationImage[];
   coverImage?: string;
 }
+
+export interface MockStandardConversation extends MockBaseConversation {
+  type: 'standard';
+}
+
 export type MockStudioImage = MockConversationImage;
+
+export interface MockStudioConversation extends MockBaseConversation {
+  type: 'studio';
+  settings: ProjectFormValues;
+  imageSets: MockStudioImageSet[];
+}
+
+export type MockConversation =
+  | MockStandardConversation
+  | MockStudioConversation;
 
 export interface MockAdAccount {
   id: string;

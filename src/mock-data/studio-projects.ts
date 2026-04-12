@@ -1,8 +1,43 @@
+import {
+  createProjectFormValues,
+  type ProjectFormValues,
+  type ReferenceImageValue,
+} from '@/app/(protected)/studio/project-form';
 import type {
   MockChatMessage,
   MockConversation,
+  MockStudioConversation,
   MockStudioImage,
+  MockStudioImageSet,
 } from '@/mock-data/types';
+
+function createReferenceImage(image: MockStudioImage): ReferenceImageValue {
+  return {
+    id: `reference-${image.id}`,
+    name: image.title,
+    preview: image.src,
+  };
+}
+
+function createImageSet(
+  id: string,
+  prompt: string,
+  images: MockStudioImage[],
+  createdAtLabel: string
+): MockStudioImageSet {
+  return {
+    id,
+    prompt,
+    images,
+    createdAtLabel,
+  };
+}
+
+function createStudioSettings(
+  overrides: Partial<ProjectFormValues>
+): ProjectFormValues {
+  return createProjectFormValues(overrides);
+}
 
 const recoveryLaunchImages: MockStudioImage[] = [
   {
@@ -66,6 +101,38 @@ Vertical version designed to feel faster, more directional, and better suited fo
   },
 ];
 
+const recoveryLaunchImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'recovery-launch-set-1',
+    recoveryLaunchMessages[0].content,
+    [recoveryLaunchImages[0]],
+    'Initial direction'
+  ),
+  createImageSet(
+    'recovery-launch-set-2',
+    recoveryLaunchMessages[2].content,
+    [recoveryLaunchImages[1], recoveryLaunchImages[2]],
+    'Follow-up variations'
+  ),
+];
+
+const recoveryLaunchSettings = createStudioSettings({
+  name: 'Recovery Launch Portrait Study',
+  prompt:
+    'Premium recovery campaign system for paid social, balancing editorial polish with high-performing launch creatives.',
+  referenceImages: [createReferenceImage(recoveryLaunchImages[0])],
+  primaryGoal: 'Sales conversion',
+  voiceTones: ['confident', 'sophisticated'],
+  colorPalette: ['#121827', '#3C4A63', '#9CAFC6', '#E2E8F0', '#F59E0B'],
+  typography: 'Space Grotesk',
+  adStyles: ['editorial', 'lifestyle', 'luxury'],
+  visualGuidelines: ['High contrast', 'Negative space', 'Natural lighting'],
+  ageRange: [24, 42],
+  gender: 'All',
+  interests: ['recovery', 'training', 'wellness', 'performance'],
+  geography: ['United States', 'Canada', 'United Kingdom'],
+});
+
 const editorialSeriesImages: MockStudioImage[] = [
   {
     id: 'creative_2',
@@ -126,6 +193,38 @@ This one is the most flexible for social rotation because it reads faster at sma
   },
 ];
 
+const editorialSeriesImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'editorial-series-set-1',
+    editorialSeriesMessages[0].content,
+    [editorialSeriesImages[0]],
+    'Editorial base'
+  ),
+  createImageSet(
+    'editorial-series-set-2',
+    editorialSeriesMessages[2].content,
+    [editorialSeriesImages[1], editorialSeriesImages[2]],
+    'Campaign-ready pass'
+  ),
+];
+
+const editorialSeriesSettings = createStudioSettings({
+  name: 'Streetwear Editorial Iterations',
+  prompt:
+    'Streetwear campaign development for social and lookbook placements with a premium, cinematic editorial point of view.',
+  referenceImages: [createReferenceImage(editorialSeriesImages[0])],
+  primaryGoal: 'Brand awareness',
+  voiceTones: ['bold', 'witty'],
+  colorPalette: ['#0F172A', '#293548', '#7C3AED', '#D4D4D8', '#F8FAFC'],
+  typography: 'Outfit',
+  adStyles: ['editorial', 'high-fashion', 'storytelling'],
+  visualGuidelines: ['Bold typography', 'Layered depth', 'Film grain'],
+  ageRange: [18, 30],
+  gender: 'All',
+  interests: ['streetwear', 'fashion', 'culture', 'sneakers'],
+  geography: ['New York', 'Los Angeles', 'London', 'Tokyo'],
+});
+
 const productMotionImages: MockStudioImage[] = [
   {
     id: 'creative_3',
@@ -175,6 +274,38 @@ const productMotionMessages: MockChatMessage[] = [
 This version keeps the same premium mood, but removes most of the motion so the carousel has a calmer detail slide to balance the opener.`,
   },
 ];
+
+const productMotionImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'product-motion-set-1',
+    productMotionMessages[0].content,
+    [productMotionImages[0]],
+    'Motion-led concept'
+  ),
+  createImageSet(
+    'product-motion-set-2',
+    productMotionMessages[2].content,
+    [productMotionImages[1]],
+    'Companion frame'
+  ),
+];
+
+const productMotionSettings = createStudioSettings({
+  name: 'Product Motion and Studio Set',
+  prompt:
+    'Launch-ready product creative system that pairs precise studio stills with motion-led hero assets for carousel storytelling.',
+  referenceImages: [createReferenceImage(productMotionImages[0])],
+  primaryGoal: 'Sales conversion',
+  voiceTones: ['minimal', 'confident'],
+  colorPalette: ['#111827', '#334155', '#64748B', '#CBD5E1', '#F8FAFC'],
+  typography: 'Sora',
+  adStyles: ['studio', 'product-focused', 'minimal'],
+  visualGuidelines: ['Clean UI', 'Soft shadows', 'Glossy highlights'],
+  ageRange: [22, 45],
+  gender: 'All',
+  interests: ['consumer tech', 'product design', 'premium goods'],
+  geography: ['United States', 'Germany', 'Singapore'],
+});
 
 const hospitalityRefreshImages: MockStudioImage[] = [
   {
@@ -236,6 +367,38 @@ Vertical story frame that leans more into ambience and guest experience.`,
   },
 ];
 
+const hospitalityRefreshImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'hospitality-refresh-set-1',
+    hospitalityRefreshMessages[0].content,
+    [hospitalityRefreshImages[0]],
+    'Hero direction'
+  ),
+  createImageSet(
+    'hospitality-refresh-set-2',
+    hospitalityRefreshMessages[2].content,
+    [hospitalityRefreshImages[1], hospitalityRefreshImages[2]],
+    'Supporting cuts'
+  ),
+];
+
+const hospitalityRefreshSettings = createStudioSettings({
+  name: 'Hospitality Brand Refresh',
+  prompt:
+    'Warm premium restaurant campaign system designed for launch posts, story placements, and evergreen social refreshes.',
+  referenceImages: [createReferenceImage(hospitalityRefreshImages[0])],
+  primaryGoal: 'Engagement',
+  voiceTones: ['friendly', 'sophisticated'],
+  colorPalette: ['#3F2D23', '#8C5E3C', '#D4A373', '#F5E9DA', '#A63C06'],
+  typography: 'Playfair Display',
+  adStyles: ['lifestyle', 'editorial'],
+  visualGuidelines: ['Natural lighting', 'Muted tones', 'Minimal props'],
+  ageRange: [25, 54],
+  gender: 'All',
+  interests: ['dining', 'hospitality', 'date nights', 'food culture'],
+  geography: ['Chicago', 'New York', 'Austin'],
+});
+
 const wellnessCampaignImages: MockStudioImage[] = [
   {
     id: 'creative_12',
@@ -295,6 +458,38 @@ Meditation still for calmer brand moments or quote-led posts.
 Square lifestyle frame with more visible movement for paid social rotation.`,
   },
 ];
+
+const wellnessCampaignImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'wellness-campaign-set-1',
+    wellnessCampaignMessages[0].content,
+    [wellnessCampaignImages[0]],
+    'Awareness opener'
+  ),
+  createImageSet(
+    'wellness-campaign-set-2',
+    wellnessCampaignMessages[2].content,
+    [wellnessCampaignImages[1], wellnessCampaignImages[2]],
+    'Rotation set'
+  ),
+];
+
+const wellnessCampaignSettings = createStudioSettings({
+  name: 'Wellness Social Campaign System',
+  prompt:
+    'Cross-funnel wellness campaign with calm awareness imagery and active retargeting variations for social placements.',
+  referenceImages: [createReferenceImage(wellnessCampaignImages[0])],
+  primaryGoal: 'Lead generation',
+  voiceTones: ['minimal', 'friendly'],
+  colorPalette: ['#1F3B4D', '#4C7A7D', '#8FB9A8', '#E7F1EA', '#D97706'],
+  typography: 'DM Sans',
+  adStyles: ['lifestyle', 'minimal', 'storytelling'],
+  visualGuidelines: ['Negative space', 'Soft shadows', 'Natural lighting'],
+  ageRange: [23, 50],
+  gender: 'All',
+  interests: ['wellness', 'mindfulness', 'fitness', 'healthy living'],
+  geography: ['United States', 'Australia', 'Canada'],
+});
 
 const foodLaunchImages: MockStudioImage[] = [
   {
@@ -356,6 +551,38 @@ Vertical plate-up moment to give the campaign a more dynamic, behind-the-pass fe
   },
 ];
 
+const foodLaunchImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'food-launch-set-1',
+    foodLaunchMessages[0].content,
+    [foodLaunchImages[0]],
+    'Launch hero'
+  ),
+  createImageSet(
+    'food-launch-set-2',
+    foodLaunchMessages[2].content,
+    [foodLaunchImages[1], foodLaunchImages[2]],
+    'Expanded set'
+  ),
+];
+
+const foodLaunchSettings = createStudioSettings({
+  name: 'Food Launch Creative Sprint',
+  prompt:
+    'Premium menu-drop creative system with craveable hero imagery and fast social variations for launch week.',
+  referenceImages: [createReferenceImage(foodLaunchImages[0])],
+  primaryGoal: 'Sales conversion',
+  voiceTones: ['playful', 'bold'],
+  colorPalette: ['#5A1E0E', '#A43E17', '#E76F51', '#F4A261', '#FDF1E3'],
+  typography: 'Oswald',
+  adStyles: ['lifestyle', 'cinematic', 'storytelling'],
+  visualGuidelines: ['High contrast', 'Textured', 'Natural lighting'],
+  ageRange: [18, 44],
+  gender: 'All',
+  interests: ['food delivery', 'restaurants', 'new openings', 'dining out'],
+  geography: ['Los Angeles', 'Miami', 'Dallas'],
+});
+
 const travelEditorialImages: MockStudioImage[] = [
   {
     id: 'creative_18',
@@ -416,13 +643,47 @@ Square social cut that reads quickly while still keeping the destination feel.`,
   },
 ];
 
-const STUDIO_PROJECT_CONVERSATIONS = [
+const travelEditorialImageSets: MockStudioImageSet[] = [
+  createImageSet(
+    'travel-editorial-set-1',
+    travelEditorialMessages[0].content,
+    [travelEditorialImages[0]],
+    'Destination opener'
+  ),
+  createImageSet(
+    'travel-editorial-set-2',
+    travelEditorialMessages[2].content,
+    [travelEditorialImages[1], travelEditorialImages[2]],
+    'Campaign companions'
+  ),
+];
+
+const travelEditorialSettings = createStudioSettings({
+  name: 'Travel Editorial Concept Pack',
+  prompt:
+    'Elevated destination campaign creative with transportive hero imagery and cleaner social-ready companion cuts.',
+  referenceImages: [createReferenceImage(travelEditorialImages[0])],
+  primaryGoal: 'Brand awareness',
+  voiceTones: ['sophisticated', 'friendly'],
+  colorPalette: ['#12344D', '#1F6F8B', '#4AA3A2', '#DFF3E3', '#F4D35E'],
+  typography: 'Merriweather',
+  adStyles: ['editorial', 'cinematic', 'lifestyle'],
+  visualGuidelines: ['Layered depth', 'Negative space', 'Gradient'],
+  ageRange: [28, 60],
+  gender: 'All',
+  interests: ['travel', 'luxury escapes', 'beach destinations', 'road trips'],
+  geography: ['United States', 'United Kingdom', 'Europe'],
+});
+
+const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
   {
     id: 'project_recovery_launch',
     title: 'Recovery Launch Portrait Study',
     coverImage: recoveryLaunchImages[0].src,
     messages: recoveryLaunchMessages,
     images: recoveryLaunchImages,
+    settings: recoveryLaunchSettings,
+    imageSets: recoveryLaunchImageSets,
   },
   {
     id: 'project_editorial_series',
@@ -430,6 +691,8 @@ const STUDIO_PROJECT_CONVERSATIONS = [
     coverImage: editorialSeriesImages[0].src,
     messages: editorialSeriesMessages,
     images: editorialSeriesImages,
+    settings: editorialSeriesSettings,
+    imageSets: editorialSeriesImageSets,
   },
   {
     id: 'project_product_motion',
@@ -437,6 +700,8 @@ const STUDIO_PROJECT_CONVERSATIONS = [
     coverImage: productMotionImages[0].src,
     messages: productMotionMessages,
     images: productMotionImages,
+    settings: productMotionSettings,
+    imageSets: productMotionImageSets,
   },
   {
     id: 'project_hospitality_refresh',
@@ -444,6 +709,8 @@ const STUDIO_PROJECT_CONVERSATIONS = [
     coverImage: hospitalityRefreshImages[0].src,
     messages: hospitalityRefreshMessages,
     images: hospitalityRefreshImages,
+    settings: hospitalityRefreshSettings,
+    imageSets: hospitalityRefreshImageSets,
   },
   {
     id: 'project_wellness_campaign',
@@ -451,6 +718,8 @@ const STUDIO_PROJECT_CONVERSATIONS = [
     coverImage: wellnessCampaignImages[0].src,
     messages: wellnessCampaignMessages,
     images: wellnessCampaignImages,
+    settings: wellnessCampaignSettings,
+    imageSets: wellnessCampaignImageSets,
   },
   {
     id: 'project_food_launch',
@@ -458,6 +727,8 @@ const STUDIO_PROJECT_CONVERSATIONS = [
     coverImage: foodLaunchImages[0].src,
     messages: foodLaunchMessages,
     images: foodLaunchImages,
+    settings: foodLaunchSettings,
+    imageSets: foodLaunchImageSets,
   },
   {
     id: 'project_travel_editorial',
@@ -465,6 +736,8 @@ const STUDIO_PROJECT_CONVERSATIONS = [
     coverImage: travelEditorialImages[0].src,
     messages: travelEditorialMessages,
     images: travelEditorialImages,
+    settings: travelEditorialSettings,
+    imageSets: travelEditorialImageSets,
   },
 ];
 

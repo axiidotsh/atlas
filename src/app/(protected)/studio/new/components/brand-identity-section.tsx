@@ -19,10 +19,9 @@ import {
   PRIMARY_GOAL_PRESETS,
   VOICE_TONE_PRESETS,
   type ProjectFormValues,
-} from '../schema';
+} from '../../project-form';
 import { ChipSelect } from './chip-select';
 import { CollapsibleSection } from './collapsible-section';
-import { ImageUpload } from './image-upload';
 
 const CUSTOM_VALUE = '__custom__';
 
@@ -42,7 +41,7 @@ export const BrandIdentitySection = () => {
   return (
     <CollapsibleSection
       title="Brand Identity"
-      description="Define your goal, voice, typography, and logo"
+      description="Define your goal, voice, and typography"
       icon={FingerprintIcon}
     >
       <Controller
@@ -196,21 +195,6 @@ export const BrandIdentitySection = () => {
             </Field>
           );
         }}
-      />
-      <Controller
-        name="logo"
-        control={control}
-        render={({ field }) => (
-          <Field>
-            <FieldLabel>Logo</FieldLabel>
-            <ImageUpload
-              images={field.value ? [field.value] : []}
-              onChange={(images) => field.onChange(images[0] ?? null)}
-              multiple={false}
-              label="Upload your logo"
-            />
-          </Field>
-        )}
       />
     </CollapsibleSection>
   );

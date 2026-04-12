@@ -1,9 +1,9 @@
-import { ProtectedLayoutShell } from '@/components/protected-layout';
+import { ProtectedLayoutContent } from '@/components/protected-layout';
 
 export default function ProtectedLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  return <ProtectedLayoutShell>{children}</ProtectedLayoutShell>;
+  return <ProtectedLayoutContent>{children}</ProtectedLayoutContent>;
 }

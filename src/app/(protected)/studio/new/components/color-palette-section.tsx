@@ -16,7 +16,7 @@ import {
   COLOR_PALETTE_PRESETS,
   DEFAULT_COLOR_PALETTE,
   type ProjectFormValues,
-} from '../schema';
+} from '../../project-form';
 import { CollapsibleSection } from './collapsible-section';
 
 const PALETTE_SWATCH_LABELS = [

@@ -104,7 +104,7 @@ export default function StudioPage() {
   }
 
   return (
-    <div className="flex flex-col gap-4 py-6 sm:py-14 2xl:py-20">
+    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 py-6 sm:py-14 2xl:py-20">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Projects</h1>
         <Button asChild>

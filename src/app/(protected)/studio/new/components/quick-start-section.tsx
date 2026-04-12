@@ -10,14 +10,14 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { SparklesIcon } from 'lucide-react';
 import { Controller, useFormContext } from 'react-hook-form';
-import type { ProjectFormValues } from '../schema';
+import type { ProjectFormValues } from '../../project-form';
 import { ImageUpload } from './image-upload';
 
-export const QuickStartSection = () => {
+export const ProjectIdentityFields = () => {
   const { control } = useFormContext<ProjectFormValues>();
 
   return (
-    <div className="bg-card dark:bg-muted border-border/50 space-y-5 rounded-xl border p-5 shadow-sm">
+    <>
       <Controller
         name="name"
         control={control}
@@ -35,41 +35,57 @@ export const QuickStartSection = () => {
         )}
       />
       <Controller
-        name="prompt"
+        name="logo"
         control={control}
         render={({ field }) => (
           <Field>
-            <FieldLabel className="flex items-center gap-1.5">
-              <SparklesIcon className="text-primary size-3.5" />
-              Describe Your Brand or Creative Project
-            </FieldLabel>
-            <Textarea
-              {...field}
-              placeholder="A luxury skincare brand creating a spring launch creative project with paid social ads, retargeting variations, and minimalist lifestyle visuals..."
-              className="bg-background dark:bg-input/30 min-h-32 resize-none"
-            />
-            <FieldDescription>
-              We&apos;ll auto-populate the project details based on your
-              description. You can fine-tune the ads and audience settings
-              below.
-            </FieldDescription>
-          </Field>
-        )}
-      />
-      <Controller
-        name="referenceImages"
-        control={control}
-        render={({ field }) => (
-          <Field>
-            <FieldLabel>Reference Images</FieldLabel>
+            <FieldLabel>Logo</FieldLabel>
             <ImageUpload
-              images={field.value}
-              onChange={field.onChange}
-              label="Drop reference images here or click to upload"
+              images={field.value ? [field.value] : []}
+              onChange={(images) => field.onChange(images[0] ?? null)}
+              multiple={false}
+              label="Drop your logo here or click to upload"
             />
           </Field>
         )}
       />
+    </>
+  );
+};
+
+export const ProjectDescriptionField = () => {
+  const { control } = useFormContext<ProjectFormValues>();
+
+  return (
+    <Controller
+      name="prompt"
+      control={control}
+      render={({ field }) => (
+        <Field>
+          <FieldLabel className="flex items-center gap-1.5">
+            <SparklesIcon className="text-primary size-3.5" />
+            Describe Your Brand or Creative Project
+          </FieldLabel>
+          <Textarea
+            {...field}
+            placeholder="A luxury skincare brand creating a spring launch creative project with paid social ads, retargeting variations, and minimalist lifestyle visuals..."
+            className="bg-background dark:bg-input/30 min-h-32 resize-none"
+          />
+          <FieldDescription>
+            We&apos;ll auto-populate any empty project details from your
+            description. You can fine-tune everything below.
+          </FieldDescription>
+        </Field>
+      )}
+    />
+  );
+};
+
+export const QuickStartSection = () => {
+  return (
+    <div className="bg-card dark:bg-muted border-border/50 space-y-5 rounded-xl border p-5 shadow-sm">
+      <ProjectIdentityFields />
+      <ProjectDescriptionField />
     </div>
   );
 };

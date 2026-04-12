@@ -1,6 +1,10 @@
 import { MOCK_CHATS } from '@/mock-data/chats';
 import { MOCK_STUDIO_PROJECTS } from '@/mock-data/studio-projects';
-import type { MockConversation } from '@/mock-data/types';
+import type {
+  MockConversation,
+  MockStandardConversation,
+  MockStudioConversation,
+} from '@/mock-data/types';
 
 export const MOCK_CONVERSATIONS: MockConversation[] = [
   ...MOCK_CHATS,
@@ -9,13 +13,13 @@ export const MOCK_CONVERSATIONS: MockConversation[] = [
 
 export function isStandardConversation(
   conversation: MockConversation
-): boolean {
+): conversation is MockStandardConversation {
   return conversation.type === 'standard';
 }
 
 export function isStudioConversation(
   conversation: MockConversation
-): boolean {
+): conversation is MockStudioConversation {
   return conversation.type === 'studio';
 }
 
