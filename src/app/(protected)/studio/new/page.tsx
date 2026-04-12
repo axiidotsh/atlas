@@ -59,7 +59,6 @@ export default function NewProjectPage() {
           </p>
         </div>
       </div>
-
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <QuickStartSection />
@@ -77,10 +76,10 @@ export default function NewProjectPage() {
             <AudienceSettingsSection />
           </div>
           <div className="bg-background sticky bottom-0 -mx-1 flex items-center justify-end gap-3 border-t px-1 py-4">
-            <Button type="button" variant="outline" size="lg" asChild>
+            <Button type="button" variant="outline" asChild>
               <Link href="/studio">Cancel</Link>
             </Button>
-            <Button type="submit" size="lg">
+            <Button type="submit">
               <SparklesIcon className="size-4" />
               Create Creative Project
             </Button>

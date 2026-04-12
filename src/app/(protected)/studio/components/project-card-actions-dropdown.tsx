@@ -8,12 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/utils/utils';
-import {
-  EllipsisIcon,
-  MessageCircleIcon,
-  PencilIcon,
-  Trash2Icon,
-} from 'lucide-react';
+import { EllipsisIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 
@@ -21,14 +16,12 @@ interface ProjectCardActionsDropdownProps {
   onCloseAutoFocus: React.ComponentProps<
     typeof DropdownMenuContent
   >['onCloseAutoFocus'];
-  onConvertToChat?: () => void;
   onDelete?: () => void;
   onRename?: () => void;
 }
 
 export const ProjectCardActionsDropdown = ({
   onCloseAutoFocus,
-  onConvertToChat,
   onDelete,
   onRename,
 }: ProjectCardActionsDropdownProps) => {
@@ -56,10 +49,6 @@ export const ProjectCardActionsDropdown = ({
         <DropdownMenuItem onSelect={onRename}>
           <PencilIcon />
           Rename project
-        </DropdownMenuItem>
-        <DropdownMenuItem onSelect={onConvertToChat}>
-          <MessageCircleIcon />
-          Convert to chat
         </DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onSelect={onDelete}>
           <Trash2Icon />

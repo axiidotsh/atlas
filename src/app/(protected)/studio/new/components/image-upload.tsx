@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/utils';
 import { ImagePlusIcon, XIcon } from 'lucide-react';
 import Image from 'next/image';
-import { type DragEvent, useRef, useState } from 'react';
+import { useDropzone } from 'react-dropzone';
 import type { ReferenceImageValue } from '../schema';
 
 interface ImageUploadProps {
@@ -20,13 +20,10 @@ export const ImageUpload = ({
   multiple = true,
   label = 'Drop images here or click to upload',
 }: ImageUploadProps) => {
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [isDragging, setIsDragging] = useState(false);
+  function processFiles(files: File[]) {
+    if (files.length === 0) return;
 
-  function processFiles(files: FileList | null) {
-    if (!files) return;
-
-    const newImages: ReferenceImageValue[] = Array.from(files)
+    const newImages: ReferenceImageValue[] = files
       .filter((file) => file.type.startsWith('image/'))
       .map((file) => ({
         id: crypto.randomUUID(),
@@ -42,17 +39,6 @@ export const ImageUpload = ({
     }
   }
 
-  function handleDrop(event: DragEvent) {
-    event.preventDefault();
-    setIsDragging(false);
-    processFiles(event.dataTransfer.files);
-  }
-
-  function handleDragOver(event: DragEvent) {
-    event.preventDefault();
-    setIsDragging(true);
-  }
-
   function handleRemove(id: string) {
     const img = images.find((i) => i.id === id);
     if (img) URL.revokeObjectURL(img.preview);
@@ -60,45 +46,37 @@ export const ImageUpload = ({
   }
 
   const hidePicker = !multiple && images.length > 0;
+  const { getInputProps, getRootProps, isDragActive } = useDropzone({
+    accept: { 'image/*': [] },
+    multiple,
+    maxFiles: multiple ? undefined : 1,
+    onDrop: processFiles,
+  });
 
   return (
     <div className="space-y-3">
       {!hidePicker && (
-        <button
-          type="button"
-          onClick={() => inputRef.current?.click()}
-          onDrop={handleDrop}
-          onDragOver={handleDragOver}
-          onDragLeave={() => setIsDragging(false)}
+        <div
+          {...getRootProps()}
           className={cn(
             'flex w-full cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed px-4 py-8 text-sm transition-all',
-            isDragging
+            isDragActive
               ? 'border-primary bg-primary/5 text-primary'
               : 'border-border text-muted-foreground hover:border-primary/40 hover:bg-accent/30'
           )}
         >
+          <input {...getInputProps()} />
           <div
             className={cn(
               'flex size-10 items-center justify-center rounded-full transition-colors',
-              isDragging ? 'bg-primary/10' : 'bg-muted'
+              isDragActive ? 'bg-primary/10' : 'bg-muted'
             )}
           >
             <ImagePlusIcon className="size-5" />
           </div>
           <span className="text-xs">{label}</span>
-        </button>
+        </div>
       )}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        multiple={multiple}
-        className="hidden"
-        onChange={(event) => {
-          processFiles(event.target.files);
-          event.target.value = '';
-        }}
-      />
       {images.length > 0 && (
         <div
           className={cn(
