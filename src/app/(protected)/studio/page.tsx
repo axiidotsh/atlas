@@ -104,10 +104,10 @@ export default function StudioPage() {
   }
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 py-6 sm:py-14 2xl:py-20">
+    <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 py-6 sm:py-8">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Projects</h1>
-        <Button asChild>
+        <Button size="lg" asChild>
           <Link href="/studio/new">
             <PlusIcon />
             New Project
@@ -124,7 +124,11 @@ export default function StudioPage() {
         <ButtonGroup>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="outline" size="icon" aria-label="Sort projects">
+              <Button
+                variant="outline"
+                size="icon-lg"
+                aria-label="Sort projects"
+              >
                 <ArrowUpDownIcon />
               </Button>
             </DropdownMenuTrigger>
@@ -159,7 +163,7 @@ export default function StudioPage() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                size="icon"
+                size="icon-lg"
                 aria-label="Filter projects"
               >
                 <FunnelIcon />
@@ -199,7 +203,7 @@ export default function StudioPage() {
           </DropdownMenu>
         </ButtonGroup>
       </div>
-      <div className="mt-5 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
         {visibleStudioProjects.map((project) => (
           <ProjectCard key={project.id} {...project} />
         ))}
