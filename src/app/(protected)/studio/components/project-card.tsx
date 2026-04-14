@@ -1,7 +1,10 @@
 'use client';
 
-import { Button } from '@/components/ui/button';
+import { DeleteProjectDialog } from '@/app/(protected)/studio/components/delete-project-dialog';
 import { ProjectCardActionsDropdown } from '@/app/(protected)/studio/components/project-card-actions-dropdown';
+import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
+import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/utils';
 import { ImageOffIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
@@ -19,6 +22,8 @@ interface ProjectCardProps {
   title: string;
   coverImage?: string;
   images: ProjectImageProps[];
+  settings: ProjectFormValues;
+  onProjectUpdate?: (values: ProjectFormValues) => void;
 }
 
 const TITLE_CLASS_NAME =
@@ -29,8 +34,12 @@ export const ProjectCard = ({
   title,
   coverImage,
   images,
+  settings,
+  onProjectUpdate,
 }: ProjectCardProps) => {
   const [isEditing, setIsEditing] = useState(false);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const shouldKeepInputFocusedRef = useRef(false);
   const previewImage = coverImage ?? images[0]?.src;
@@ -103,6 +112,18 @@ export const ProjectCard = ({
 
   return (
     <div className="group relative">
+      <DeleteProjectDialog
+        open={isDeleteDialogOpen}
+        onOpenChange={setIsDeleteDialogOpen}
+        projectTitle={title}
+        onConfirm={() => {}}
+      />
+      <StudioProjectSettingsSheet
+        open={isSettingsSheetOpen}
+        onOpenChange={setIsSettingsSheetOpen}
+        initialValues={settings}
+        onProjectUpdate={onProjectUpdate}
+      />
       <ProjectCardActionsDropdown
         onCloseAutoFocus={(event) => {
           if (!shouldKeepInputFocusedRef.current) {
@@ -121,6 +142,8 @@ export const ProjectCard = ({
           shouldKeepInputFocusedRef.current = true;
           setIsEditing(true);
         }}
+        onSettings={() => setIsSettingsSheetOpen(true)}
+        onDelete={() => setIsDeleteDialogOpen(true)}
       />
       {isEditing ? (
         <div className={cardClassName}>{cardContent}</div>

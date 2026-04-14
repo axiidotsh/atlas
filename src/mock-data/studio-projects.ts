@@ -58,6 +58,24 @@ const recoveryLaunchImages: MockStudioImage[] = [
     src: 'https://images.unsplash.com/photo-1774429078795-0c3fe5ddba8f?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     aspectRatio: '1:1',
   },
+  {
+    id: 'creative_1a',
+    title: 'Gym Floor Recovery Shot',
+    src: 'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_1b',
+    title: 'Cool-Down Stretch Close-Up',
+    src: 'https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '4:5',
+  },
+  {
+    id: 'creative_1c',
+    title: 'Post-Workout Portrait',
+    src: 'https://images.unsplash.com/photo-1526506118085-60ce8714f8c5?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
 ];
 
 const recoveryLaunchMessages: MockChatMessage[] = [
@@ -152,6 +170,18 @@ const editorialSeriesImages: MockStudioImage[] = [
     src: 'https://images.unsplash.com/photo-1773929483999-52ac8e6af2cc?q=80&w=1335&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     aspectRatio: '1:1',
   },
+  {
+    id: 'creative_2a',
+    title: 'Urban Backdrop Detail',
+    src: 'https://images.unsplash.com/photo-1523398002811-999ca8dec234?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '4:5',
+  },
+  {
+    id: 'creative_2b',
+    title: 'Layered Outfit Story',
+    src: 'https://images.unsplash.com/photo-1509631179647-0177331693ae?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '9:16',
+  },
 ];
 
 const editorialSeriesMessages: MockChatMessage[] = [
@@ -237,6 +267,24 @@ const productMotionImages: MockStudioImage[] = [
     title: 'Studio Product Sweep',
     src: 'https://images.unsplash.com/photo-1773979407769-363772f1e5fa?q=80&w=1287&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D',
     aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_3a',
+    title: 'Flat Lay Product Grid',
+    src: 'https://images.unsplash.com/photo-1491553895911-0055eca6402d?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_3b',
+    title: 'Macro Texture Detail',
+    src: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_3c',
+    title: 'Product in Context',
+    src: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '4:5',
   },
 ];
 
@@ -324,6 +372,24 @@ const hospitalityRefreshImages: MockStudioImage[] = [
     id: 'creative_11',
     title: 'Dining Experience Story Frame',
     src: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_9a',
+    title: 'Bar Detail Moody',
+    src: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_9b',
+    title: 'Plated Dessert Close-Up',
+    src: 'https://images.unsplash.com/photo-1551024506-0bccd828d307?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '4:5',
+  },
+  {
+    id: 'creative_9c',
+    title: 'Outdoor Patio Evening',
+    src: 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?q=80&w=1600&auto=format&fit=crop',
     aspectRatio: '1:1',
   },
 ];
@@ -418,6 +484,18 @@ const wellnessCampaignImages: MockStudioImage[] = [
     src: 'https://images.unsplash.com/photo-1517836357463-d25dfeac3438?q=80&w=1600&auto=format&fit=crop',
     aspectRatio: '1:1',
   },
+  {
+    id: 'creative_12a',
+    title: 'Yoga Studio Overhead',
+    src: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_12b',
+    title: 'Smoothie Bowl Flat Lay',
+    src: 'https://images.unsplash.com/photo-1511690743698-d9d18f7e20f1?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
 ];
 
 const wellnessCampaignMessages: MockChatMessage[] = [
@@ -509,6 +587,30 @@ const foodLaunchImages: MockStudioImage[] = [
     title: 'Kitchen Motion Plate-up',
     src: 'https://images.unsplash.com/photo-1515003197210-e0cd71810b5f?q=80&w=1600&auto=format&fit=crop',
     aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_15a',
+    title: 'Ingredient Detail Macro',
+    src: 'https://images.unsplash.com/photo-1466637574441-749b8f19452f?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_15b',
+    title: 'Chef Hands Plating',
+    src: 'https://images.unsplash.com/photo-1556910103-1c02745aae4d?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '4:5',
+  },
+  {
+    id: 'creative_15c',
+    title: 'Overhead Table Setting',
+    src: 'https://images.unsplash.com/photo-1476224203421-9ac39bcb3327?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_15d',
+    title: 'Cocktail Pairing Shot',
+    src: 'https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '9:16',
   },
 ];
 
@@ -602,6 +704,24 @@ const travelEditorialImages: MockStudioImage[] = [
     src: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?q=80&w=1600&auto=format&fit=crop',
     aspectRatio: '1:1',
   },
+  {
+    id: 'creative_18a',
+    title: 'Mountain Vista Panoramic',
+    src: 'https://images.unsplash.com/photo-1506905925346-21bda4d32df4?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
+  {
+    id: 'creative_18b',
+    title: 'Sunset Poolside Lounge',
+    src: 'https://images.unsplash.com/photo-1540541338287-41700207dee6?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '4:5',
+  },
+  {
+    id: 'creative_18c',
+    title: 'Local Market Wander',
+    src: 'https://images.unsplash.com/photo-1555939594-58d7cb561ad1?q=80&w=1600&auto=format&fit=crop',
+    aspectRatio: '1:1',
+  },
 ];
 
 const travelEditorialMessages: MockChatMessage[] = [
@@ -684,6 +804,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: recoveryLaunchImages,
     settings: recoveryLaunchSettings,
     imageSets: recoveryLaunchImageSets,
+    createdAt: '2026-04-12T14:30:00Z',
   },
   {
     id: 'project_editorial_series',
@@ -693,6 +814,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: editorialSeriesImages,
     settings: editorialSeriesSettings,
     imageSets: editorialSeriesImageSets,
+    createdAt: '2026-04-10T09:15:00Z',
   },
   {
     id: 'project_product_motion',
@@ -702,6 +824,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: productMotionImages,
     settings: productMotionSettings,
     imageSets: productMotionImageSets,
+    createdAt: '2026-04-07T16:45:00Z',
   },
   {
     id: 'project_hospitality_refresh',
@@ -711,6 +834,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: hospitalityRefreshImages,
     settings: hospitalityRefreshSettings,
     imageSets: hospitalityRefreshImageSets,
+    createdAt: '2026-03-28T11:00:00Z',
   },
   {
     id: 'project_wellness_campaign',
@@ -720,6 +844,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: wellnessCampaignImages,
     settings: wellnessCampaignSettings,
     imageSets: wellnessCampaignImageSets,
+    createdAt: '2026-03-20T08:30:00Z',
   },
   {
     id: 'project_food_launch',
@@ -729,6 +854,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: foodLaunchImages,
     settings: foodLaunchSettings,
     imageSets: foodLaunchImageSets,
+    createdAt: '2026-03-15T13:20:00Z',
   },
   {
     id: 'project_travel_editorial',
@@ -738,6 +864,7 @@ const STUDIO_PROJECT_CONVERSATIONS: Omit<MockStudioConversation, 'type'>[] = [
     images: travelEditorialImages,
     settings: travelEditorialSettings,
     imageSets: travelEditorialImageSets,
+    createdAt: '2026-03-08T10:45:00Z',
   },
 ];
 

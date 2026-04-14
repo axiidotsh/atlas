@@ -1,5 +1,10 @@
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
+export const STUDIO_VIEWS = ['grid', 'table'] as const;
+
+export type StudioView = (typeof STUDIO_VIEWS)[number];
+
+const studioViewStorage = createJSONStorage<StudioView>();
 const studioQueryStorage = createJSONStorage<string>();
 const studioAspectRatioStorage = createJSONStorage<StudioAspectRatio[]>();
 
@@ -13,6 +18,15 @@ export const STUDIO_ASPECT_RATIOS = [
 ] as const;
 
 export type StudioAspectRatio = (typeof STUDIO_ASPECT_RATIOS)[number];
+
+export const studioViewAtom = atomWithStorage<StudioView>(
+  'studio-view',
+  'grid',
+  studioViewStorage,
+  {
+    getOnInit: true,
+  }
+);
 
 export const studioQueryAtom = atomWithStorage<string>(
   'studio-query',

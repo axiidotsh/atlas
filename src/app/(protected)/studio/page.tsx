@@ -1,5 +1,7 @@
 'use client';
 
+import { studioViewAtom, type StudioView } from '@/app/(protected)/studio/atoms';
+import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { STUDIO_ASPECT_RATIO_OPTIONS } from '@/app/(protected)/studio/utils';
 import { SearchBar } from '@/components/search-bar';
 import { Button } from '@/components/ui/button';
@@ -16,20 +18,38 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getStudioConversations } from '@/mock-data/conversations';
-import { ArrowUpDownIcon, FunnelIcon, PlusIcon } from 'lucide-react';
+import { useAtom } from 'jotai';
+import {
+  ArrowUpDownIcon,
+  FunnelIcon,
+  LayoutGridIcon,
+  PlusIcon,
+  TableIcon,
+} from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
 import { ProjectCard } from './components/project-card';
+import { ProjectTable } from './components/project-table';
 
-type StudioProjectSortOption = 'recent' | 'name-asc' | 'name-desc';
+type StudioProjectSortOption =
+  | 'created-desc'
+  | 'created-asc'
+  | 'name-asc'
+  | 'name-desc'
+  | 'images-desc'
+  | 'images-asc';
 
 const STUDIO_PROJECT_SORT_OPTIONS: Array<{
   value: StudioProjectSortOption;
   label: string;
 }> = [
   {
-    value: 'recent',
-    label: 'Recently created',
+    value: 'created-desc',
+    label: 'Newest first',
+  },
+  {
+    value: 'created-asc',
+    label: 'Oldest first',
   },
   {
     value: 'name-asc',
@@ -39,6 +59,23 @@ const STUDIO_PROJECT_SORT_OPTIONS: Array<{
     value: 'name-desc',
     label: 'Name Z-A',
   },
+  {
+    value: 'images-desc',
+    label: 'Most images',
+  },
+  {
+    value: 'images-asc',
+    label: 'Fewest images',
+  },
+];
+
+const STUDIO_VIEW_OPTIONS: Array<{
+  value: StudioView;
+  label: string;
+  icon: typeof LayoutGridIcon;
+}> = [
+  { value: 'grid', label: 'Grid', icon: LayoutGridIcon },
+  { value: 'table', label: 'Table', icon: TableIcon },
 ];
 
 const RESET_MENU_ITEM_CLASS_NAME =
@@ -46,13 +83,16 @@ const RESET_MENU_ITEM_CLASS_NAME =
 
 export default function StudioPage() {
   const [projectQuery, setProjectQuery] = useState('');
-  const [studioProjects] = useState(() => getStudioConversations());
+  const [studioProjects, setStudioProjects] = useState(() =>
+    getStudioConversations()
+  );
   const [sortOption, setSortOption] =
-    useState<StudioProjectSortOption>('recent');
+    useState<StudioProjectSortOption>('created-desc');
   const [selectedAspectRatios, setSelectedAspectRatios] = useState<string[]>(
     []
   );
   const [shouldFilterHasImages, setShouldFilterHasImages] = useState(false);
+  const [activeView, setActiveView] = useAtom(studioViewAtom);
 
   const normalizedProjectQuery = projectQuery.trim().toLowerCase();
   const visibleStudioProjects = studioProjects
@@ -81,6 +121,26 @@ export default function StudioPage() {
         return rightProject.title.localeCompare(leftProject.title);
       }
 
+      if (sortOption === 'created-desc') {
+        return (rightProject.createdAt ?? '').localeCompare(
+          leftProject.createdAt ?? ''
+        );
+      }
+
+      if (sortOption === 'created-asc') {
+        return (leftProject.createdAt ?? '').localeCompare(
+          rightProject.createdAt ?? ''
+        );
+      }
+
+      if (sortOption === 'images-desc') {
+        return rightProject.images.length - leftProject.images.length;
+      }
+
+      if (sortOption === 'images-asc') {
+        return leftProject.images.length - rightProject.images.length;
+      }
+
       return 0;
     });
 
@@ -95,13 +155,33 @@ export default function StudioPage() {
   }
 
   function resetSortOption() {
-    setSortOption('recent');
+    setSortOption('created-desc');
   }
 
   function resetFilters() {
     setSelectedAspectRatios([]);
     setShouldFilterHasImages(false);
   }
+
+  function handleProjectUpdate(
+    projectId: string,
+    nextSettings: ProjectFormValues
+  ) {
+    setStudioProjects((currentProjects) =>
+      currentProjects.map((project) =>
+        project.id === projectId
+          ? {
+              ...project,
+              settings: nextSettings,
+            }
+          : project
+      )
+    );
+  }
+
+  const ActiveViewIcon =
+    STUDIO_VIEW_OPTIONS.find((option) => option.value === activeView)?.icon ??
+    LayoutGridIcon;
 
   return (
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 py-6 sm:py-8">
@@ -122,6 +202,35 @@ export default function StudioPage() {
           containerClassName="flex-1"
         />
         <ButtonGroup>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="outline"
+                size="icon-lg"
+                aria-label="Change view"
+              >
+                <ActiveViewIcon />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-40">
+              <DropdownMenuLabel>View</DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuRadioGroup
+                value={activeView}
+                onValueChange={(value) => setActiveView(value as StudioView)}
+              >
+                {STUDIO_VIEW_OPTIONS.map((option) => (
+                  <DropdownMenuRadioItem
+                    key={option.value}
+                    value={option.value}
+                  >
+                    <option.icon className="size-4" />
+                    {option.label}
+                  </DropdownMenuRadioItem>
+                ))}
+              </DropdownMenuRadioGroup>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -203,11 +312,29 @@ export default function StudioPage() {
           </DropdownMenu>
         </ButtonGroup>
       </div>
-      <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-        {visibleStudioProjects.map((project) => (
-          <ProjectCard key={project.id} {...project} />
-        ))}
-      </div>
+      {activeView === 'grid' ? (
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
+          {visibleStudioProjects.map((project) => (
+            <ProjectCard
+              key={project.id}
+              {...project}
+              onProjectUpdate={(nextSettings) =>
+                handleProjectUpdate(project.id, nextSettings)
+              }
+            />
+          ))}
+        </div>
+      ) : (
+        <div className="mt-5">
+          <ProjectTable
+            projects={visibleStudioProjects.map((project) => ({
+              ...project,
+              onProjectUpdate: (nextSettings) =>
+                handleProjectUpdate(project.id, nextSettings),
+            }))}
+          />
+        </div>
+      )}
     </div>
   );
 }

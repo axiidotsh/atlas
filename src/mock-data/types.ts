@@ -47,6 +47,7 @@ interface MockBaseConversation {
   messages: MockChatMessage[];
   images: MockConversationImage[];
   coverImage?: string;
+  createdAt?: string;
 }
 
 export interface MockStandardConversation extends MockBaseConversation {

@@ -8,7 +8,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/utils/utils';
-import { EllipsisIcon, PencilIcon, Trash2Icon } from 'lucide-react';
+import { CogIcon, EllipsisIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import * as React from 'react';
 
@@ -18,12 +18,14 @@ interface ProjectCardActionsDropdownProps {
   >['onCloseAutoFocus'];
   onDelete?: () => void;
   onRename?: () => void;
+  onSettings?: () => void;
 }
 
 export const ProjectCardActionsDropdown = ({
   onCloseAutoFocus,
   onDelete,
   onRename,
+  onSettings,
 }: ProjectCardActionsDropdownProps) => {
   const { theme } = useTheme();
 
@@ -46,6 +48,10 @@ export const ProjectCardActionsDropdown = ({
         align="end"
         onCloseAutoFocus={onCloseAutoFocus}
       >
+        <DropdownMenuItem onSelect={onSettings}>
+          <CogIcon />
+          Project settings
+        </DropdownMenuItem>
         <DropdownMenuItem onSelect={onRename}>
           <PencilIcon />
           Rename project

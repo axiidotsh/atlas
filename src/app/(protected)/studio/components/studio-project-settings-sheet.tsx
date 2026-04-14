@@ -23,15 +23,30 @@ import { FormProvider, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
 interface StudioProjectSettingsSheetProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   initialValues: ProjectFormValues;
   onProjectUpdate?: (values: ProjectFormValues) => void;
 }
 
 export const StudioProjectSettingsSheet = ({
+  open: controlledOpen,
+  onOpenChange: controlledOnOpenChange,
   initialValues,
   onProjectUpdate,
 }: StudioProjectSettingsSheetProps) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [internalOpen, setInternalOpen] = useState(false);
+  const isControlled = controlledOpen !== undefined;
+  const isOpen = isControlled ? controlledOpen : internalOpen;
+
+  function setIsOpen(nextOpen: boolean) {
+    if (isControlled) {
+      controlledOnOpenChange?.(nextOpen);
+    } else {
+      setInternalOpen(nextOpen);
+    }
+  }
+
   const form = useForm<ProjectFormValues>({
     resolver: zodResolver(projectFormSchema as never) as never,
     defaultValues: createProjectFormValues(initialValues),
@@ -59,17 +74,19 @@ export const StudioProjectSettingsSheet = ({
 
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
-      <SheetTrigger asChild>
-        <Button
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          tooltip="Project Settings"
-        >
-          <CogIcon />
-          <span className="sr-only">Open project settings</span>
-        </Button>
-      </SheetTrigger>
+      {!isControlled && (
+        <SheetTrigger asChild>
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            tooltip="Project Settings"
+          >
+            <CogIcon />
+            <span className="sr-only">Open project settings</span>
+          </Button>
+        </SheetTrigger>
+      )}
       <SheetContent side="right" className="w-full! gap-0 p-0 sm:max-w-5xl!">
         <SheetHeader className="border-b pr-14">
           <SheetTitle>Project settings</SheetTitle>
