@@ -1,12 +1,18 @@
 'use client';
 
 import { Button } from '@/components/ui/button';
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from '@/components/ui/collapsible';
 import type {
   MockStudioConversation,
   MockStudioImage,
+  MockStudioImageSet,
 } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
-import { DownloadIcon, Link2Icon, PencilIcon } from 'lucide-react';
+import { ChevronRightIcon, DownloadIcon, Link2Icon, PencilIcon } from 'lucide-react';
 import Image from 'next/image';
 
 interface StudioProjectWorkspaceProps {
@@ -74,33 +80,63 @@ const StudioImageCard = ({ image }: StudioImageCardProps) => {
   );
 };
 
+interface ImageSetSectionProps {
+  imageSet: MockStudioImageSet;
+  index: number;
+  isLast: boolean;
+}
+
+const ImageSetSection = ({ imageSet, index, isLast }: ImageSetSectionProps) => {
+  return (
+    <section className="space-y-6">
+      <Collapsible>
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2">
+            <p className="text-muted-foreground text-sm font-medium">
+              {imageSet.createdAtLabel ?? `Set ${index + 1}`}
+            </p>
+            <CollapsibleTrigger className="text-muted-foreground/60 hover:text-muted-foreground group/prompt flex cursor-pointer items-center gap-0.5 text-xs transition">
+              <ChevronRightIcon className="size-3 transition group-data-[state=open]/prompt:rotate-90" />
+              <span>Prompt</span>
+            </CollapsibleTrigger>
+          </div>
+          <p className="text-muted-foreground text-xs">
+            {imageSet.images.length} image
+            {imageSet.images.length === 1 ? '' : 's'}
+          </p>
+        </div>
+        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+          <p className="text-muted-foreground/80 mt-2 max-w-2xl text-sm">
+            {imageSet.prompt}
+          </p>
+        </CollapsibleContent>
+      </Collapsible>
+      <div className={cn('grid gap-3', 'sm:grid-cols-2', 'xl:grid-cols-4')}>
+        {imageSet.images.map((image) => (
+          <StudioImageCard key={image.id} image={image} />
+        ))}
+      </div>
+      {!isLast ? (
+        <div className="border-border/70 pt-6">
+          <div className="border-t" />
+        </div>
+      ) : null}
+    </section>
+  );
+};
+
 export const StudioProjectWorkspace = ({
   project,
 }: StudioProjectWorkspaceProps) => {
   return (
     <div className="flex-1 space-y-10 py-6 sm:py-8">
       {project.imageSets.map((imageSet, index) => (
-        <section key={imageSet.id} className="space-y-4">
-          <div className="flex items-center justify-between gap-3">
-            <p className="text-muted-foreground text-xs font-medium tracking-[0.18em] uppercase">
-              {imageSet.createdAtLabel ?? `Set ${index + 1}`}
-            </p>
-            <p className="text-muted-foreground text-xs">
-              {imageSet.images.length} image
-              {imageSet.images.length === 1 ? '' : 's'}
-            </p>
-          </div>
-          <div className={cn('grid gap-3', 'sm:grid-cols-2', 'xl:grid-cols-4')}>
-            {imageSet.images.map((image) => (
-              <StudioImageCard key={image.id} image={image} />
-            ))}
-          </div>
-          {index < project.imageSets.length - 1 ? (
-            <div className="border-border/70 pt-6">
-              <div className="border-t" />
-            </div>
-          ) : null}
-        </section>
+        <ImageSetSection
+          key={imageSet.id}
+          imageSet={imageSet}
+          index={index}
+          isLast={index === project.imageSets.length - 1}
+        />
       ))}
     </div>
   );

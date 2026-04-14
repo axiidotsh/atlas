@@ -3,7 +3,6 @@
 import { AudienceSettingsSection } from '@/app/(protected)/studio/new/components/audience-settings-section';
 import { BrandIdentitySection } from '@/app/(protected)/studio/new/components/brand-identity-section';
 import { ColorPaletteSection } from '@/app/(protected)/studio/new/components/color-palette-section';
-import { CreativeDirectionSection } from '@/app/(protected)/studio/new/components/creative-direction-section';
 import {
   ProjectIdentityFields,
   QuickStartSection,
@@ -36,7 +35,6 @@ export const ProjectSettingsForm = ({
       <div className="space-y-3">
         <BrandIdentitySection />
         <ColorPaletteSection />
-        <CreativeDirectionSection />
         <AudienceSettingsSection />
       </div>
     </>

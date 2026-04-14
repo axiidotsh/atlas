@@ -60,7 +60,12 @@ export const StudioProjectSettingsSheet = ({
   return (
     <Sheet open={isOpen} onOpenChange={handleOpenChange}>
       <SheetTrigger asChild>
-        <Button type="button" variant="ghost" size="icon-sm">
+        <Button
+          type="button"
+          variant="ghost"
+          size="icon-sm"
+          tooltip="Project Settings"
+        >
           <CogIcon />
           <span className="sr-only">Open project settings</span>
         </Button>

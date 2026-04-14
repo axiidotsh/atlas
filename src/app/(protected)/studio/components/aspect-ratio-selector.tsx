@@ -7,28 +7,44 @@ import {
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
+  DropdownMenuCheckboxItem,
   DropdownMenuContent,
   DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAtom } from 'jotai';
 import { ChevronsUpDownIcon } from 'lucide-react';
-import {
-  getAspectRatio,
-  isStudioAspectRatio,
-  STUDIO_ASPECT_RATIO_OPTIONS,
-} from '../utils';
+import { STUDIO_ASPECT_RATIO_OPTIONS } from '../utils';
 
 export const AspectRatioSelector = () => {
-  const [aspectRatio, setAspectRatio] = useAtom(studioAspectRatioAtom);
-  const selectedAspectRatio = getAspectRatio(aspectRatio);
+  const [aspectRatios, setAspectRatios] = useAtom(studioAspectRatioAtom);
 
-  function handleAspectRatioChange(value: string) {
-    if (!isStudioAspectRatio(value)) return;
-    setAspectRatio(value as StudioAspectRatio);
+  function handleToggle(value: StudioAspectRatio) {
+    if (value === 'auto') {
+      setAspectRatios(['auto']);
+      return;
+    }
+
+    const withoutAuto = aspectRatios.filter((r) => r !== 'auto');
+    const isSelected = withoutAuto.includes(value);
+
+    if (isSelected) {
+      const next = withoutAuto.filter((r) => r !== value);
+      setAspectRatios(next.length === 0 ? ['auto'] : next);
+    } else {
+      setAspectRatios([...withoutAuto, value]);
+    }
+  }
+
+  function getLabel() {
+    if (aspectRatios.length === 0 || aspectRatios.includes('auto')) {
+      return 'Auto';
+    }
+    if (aspectRatios.length <= 2) {
+      return aspectRatios.join(', ');
+    }
+    return `${aspectRatios[0]}, ${aspectRatios[1]} +${aspectRatios.length - 2}`;
   }
 
   return (
@@ -39,29 +55,32 @@ export const AspectRatioSelector = () => {
           size="sm"
           className="text-muted-foreground gap-1.5 text-xs font-normal"
         >
-          <selectedAspectRatio.icon className="size-3.5" />
-          Aspect ratio: {selectedAspectRatio.label}
+          Aspect ratio: {getLabel()}
           <ChevronsUpDownIcon className="size-3" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-40">
         <DropdownMenuLabel>Aspect ratio</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuRadioGroup
-          value={aspectRatio}
-          onValueChange={handleAspectRatioChange}
-        >
-          {STUDIO_ASPECT_RATIO_OPTIONS.map((option) => {
-            const AspectRatioIcon = option.icon;
+        {STUDIO_ASPECT_RATIO_OPTIONS.map((option) => {
+          const AspectRatioIcon = option.icon;
+          const isChecked =
+            option.value === 'auto'
+              ? aspectRatios.includes('auto')
+              : aspectRatios.includes(option.value);
 
-            return (
-              <DropdownMenuRadioItem key={option.value} value={option.value}>
-                <AspectRatioIcon className="size-3.5" />
-                {option.label}
-              </DropdownMenuRadioItem>
-            );
-          })}
-        </DropdownMenuRadioGroup>
+          return (
+            <DropdownMenuCheckboxItem
+              key={option.value}
+              checked={isChecked}
+              onCheckedChange={() => handleToggle(option.value)}
+              onSelect={(e) => e.preventDefault()}
+            >
+              <AspectRatioIcon className="size-3.5" />
+              {option.label}
+            </DropdownMenuCheckboxItem>
+          );
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   );

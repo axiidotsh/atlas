@@ -15,7 +15,7 @@ import {
 import { useAtom } from 'jotai';
 import { ArrowUpIcon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
-import { ReactNode, useRef, useState } from 'react';
+import { Fragment, ReactNode, useRef, useState } from 'react';
 import { AdAccountSelector } from './ad-account-selector';
 import { ModeSelector } from './mode-selector';
 import { TokenUsage } from './token-usage';
@@ -79,9 +79,8 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
                     const isLastItem = i === data.length - 1;
 
                     return (
-                      <>
+                      <Fragment key={item.id}>
                         <MentionItem
-                          key={item.id}
                           label={getMentionLabel(item)}
                           value={item.name + item.id}
                           className="cursor-pointer rounded-md px-2.5 py-2"
@@ -92,7 +91,7 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
                           </span>
                         </MentionItem>
                         {isLastItem && <div className="h-1 w-full" />}
-                      </>
+                      </Fragment>
                     );
                   })}
                 </div>

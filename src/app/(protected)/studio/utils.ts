@@ -6,7 +6,7 @@ import {
   SquareIcon,
   type LucideIcon,
 } from 'lucide-react';
-import { STUDIO_ASPECT_RATIOS, StudioAspectRatio } from './atoms';
+import { StudioAspectRatio } from './atoms';
 
 export function getStudioProject(projectId: string) {
   return getStudioConversation(projectId);
@@ -51,14 +51,3 @@ export const STUDIO_ASPECT_RATIO_OPTIONS: StudioAspectRatioOption[] = [
   },
 ];
 
-export function isStudioAspectRatio(value: string): value is StudioAspectRatio {
-  return STUDIO_ASPECT_RATIOS.includes(value as StudioAspectRatio);
-}
-
-export function getAspectRatio(aspectRatio: string) {
-  return (
-    STUDIO_ASPECT_RATIO_OPTIONS.find(
-      (option) => option.value === aspectRatio
-    ) ?? STUDIO_ASPECT_RATIO_OPTIONS[0]
-  );
-}

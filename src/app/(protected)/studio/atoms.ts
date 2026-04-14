@@ -1,7 +1,7 @@
 import { atomWithStorage, createJSONStorage } from 'jotai/utils';
 
 const studioQueryStorage = createJSONStorage<string>();
-const studioAspectRatioStorage = createJSONStorage<StudioAspectRatio>();
+const studioAspectRatioStorage = createJSONStorage<StudioAspectRatio[]>();
 
 export const STUDIO_ASPECT_RATIOS = [
   'auto',
@@ -23,9 +23,9 @@ export const studioQueryAtom = atomWithStorage<string>(
   }
 );
 
-export const studioAspectRatioAtom = atomWithStorage<StudioAspectRatio>(
-  'studio-aspect-ratio',
-  'auto',
+export const studioAspectRatioAtom = atomWithStorage<StudioAspectRatio[]>(
+  'studio-aspect-ratios',
+  ['auto'],
   studioAspectRatioStorage,
   {
     getOnInit: true,
