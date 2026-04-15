@@ -87,7 +87,10 @@ export const StudioProjectSettingsSheet = ({
           </Button>
         </SheetTrigger>
       )}
-      <SheetContent side="right" className="w-full! gap-0 p-0 sm:max-w-5xl!">
+      <SheetContent
+        side="right"
+        className="dark:bg-background w-full! gap-0 p-0 sm:max-w-5xl!"
+      >
         <SheetHeader className="border-b pr-14">
           <SheetTitle>Project settings</SheetTitle>
           <SheetDescription>

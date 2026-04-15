@@ -1,15 +1,9 @@
 'use client';
 
 import { DeleteProjectDialog } from '@/app/(protected)/studio/components/delete-project-dialog';
+import { ProjectActionsDropdown } from '@/app/(protected)/studio/components/project-actions-dropdown';
 import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
 import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
-import { Button } from '@/components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import {
   Table,
   TableBody,
@@ -20,13 +14,7 @@ import {
 } from '@/components/ui/table';
 import type { MockConversationImage } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
-import {
-  CogIcon,
-  EllipsisIcon,
-  ImageOffIcon,
-  PencilIcon,
-  Trash2Icon,
-} from 'lucide-react';
+import { ImageOffIcon } from 'lucide-react';
 import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
@@ -174,50 +162,25 @@ const ProjectTableRow = ({
         {formatDate(createdAt)}
       </TableCell>
       <TableCell>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="icon-sm">
-              <EllipsisIcon />
-              <span className="sr-only">Open project actions</span>
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent
-            align="end"
-            className="w-full min-w-44"
-            onCloseAutoFocus={(event) => {
-              if (!shouldKeepInputFocusedRef.current) return;
+        <ProjectActionsDropdown
+          onCloseAutoFocus={(event) => {
+            if (!shouldKeepInputFocusedRef.current) return;
 
-              event.preventDefault();
-              shouldKeepInputFocusedRef.current = false;
+            event.preventDefault();
+            shouldKeepInputFocusedRef.current = false;
 
-              requestAnimationFrame(() => {
-                inputRef.current?.focus();
-                inputRef.current?.select();
-              });
-            }}
-          >
-            <DropdownMenuItem onSelect={() => setIsSettingsSheetOpen(true)}>
-              <CogIcon />
-              Project settings
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onSelect={() => {
-                shouldKeepInputFocusedRef.current = true;
-                setIsEditing(true);
-              }}
-            >
-              <PencilIcon />
-              Rename project
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              variant="destructive"
-              onSelect={() => setIsDeleteDialogOpen(true)}
-            >
-              <Trash2Icon />
-              Delete project
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+            requestAnimationFrame(() => {
+              inputRef.current?.focus();
+              inputRef.current?.select();
+            });
+          }}
+          onSettings={() => setIsSettingsSheetOpen(true)}
+          onRename={() => {
+            shouldKeepInputFocusedRef.current = true;
+            setIsEditing(true);
+          }}
+          onDelete={() => setIsDeleteDialogOpen(true)}
+        />
       </TableCell>
     </TableRow>
   );

@@ -1,6 +1,9 @@
 'use client';
 
-import { studioViewAtom, type StudioView } from '@/app/(protected)/studio/atoms';
+import {
+  studioViewAtom,
+  type StudioView,
+} from '@/app/(protected)/studio/atoms';
 import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { STUDIO_ASPECT_RATIO_OPTIONS } from '@/app/(protected)/studio/utils';
 import { SearchBar } from '@/components/search-bar';
@@ -187,7 +190,7 @@ export default function StudioPage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 py-6 sm:py-8">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Projects</h1>
-        <Button size="lg" asChild>
+        <Button asChild>
           <Link href="/studio/new">
             <PlusIcon />
             New Project
@@ -199,16 +202,13 @@ export default function StudioPage() {
           value={projectQuery}
           onChange={setProjectQuery}
           placeholder="Search your projects..."
-          containerClassName="flex-1"
+          containerClassName="h-9 flex-1 rounded-md"
+          inputClassName="h-full"
         />
         <ButtonGroup>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon-lg"
-                aria-label="Change view"
-              >
+              <Button variant="outline" size="icon" aria-label="Change view">
                 <ActiveViewIcon />
               </Button>
             </DropdownMenuTrigger>
@@ -235,7 +235,7 @@ export default function StudioPage() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                size="icon-lg"
+                size="icon"
                 aria-label="Sort projects"
               >
                 <ArrowUpDownIcon />
@@ -272,7 +272,7 @@ export default function StudioPage() {
             <DropdownMenuTrigger asChild>
               <Button
                 variant="outline"
-                size="icon-lg"
+                size="icon"
                 aria-label="Filter projects"
               >
                 <FunnelIcon />

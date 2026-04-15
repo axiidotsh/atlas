@@ -9,56 +9,59 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { cn } from '@/utils/utils';
 import { CogIcon, EllipsisIcon, PencilIcon, Trash2Icon } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import * as React from 'react';
 
-interface ProjectCardActionsDropdownProps {
-  onCloseAutoFocus: React.ComponentProps<
+interface ProjectActionsDropdownProps {
+  contentClassName?: string;
+  onCloseAutoFocus?: React.ComponentProps<
     typeof DropdownMenuContent
   >['onCloseAutoFocus'];
   onDelete?: () => void;
   onRename?: () => void;
   onSettings?: () => void;
+  triggerClassName?: string;
+  triggerSize?: React.ComponentProps<typeof Button>['size'];
+  triggerVariant?: React.ComponentProps<typeof Button>['variant'];
 }
 
-export const ProjectCardActionsDropdown = ({
+export const ProjectActionsDropdown = ({
+  contentClassName,
   onCloseAutoFocus,
   onDelete,
   onRename,
   onSettings,
-}: ProjectCardActionsDropdownProps) => {
-  const { theme } = useTheme();
-
+  triggerClassName,
+  triggerSize = 'icon-sm',
+  triggerVariant = 'ghost',
+}: ProjectActionsDropdownProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button
-          variant={theme === 'dark' ? 'secondary' : 'outline'}
-          size="icon-xs"
-          className={cn(
-            'absolute top-2 right-2 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100'
-          )}
+          variant={triggerVariant}
+          size={triggerSize}
+          className={triggerClassName}
         >
           <EllipsisIcon />
           <span className="sr-only">Open project actions</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent
-        className="w-full min-w-44"
+        className={cn(contentClassName)}
         align="end"
         onCloseAutoFocus={onCloseAutoFocus}
       >
-        <DropdownMenuItem onSelect={onSettings}>
-          <CogIcon />
-          Project settings
-        </DropdownMenuItem>
         <DropdownMenuItem onSelect={onRename}>
           <PencilIcon />
-          Rename project
+          Rename
+        </DropdownMenuItem>
+        <DropdownMenuItem onSelect={onSettings}>
+          <CogIcon />
+          Settings
         </DropdownMenuItem>
         <DropdownMenuItem variant="destructive" onSelect={onDelete}>
           <Trash2Icon />
-          Delete project
+          Delete
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

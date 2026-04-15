@@ -1,13 +1,14 @@
 'use client';
 
 import { DeleteProjectDialog } from '@/app/(protected)/studio/components/delete-project-dialog';
-import { ProjectCardActionsDropdown } from '@/app/(protected)/studio/components/project-card-actions-dropdown';
+import { ProjectActionsDropdown } from '@/app/(protected)/studio/components/project-actions-dropdown';
 import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
 import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/utils';
 import { ImageOffIcon, XIcon } from 'lucide-react';
 import Link from 'next/link';
+import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
 
 interface ProjectImageProps {
@@ -37,6 +38,7 @@ export const ProjectCard = ({
   settings,
   onProjectUpdate,
 }: ProjectCardProps) => {
+  const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
@@ -124,7 +126,10 @@ export const ProjectCard = ({
         initialValues={settings}
         onProjectUpdate={onProjectUpdate}
       />
-      <ProjectCardActionsDropdown
+      <ProjectActionsDropdown
+        triggerVariant={theme === 'dark' ? 'secondary' : 'outline'}
+        triggerSize="icon-xs"
+        triggerClassName="absolute top-2 right-2 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100"
         onCloseAutoFocus={(event) => {
           if (!shouldKeepInputFocusedRef.current) {
             return;
