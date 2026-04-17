@@ -6,14 +6,21 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
+import { ImageLightbox } from '@/components/ui/image-lightbox';
 import type {
   MockStudioConversation,
   MockStudioImage,
   MockStudioImageSet,
 } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
-import { ChevronRightIcon, DownloadIcon, Link2Icon, PencilIcon } from 'lucide-react';
+import {
+  ChevronRightIcon,
+  DownloadIcon,
+  Link2Icon,
+  PencilIcon,
+} from 'lucide-react';
 import Image from 'next/image';
+import { useState } from 'react';
 
 interface StudioProjectWorkspaceProps {
   project: MockStudioConversation;
@@ -21,12 +28,19 @@ interface StudioProjectWorkspaceProps {
 
 interface StudioImageCardProps {
   image: MockStudioImage;
+  onOpen: () => void;
 }
 
-const StudioImageCard = ({ image }: StudioImageCardProps) => {
+const StudioImageCard = ({ image, onOpen }: StudioImageCardProps) => {
   return (
     <article className="group/image bg-card relative overflow-hidden rounded-2xl border shadow-sm">
       <div className="relative aspect-square overflow-hidden">
+        <button
+          type="button"
+          className="absolute inset-0 z-10 cursor-zoom-in"
+          onClick={onOpen}
+          aria-label={`Open ${image.title}`}
+        />
         <Image
           src={image.src}
           alt={image.title}
@@ -36,7 +50,7 @@ const StudioImageCard = ({ image }: StudioImageCardProps) => {
           className="object-cover transition duration-300 group-focus-within/image:scale-[1.02] group-hover/image:scale-[1.02]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100" />
-        <div className="absolute right-3 bottom-3 flex items-center gap-1 opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100">
+        <div className="absolute right-3 bottom-3 z-20 flex items-center gap-1 opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100">
           <Button
             asChild
             size="icon-sm"
@@ -87,6 +101,8 @@ interface ImageSetSectionProps {
 }
 
 const ImageSetSection = ({ imageSet, index, isLast }: ImageSetSectionProps) => {
+  const [activeImageIndex, setActiveImageIndex] = useState<number | null>(null);
+
   return (
     <section className="space-y-6">
       <Collapsible>
@@ -105,17 +121,32 @@ const ImageSetSection = ({ imageSet, index, isLast }: ImageSetSectionProps) => {
             {imageSet.images.length === 1 ? '' : 's'}
           </p>
         </div>
-        <CollapsibleContent className="overflow-hidden data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down">
+        <CollapsibleContent className="data-[state=closed]:animate-collapsible-up data-[state=open]:animate-collapsible-down overflow-hidden">
           <p className="text-muted-foreground/80 mt-2 max-w-2xl text-sm">
             {imageSet.prompt}
           </p>
         </CollapsibleContent>
       </Collapsible>
       <div className={cn('grid gap-3', 'sm:grid-cols-2', 'xl:grid-cols-4')}>
-        {imageSet.images.map((image) => (
-          <StudioImageCard key={image.id} image={image} />
+        {imageSet.images.map((image, imageIndex) => (
+          <StudioImageCard
+            key={image.id}
+            image={image}
+            onOpen={() => setActiveImageIndex(imageIndex)}
+          />
         ))}
       </div>
+      <ImageLightbox
+        images={imageSet.images}
+        index={activeImageIndex ?? 0}
+        open={activeImageIndex !== null}
+        onIndexChange={setActiveImageIndex}
+        onOpenChange={(open) => {
+          if (!open) {
+            setActiveImageIndex(null);
+          }
+        }}
+      />
       {!isLast ? (
         <div className="border-border/70 pt-6">
           <div className="border-t" />

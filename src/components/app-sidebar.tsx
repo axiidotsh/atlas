@@ -1,5 +1,6 @@
 'use client';
 
+import { ChatActionsDropdown } from '@/components/chat-actions-dropdown';
 import {
   Sidebar,
   SidebarContent,
@@ -27,7 +28,6 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
-import { ChatActionsDropdown } from '@/components/chat-actions-dropdown';
 import { PlaceholderLogo } from './icons';
 import { SearchBar } from './search-bar';
 import { UserMenu } from './user-menu';
@@ -63,6 +63,7 @@ const NAV_ITEMS = [
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const [chatQuery, setChatQuery] = React.useState('');
   const { open, setOpen, setOpenMobile } = useSidebar();
+
   const pathname = usePathname();
   const chats = getStandardConversations();
 
@@ -74,7 +75,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     if (href === '/chat') {
       return pathname === href;
     }
-
     return pathname.startsWith(href);
   }
 

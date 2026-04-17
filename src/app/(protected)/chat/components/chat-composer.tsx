@@ -34,6 +34,7 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
     MOCK_AD_ACCOUNTS.map((adAccount) => adAccount.id)
   );
   const pathname = usePathname();
+
   const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 

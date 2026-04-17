@@ -152,8 +152,6 @@ export const DateRangePicker = ({
     setIsOpen(false);
   }
 
-  const hasChanges = !areRangesEqual(date, draftDate);
-
   return (
     <Popover open={isOpen} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
@@ -213,9 +211,7 @@ export const DateRangePicker = ({
             <Button variant="outline" onClick={handleCancel}>
               Cancel
             </Button>
-            <Button onClick={handleSave} disabled={!hasChanges}>
-              Save
-            </Button>
+            <Button onClick={handleSave}>Save</Button>
           </div>
         </div>
       </PopoverContent>

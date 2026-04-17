@@ -2,12 +2,10 @@
 
 import { Button } from '@/components/ui/button';
 import { ArrowDownIcon } from 'lucide-react';
-import { useTheme } from 'next-themes';
 import { useStickToBottomContext } from 'use-stick-to-bottom';
 
 export const ScrollToBottom = () => {
   const { isAtBottom, scrollToBottom } = useStickToBottomContext();
-  const { theme } = useTheme();
 
   return (
     !isAtBottom && (

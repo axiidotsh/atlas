@@ -33,11 +33,11 @@ export const TagInput = ({ tags, onChange, placeholder }: TagInputProps) => {
   }
 
   return (
-    <div className="border-input focus-within:border-ring focus-within:ring-ring/50 flex flex-wrap items-center gap-1.5 rounded-md border bg-transparent px-2.5 py-2 shadow-xs focus-within:ring-3">
+    <div className="border-input bg-background dark:bg-input/30 focus-within:border-ring focus-within:ring-ring/50 flex flex-wrap items-center gap-1.5 rounded-md border px-2.5 py-2 shadow-xs focus-within:ring-3">
       {tags.map((tag) => (
         <span
           key={tag}
-          className="bg-secondary text-secondary-foreground inline-flex items-center gap-1 rounded-full py-0.5 pr-1.5 pl-2.5 text-xs font-medium"
+          className="bg-secondary text-secondary-foreground dark:bg-input dark:text-foreground inline-flex items-center gap-1 rounded-full py-0.5 pr-1.5 pl-2.5 text-xs font-medium"
         >
           {tag}
           <button
