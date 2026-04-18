@@ -3,10 +3,10 @@
 import { CreativeInsightsSection } from '@/app/(protected)/metrics/components/creative-insights-section';
 import { MetricCard } from '@/app/(protected)/metrics/components/metric-card';
 import { MetricToolbar } from '@/app/(protected)/metrics/components/metric-toolbar';
-import { MetricsPerformanceSection } from '@/app/(protected)/metrics/components/metrics-performance-section';
-import { MetricsStructureSection } from '@/app/(protected)/metrics/components/metrics-structure-section';
+import { MetricsAccountStructureSection } from '@/app/(protected)/metrics/components/metrics-account-structure-section';
 import { MetricsTrendsGrid } from '@/app/(protected)/metrics/components/metrics-trends-grid';
 import { PlatformBreakdownGrid } from '@/app/(protected)/metrics/components/platform-breakdown-grid';
+import { PlatformBreakdownMetricsMenu } from '@/app/(protected)/metrics/components/platform-breakdown-metrics-menu';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { MOCK_METRICS } from '@/mock-data/metrics';
@@ -60,21 +60,12 @@ export default function MetricsPage() {
       <section className="flex flex-col gap-6">
         <div className="flex items-center justify-between">
           <h2 className="text-xl font-semibold">Platform Breakdown</h2>
-          <Button
-            variant="ghost"
-            size="icon-sm"
-            className="text-muted-foreground"
-            tooltip="Add, remove or reorder graphs"
-          >
-            <BlocksIcon />
-          </Button>
+          <PlatformBreakdownMetricsMenu />
         </div>
         <PlatformBreakdownGrid />
       </section>
       <Separator className="my-10" />
-      <MetricsStructureSection />
-      <Separator className="my-10" />
-      <MetricsPerformanceSection />
+      <MetricsAccountStructureSection />
       <Separator className="my-10" />
       <CreativeInsightsSection />
     </div>

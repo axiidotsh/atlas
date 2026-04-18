@@ -1,14 +1,24 @@
 'use client';
 
-import { campaignPerformanceRowsAtom } from '@/app/(protected)/metrics/atoms';
+import {
+  campaignPerformanceRowsAtom,
+  platformBreakdownVisibleMetricsAtom,
+} from '@/app/(protected)/metrics/atoms';
+import {
+  PLATFORM_BREAKDOWN_METRIC_KEYS,
+  PLATFORM_BREAKDOWN_METRIC_LABELS,
+  type PlatformBreakdownMetricKey,
+} from '@/app/(protected)/metrics/platform-breakdown.config';
 import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
-import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import type { AdPlatform, MockCampaignMetrics } from '@/mock-data/types';
 import { useAtomValue } from 'jotai';
 
 const PLATFORM_ORDER: AdPlatform[] = ['meta', 'google'];
+
+type MetricKey = PlatformBreakdownMetricKey;
 
 interface PlatformMetricSummary {
   platform: AdPlatform;
@@ -21,11 +31,6 @@ interface PlatformMetricSummary {
   ctr: number;
   cpc: number;
   roas: number;
-}
-
-interface PlatformMetricItem {
-  label: string;
-  value: string;
 }
 
 const compactNumberFormatter = new Intl.NumberFormat('en-US', {
@@ -49,53 +54,82 @@ const unitCurrencyFormatter = new Intl.NumberFormat('en-US', {
 
 export const PlatformBreakdownGrid = () => {
   const campaignRows = useAtomValue(campaignPerformanceRowsAtom);
-  const platformSummaries = createPlatformSummaries(campaignRows);
+  const visibleMetrics = useAtomValue(platformBreakdownVisibleMetricsAtom);
+  const platformSummaries = createPlatformSummaries(campaignRows).filter(
+    (summary) => summary.campaignCount > 0
+  );
+  const visibleMetricKeys = PLATFORM_BREAKDOWN_METRIC_KEYS.filter((key) =>
+    visibleMetrics.includes(key)
+  );
+
+  if (platformSummaries.length === 0 || visibleMetricKeys.length === 0) {
+    return null;
+  }
+
+  const columnMinWidth = 160;
+  const gridTemplate = `minmax(${columnMinWidth}px,1fr) ${platformSummaries
+    .map(() => `minmax(${columnMinWidth}px,1fr)`)
+    .join(' ')}`;
+  const minContentWidth = columnMinWidth * (platformSummaries.length + 1);
 
   return (
-    <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-      {platformSummaries.map((summary) => {
-        const PlatformIcon =
-          summary.platform === 'meta' ? MetaLogo : GoogleAdsLogo;
+    <Card className="gap-4">
+      <ScrollArea>
+        <div style={{ minWidth: minContentWidth }}>
+          <CardHeader>
+            <div
+              className="grid items-center gap-4 px-2"
+              style={{ gridTemplateColumns: gridTemplate }}
+            >
+              <span className="text-muted-foreground text-sm font-medium">
+                Metric
+              </span>
+              {platformSummaries.map((summary) => {
+                const PlatformIcon =
+                  summary.platform === 'meta' ? MetaLogo : GoogleAdsLogo;
 
-        return (
-          <Card key={summary.platform} className="gap-4">
-            <CardHeader>
-              <div className="flex items-center justify-between gap-2">
-                <div className="flex items-center gap-4">
-                  <PlatformIcon className="size-5" />
-                  <div className="space-y-1">
-                    <CardTitle className="text-sm">
+                return (
+                  <div
+                    key={summary.platform}
+                    className="flex items-center gap-2"
+                  >
+                    <PlatformIcon className="size-4" />
+                    <span className="text-sm font-medium">
                       {formatPlatformName(summary.platform)}
-                    </CardTitle>
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </CardHeader>
+          <CardContent>
+            <div className="px-2">
+              {visibleMetricKeys.map((key, index) => (
+                <div key={key}>
+                  {index > 0 ? <Separator /> : null}
+                  <div
+                    className="grid items-center gap-4 py-3"
+                    style={{ gridTemplateColumns: gridTemplate }}
+                  >
+                    <p className="text-muted-foreground text-sm">
+                      {PLATFORM_BREAKDOWN_METRIC_LABELS[key]}
+                    </p>
+                    {platformSummaries.map((summary) => (
+                      <p
+                        key={summary.platform}
+                        className="text-sm font-semibold tabular-nums"
+                      >
+                        {formatMetric(key, summary[key])}
+                      </p>
+                    ))}
                   </div>
                 </div>
-                <Badge variant="outline" className="bg-input">
-                  {summary.campaignCount}{' '}
-                  {summary.campaignCount === 1 ? 'campaign' : 'campaigns'}
-                </Badge>
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="px-2">
-                {getMetricItems(summary).map((metric, index) => (
-                  <div key={metric.label}>
-                    {index > 0 ? <Separator /> : null}
-                    <div className="flex items-center justify-between gap-4 py-3">
-                      <p className="text-muted-foreground text-sm">
-                        {metric.label}
-                      </p>
-                      <p className="text-sm font-semibold tabular-nums">
-                        {metric.value}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
-    </div>
+              ))}
+            </div>
+          </CardContent>
+        </div>
+      </ScrollArea>
+    </Card>
   );
 };
 
@@ -170,41 +204,24 @@ function createPlatformSummaries(
   });
 }
 
-function getMetricItems(summary: PlatformMetricSummary): PlatformMetricItem[] {
-  return [
-    {
-      label: 'Impressions',
-      value: formatCompactNumber(summary.impressions),
-    },
-    {
-      label: 'Clicks',
-      value: formatCompactNumber(summary.clicks),
-    },
-    {
-      label: 'Spend',
-      value: formatCompactCurrency(summary.spend),
-    },
-    {
-      label: 'Reach',
-      value: formatCompactNumber(summary.reach),
-    },
-    {
-      label: 'Revenue',
-      value: formatCompactCurrency(summary.revenue),
-    },
-    {
-      label: 'CTR',
-      value: formatPercent(summary.ctr),
-    },
-    {
-      label: 'CPC',
-      value: formatUnitCurrency(summary.cpc),
-    },
-    {
-      label: 'ROAS',
-      value: formatMultiplier(summary.roas),
-    },
-  ];
+function formatMetric(key: MetricKey, value: number) {
+  if (key === 'spend' || key === 'revenue') {
+    return compactCurrencyFormatter.format(value);
+  }
+
+  if (key === 'cpc') {
+    return unitCurrencyFormatter.format(value);
+  }
+
+  if (key === 'ctr') {
+    return `${value.toFixed(2)}%`;
+  }
+
+  if (key === 'roas') {
+    return `${value.toFixed(2)}x`;
+  }
+
+  return compactNumberFormatter.format(value);
 }
 
 function parseMetricValue(value: string) {
@@ -231,24 +248,4 @@ function parseMetricValue(value: string) {
 
 function formatPlatformName(platform: AdPlatform) {
   return platform === 'meta' ? 'Meta Ads' : 'Google Ads';
-}
-
-function formatCompactNumber(value: number) {
-  return compactNumberFormatter.format(value);
-}
-
-function formatCompactCurrency(value: number) {
-  return compactCurrencyFormatter.format(value);
-}
-
-function formatUnitCurrency(value: number) {
-  return unitCurrencyFormatter.format(value);
-}
-
-function formatPercent(value: number) {
-  return `${value.toFixed(2)}%`;
-}
-
-function formatMultiplier(value: number) {
-  return `${value.toFixed(2)}x`;
 }
