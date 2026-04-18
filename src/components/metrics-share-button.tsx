@@ -1,5 +1,9 @@
 'use client';
 
+import {
+  campaignPerformanceRowsAtom,
+  platformBreakdownVisibleMetricsAtom,
+} from '@/app/(protected)/metrics/atoms';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -15,8 +19,10 @@ import { useBrowserShare } from '@/hooks/use-browser-share';
 import { cn } from '@/utils/utils';
 import { type VariantProps } from 'class-variance-authority';
 import { format } from 'date-fns';
+import { useAtomValue } from 'jotai';
 import { Share2Icon } from 'lucide-react';
 import { useId, useState } from 'react';
+import { toast } from 'sonner';
 import { Label } from './ui/label';
 
 const METRICS_SHARE_PATH = '/metrics';
@@ -87,8 +93,27 @@ const ACCOUNT_BREAKDOWN_OPTIONS: Array<{
   },
 ];
 
+const ACCOUNT_BREAKDOWN_LEVEL_MAP = {
+  'ad-sets': 'adSet',
+  ads: 'ad',
+  campaigns: 'campaign',
+} as const;
+const MIN_EXPORT_DURATION_MS = 2000;
+
 function getDefaultPdfFileName() {
   return `Metrics - ${format(new Date(), 'LLL dd, y')}`;
+}
+
+function getExportFileName(fileName: string) {
+  const normalizedFileName = (
+    fileName.trim() || getDefaultPdfFileName()
+  ).replace(/\.pdf$/i, '');
+
+  return normalizedFileName.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '-');
+}
+
+function wait(durationMs: number) {
+  return new Promise((resolve) => window.setTimeout(resolve, durationMs));
 }
 
 export const MetricsShareButton = ({
@@ -99,6 +124,7 @@ export const MetricsShareButton = ({
 }: MetricsShareButtonProps) => {
   const [activeTab, setActiveTab] = useState<MetricsShareTab>('share');
   const [fileName, setFileName] = useState(() => getDefaultPdfFileName());
+  const [isExporting, setIsExporting] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isShareGenerated, setIsShareGenerated] = useState(false);
   const [selectedSections, setSelectedSections] = useState<
@@ -118,6 +144,10 @@ export const MetricsShareButton = ({
   });
   const fileNameInputId = useId();
   const { copyText } = useBrowserShare();
+  const campaignRows = useAtomValue(campaignPerformanceRowsAtom);
+  const visiblePlatformMetrics = useAtomValue(
+    platformBreakdownVisibleMetricsAtom
+  );
 
   const shareUrl =
     typeof window === 'undefined'
@@ -173,9 +203,64 @@ export const MetricsShareButton = ({
     });
   }
 
+  async function handlePdfExport() {
+    if (isExporting) {
+      return;
+    }
+
+    const exportFileName = getExportFileName(fileName);
+    const selectedAccountBreakdownLevels = ACCOUNT_BREAKDOWN_OPTIONS.filter(
+      (section) => selectedAccountBreakdownSections[section.id]
+    ).map((section) => ACCOUNT_BREAKDOWN_LEVEL_MAP[section.id]);
+
+    setIsExporting(true);
+
+    try {
+      const minimumExportDuration = wait(MIN_EXPORT_DURATION_MS);
+      const blobPromise = Promise.all([
+        import('@react-pdf/renderer'),
+        import('@/app/(protected)/metrics/components/metrics-pdf-document'),
+      ]).then(async ([{ pdf }, { MetricsPdfDocument }]) =>
+        pdf(
+          <MetricsPdfDocument
+            campaignRows={campaignRows}
+            fileName={exportFileName}
+            platformBreakdownMetricKeys={visiblePlatformMetrics}
+            selectedAccountBreakdownSections={selectedAccountBreakdownLevels}
+            selectedSections={{
+              coreMetrics: selectedSections['core-metrics'],
+              platformBreakdown: selectedSections['platform-breakdown'],
+              trends: selectedSections.trends,
+            }}
+          />
+        ).toBlob()
+      );
+      const [blob] = await Promise.all([blobPromise, minimumExportDuration]);
+      const blobUrl = URL.createObjectURL(blob);
+      const downloadLink = document.createElement('a');
+
+      downloadLink.href = blobUrl;
+      downloadLink.download = `${exportFileName}.pdf`;
+      document.body.append(downloadLink);
+      downloadLink.click();
+      downloadLink.remove();
+      window.setTimeout(() => URL.revokeObjectURL(blobUrl), 0);
+      toast.success('PDF exported');
+      setIsOpen(false);
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to export PDF');
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   const selectedAccountBreakdownCount = ACCOUNT_BREAKDOWN_OPTIONS.filter(
     (section) => selectedAccountBreakdownSections[section.id]
   ).length;
+  const hasSelectedExportSection =
+    Object.values(selectedSections).some(Boolean) ||
+    selectedAccountBreakdownCount > 0;
 
   const isAccountBreakdownChecked =
     selectedAccountBreakdownCount === ACCOUNT_BREAKDOWN_OPTIONS.length;
@@ -200,8 +285,8 @@ export const MetricsShareButton = ({
         <DialogHeader>
           <DialogTitle>Share metrics</DialogTitle>
           <DialogDescription>
-            Only the metric values you currently see are shared, and they won&apos;t
-            update later.
+            Only the metric values you currently see are shared, and they
+            won&apos;t update later.
           </DialogDescription>
         </DialogHeader>
         <div className="space-y-4">
@@ -242,7 +327,9 @@ export const MetricsShareButton = ({
                   )}
                 >
                   <Button type="button" onClick={handleShareCopy}>
-                    {isShareGenerated ? 'Copy share link' : 'Generate share link'}
+                    {isShareGenerated
+                      ? 'Copy share link'
+                      : 'Generate share link'}
                   </Button>
                 </div>
               </div>
@@ -326,8 +413,13 @@ export const MetricsShareButton = ({
                   align === 'end' ? 'justify-end' : 'justify-center'
                 )}
               >
-                <Button type="button" disabled>
-                  Export as PDF
+                <Button
+                  type="button"
+                  className="min-w-32"
+                  disabled={!hasSelectedExportSection || isExporting}
+                  onClick={handlePdfExport}
+                >
+                  {isExporting ? 'Exporting...' : 'Export as PDF'}
                 </Button>
               </div>
             </div>
