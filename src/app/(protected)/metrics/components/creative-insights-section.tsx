@@ -1,15 +1,13 @@
 'use client';
 
 import { formatCampaignStatus } from '@/app/(protected)/metrics/campaign-performance.config';
-import {
-  getCampaignPlatformIcon,
-  parseCampaignMetricValue,
-} from '@/app/(protected)/metrics/campaign-performance.utils';
+import { parseCampaignMetricValue } from '@/app/(protected)/metrics/campaign-performance.utils';
 import {
   CREATIVE_INSIGHT_ROWS,
   getMetricLabel,
   type CreativeInsightRow,
 } from '@/app/(protected)/metrics/metrics-data';
+import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
 import { SearchBar } from '@/components/search-bar';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -36,8 +34,15 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+} from '@/components/ui/table';
 import { MOCK_METRICS } from '@/mock-data/metrics';
 import type { CoreMetricId, MockCreativeMedia } from '@/mock-data/types';
+import { cn } from '@/utils/utils';
 import {
   ArrowUpRightIcon,
   ChevronDownIcon,
@@ -47,9 +52,16 @@ import {
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 
-const DISPLAY_LIMIT = 4;
+const DISPLAY_LIMIT = 5;
 const CREATIVE_CARD_MEDIA_CLASS = 'h-44';
 const CREATIVE_DETAIL_MEDIA_CLASS = 'aspect-[4/5]';
+
+function getCreativeThumbnail(media: MockCreativeMedia) {
+  if (media.type === 'video') {
+    return media.posterSrc ?? media.src;
+  }
+  return media.src;
+}
 
 export const CreativeInsightsSection = () => {
   const [selectedMetricId, setSelectedMetricId] =
@@ -103,121 +115,159 @@ export const CreativeInsightsSection = () => {
           <CreativeInsightsDetailView triggerClassName="w-full justify-between sm:w-auto" />
         </div>
       </div>
-      <div className="space-y-6">
-        <CreativeGalleryRow
-          title="Top Creatives"
+      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+        <CreativeListCard
+          title="Top Performers"
           description={`Highest ${selectedMetricLabel} across active creative inventory`}
           creatives={topCreatives}
           selectedMetricId={selectedMetricId}
-          selectedMetricLabel={selectedMetricLabel}
+          tone="top"
         />
-        <CreativeGalleryRow
-          title="Bottom Creatives"
+        <CreativeListCard
+          title="Bottom Performers"
           description={`Lowest ${selectedMetricLabel} across active creative inventory`}
           creatives={bottomCreatives}
           selectedMetricId={selectedMetricId}
-          selectedMetricLabel={selectedMetricLabel}
+          tone="bottom"
         />
       </div>
     </section>
   );
 };
 
-interface CreativeGalleryRowProps {
+interface CreativeListCardProps {
   title: string;
   description: string;
   creatives: CreativeInsightRow[];
   selectedMetricId: CoreMetricId;
-  selectedMetricLabel: string;
+  tone: 'top' | 'bottom';
 }
 
-const CreativeGalleryRow = ({
+const CreativeListCard = ({
   title,
   description,
   creatives,
   selectedMetricId,
-  selectedMetricLabel,
-}: CreativeGalleryRowProps) => {
+  tone,
+}: CreativeListCardProps) => {
   return (
-    <Card className="gap-4 py-5">
-      <CardHeader className="px-5">
+    <Card className="gap-4">
+      <CardHeader>
         <div className="space-y-1">
           <CardTitle className="text-sm">{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
       </CardHeader>
-      <CardContent className="px-5">
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-4">
-          {creatives.map((creative) => (
-            <AdCreativeTile key={creative.id} creative={creative}>
-              {(PlatformIcon) => (
-                <AdCreativeDetailSheet creative={creative}>
-                  <button
-                    type="button"
-                    className="group bg-muted/40 hover:bg-muted cursor-pointer overflow-hidden rounded-xl border text-left transition-colors"
-                    aria-label={`Open ${creative.name}`}
-                  >
-                    <div className="bg-muted relative overflow-hidden">
-                      <MediaPreview media={creative.previewMedia} />
-                    </div>
-                    <div className="flex items-center justify-between gap-4 px-3 py-3">
-                      <div className="min-w-0 space-y-1">
-                        <p className="line-clamp-1 text-sm font-medium">
-                          {creative.name}
-                        </p>
-                        <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                          <PlatformIcon className="size-3" />
-                          <span className="truncate">
-                            {creative.adAccount.name}
-                          </span>
-                          <span aria-hidden="true">/</span>
-                          <span className="capitalize">
-                            {formatCampaignStatus(creative.status)}
-                          </span>
-                        </div>
-                      </div>
-                      <MetricStack
-                        label={selectedMetricLabel}
-                        value={creative.metrics[selectedMetricId]}
-                        align="right"
-                      />
-                    </div>
-                  </button>
-                </AdCreativeDetailSheet>
-              )}
-            </AdCreativeTile>
-          ))}
-        </div>
+      <CardContent>
+        {creatives.length === 0 ? (
+          <p className="text-muted-foreground text-sm">
+            No creative performance data is available right now.
+          </p>
+        ) : (
+          <Table>
+            <TableBody>
+              {creatives.map((creative) => (
+                <CreativeTableRow
+                  key={creative.id}
+                  creative={creative}
+                  selectedMetricId={selectedMetricId}
+                  tone={tone}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </CardContent>
     </Card>
   );
 };
 
-interface AdCreativeTileProps {
+interface CreativeTableRowProps {
   creative: CreativeInsightRow;
-  children: (
-    platformIcon: ReturnType<typeof getCampaignPlatformIcon>
-  ) => ReactNode;
+  selectedMetricId: CoreMetricId;
+  tone: 'top' | 'bottom';
 }
 
-const AdCreativeTile = ({ creative, children }: AdCreativeTileProps) => {
-  const PlatformIcon = getCampaignPlatformIcon(creative.adAccount.platform);
+const CreativeTableRow = ({
+  creative,
+  selectedMetricId,
+  tone,
+}: CreativeTableRowProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const thumbnailSrc = getCreativeThumbnail(creative.previewMedia);
+  const statusLabel = formatCampaignStatus(creative.status);
 
-  return children(PlatformIcon);
+  return (
+    <AdCreativeDetailSheet
+      creative={creative}
+      open={isOpen}
+      onOpenChange={setIsOpen}
+    >
+      <TableRow
+        onClick={() => setIsOpen(true)}
+        onKeyDown={(event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            setIsOpen(true);
+          }
+        }}
+        tabIndex={0}
+        className="cursor-pointer focus-visible:bg-muted/50 focus-visible:outline-none"
+        aria-label={`Open ${creative.name}`}
+      >
+        <TableCell>
+          <div className="flex items-center gap-3">
+            <img
+              src={thumbnailSrc}
+              alt=""
+              className="size-10 min-w-10 shrink-0 rounded-md object-cover"
+            />
+            <div className="min-w-0 space-y-1">
+              <p className="truncate text-sm font-medium">{creative.name}</p>
+              <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                {creative.adAccount.platform === 'google' ? (
+                  <GoogleAdsLogo className="size-3" />
+                ) : (
+                  <MetaLogo className="size-3" />
+                )}
+                <span className="truncate">{creative.adAccount.name}</span>
+                <span aria-hidden="true">/</span>
+                <span className="capitalize">{statusLabel}</span>
+              </div>
+            </div>
+          </div>
+        </TableCell>
+        <TableCell className="text-right">
+          <p
+            className={cn(
+              'text-sm font-medium tabular-nums',
+              tone === 'bottom' && 'text-destructive dark:text-red-300'
+            )}
+          >
+            {creative.metrics[selectedMetricId]}
+          </p>
+        </TableCell>
+      </TableRow>
+    </AdCreativeDetailSheet>
+  );
 };
 
 interface AdCreativeDetailSheetProps {
   creative: CreativeInsightRow;
   children: ReactNode;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
 }
 
 const AdCreativeDetailSheet = ({
   creative,
   children,
+  open,
+  onOpenChange,
 }: AdCreativeDetailSheetProps) => {
   return (
-    <Sheet>
-      <SheetTrigger asChild>{children}</SheetTrigger>
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      {children}
       <SheetContent
         className="w-full gap-0 data-[side=right]:w-screen sm:data-[side=right]:w-[min(96vw,1200px)] sm:data-[side=right]:max-w-[1200px]"
         onOpenAutoFocus={(event) => event.preventDefault()}
@@ -390,23 +440,6 @@ const CreativeInsightsDetailView = ({
         </div>
       </SheetContent>
     </Sheet>
-  );
-};
-
-interface MetricStackProps {
-  label: string;
-  value: string;
-  align?: 'left' | 'right';
-}
-
-const MetricStack = ({ label, value, align = 'left' }: MetricStackProps) => {
-  return (
-    <div className={align === 'right' ? 'space-y-1 text-right' : 'space-y-1'}>
-      <p className="text-foreground text-xs font-medium tabular-nums sm:text-sm">
-        {value}
-      </p>
-      <p className="text-muted-foreground text-xs">{label}</p>
-    </div>
   );
 };
 

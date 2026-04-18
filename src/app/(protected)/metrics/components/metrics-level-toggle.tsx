@@ -21,11 +21,18 @@ export const MetricsLevelToggle = ({
   value,
   onValueChange,
 }: MetricsLevelToggleProps) => {
+  const label =
+    value === 'campaign' ? 'Campaigns' : value === 'adSet' ? 'Ad Sets' : 'Ads';
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="justify-between sm:w-auto">
-          {value === 'campaign' ? 'Campaigns' : 'Ad Sets'}
+        <Button
+          variant="outline"
+          size="sm"
+          className="w-full justify-between sm:min-w-36"
+        >
+          {label}
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
@@ -39,6 +46,7 @@ export const MetricsLevelToggle = ({
             Campaigns
           </DropdownMenuRadioItem>
           <DropdownMenuRadioItem value="adSet">Ad Sets</DropdownMenuRadioItem>
+          <DropdownMenuRadioItem value="ad">Ads</DropdownMenuRadioItem>
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
     </DropdownMenu>

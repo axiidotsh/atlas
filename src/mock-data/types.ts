@@ -9,7 +9,7 @@ export type CampaignStatus =
   | 'PAUSED'
   | 'WITH_ISSUES'
   | 'ENDED';
-export type PerformanceLevel = 'campaign' | 'adSet';
+export type PerformanceLevel = 'campaign' | 'adSet' | 'ad';
 export type CreativeMediaType = 'image' | 'video';
 export type CoreMetricId =
   | 'impressions'

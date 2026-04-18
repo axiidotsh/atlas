@@ -7,8 +7,6 @@ import {
   getCampaignStatusClassName,
 } from '@/app/(protected)/metrics/campaign-performance.utils';
 import {
-  AD_SET_PERFORMANCE_ROWS,
-  CAMPAIGN_PERFORMANCE_ROWS,
   getMetricLabel,
   getPerformanceRows,
   type MetricsPerformanceRow,
@@ -42,6 +40,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import {
   Sheet,
   SheetContent,
@@ -86,6 +89,7 @@ interface PerformanceColumnOption {
 interface PerformanceSectionState<T> {
   campaign: T;
   adSet: T;
+  ad: T;
 }
 
 interface BreakdownDatum {
@@ -138,25 +142,27 @@ const METRIC_COLUMNS: PerformanceColumnOption[] = MOCK_METRICS.map((metric) => (
 const DEFAULT_VISIBLE_COLUMN_IDS: PerformanceSectionState<PerformanceColumnId[]> = {
   campaign: ['adAccount', 'status', 'impressions', 'spend', 'revenue', 'roas'],
   adSet: ['adAccount', 'status', 'impressions', 'spend', 'revenue', 'roas'],
+  ad: ['adAccount', 'status', 'impressions', 'spend', 'revenue', 'roas'],
 };
 
 export const MetricsAccountStructureSection = () => {
   const [level, setLevel] = useState<PerformanceLevel>('campaign');
-
-  const rows =
-    level === 'campaign' ? CAMPAIGN_PERFORMANCE_ROWS : AD_SET_PERFORMANCE_ROWS;
+  const rows = getPerformanceRows(level);
   const totalRows = rows.length;
   const compositionBreakdown: BreakdownDatum[] =
     level === 'campaign'
       ? createAdAccountBreakdown(rows, totalRows)
-      : createCampaignBreakdown(rows, totalRows);
+      : level === 'adSet'
+        ? createCampaignBreakdown(rows, totalRows)
+        : createAdSetBreakdown(rows, totalRows);
   const statusBreakdown = createStatusBreakdown(rows, totalRows);
+  const summaryLabel = getBreakdownSummaryLabel(level);
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between sm:gap-4">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:gap-4">
         <h2 className="text-xl font-semibold">Account Breakdown</h2>
-        <div className="grid grid-cols-2 gap-2 sm:flex sm:items-center">
+        <div className="grid grid-cols-2 gap-2 sm:justify-self-end">
           <MetricsLevelToggle value={level} onValueChange={setLevel} />
           <PerformanceDetailView
             level={level}
@@ -166,22 +172,10 @@ export const MetricsAccountStructureSection = () => {
       </div>
       <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
         <MetricsChartCard
-          title={
-            level === 'campaign'
-              ? 'Campaigns by Ad Account'
-              : 'Ad Sets by Campaign'
-          }
-          description={
-            level === 'campaign'
-              ? 'See how campaign volume is distributed across connected ad accounts.'
-              : 'See which campaigns are carrying the largest ad set footprint right now.'
-          }
+          title={getCompositionChartTitle(level)}
+          description={getCompositionChartDescription(level)}
           summary={String(totalRows)}
-          summaryLabel={
-            level === 'campaign'
-              ? 'Total campaigns in the current breakdown'
-              : 'Total ad sets in the current breakdown'
-          }
+          summaryLabel={summaryLabel}
         >
           <BreakdownPieCard
             data={compositionBreakdown}
@@ -189,18 +183,10 @@ export const MetricsAccountStructureSection = () => {
           />
         </MetricsChartCard>
         <MetricsChartCard
-          title={level === 'campaign' ? 'Campaigns by Status' : 'Ad Sets by Status'}
-          description={
-            level === 'campaign'
-              ? 'Track the current campaign mix across active, paused, ended, and issue states.'
-              : 'Track the current ad set mix across active, paused, ended, and issue states.'
-          }
+          title={getStatusChartTitle(level)}
+          description={getStatusChartDescription(level)}
           summary={String(totalRows)}
-          summaryLabel={
-            level === 'campaign'
-              ? 'Total campaigns in the current breakdown'
-              : 'Total ad sets in the current breakdown'
-          }
+          summaryLabel={summaryLabel}
         >
           <BreakdownPieCard
             data={statusBreakdown}
@@ -378,21 +364,38 @@ const PerformanceListCard = ({ level, tone }: PerformanceListCardProps) => {
                 <div key={row.id}>
                   {index > 0 ? <div className="bg-border h-px w-full" /> : null}
                   <div className="flex items-center justify-between gap-6 py-3">
-                    <div className="min-w-0 space-y-1">
-                      <p className="truncate text-sm font-medium">{row.name}</p>
-                      <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                        <PlatformIcon className="size-3" />
-                        <span className="truncate">{row.adAccount.name}</span>
-                        {row.campaignName ? (
-                          <>
-                            <span aria-hidden="true">/</span>
-                            <span className="truncate">{row.campaignName}</span>
-                          </>
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-3">
+                        {level === 'ad' ? (
+                          <img
+                            src={getPerformanceRowThumbnail(row)}
+                            alt=""
+                            className="size-10 min-w-10 shrink-0 rounded-md object-cover"
+                          />
                         ) : null}
-                        <span aria-hidden="true">/</span>
-                        <span className="capitalize">
-                          {formatCampaignStatus(row.status)}
-                        </span>
+                        <div className="min-w-0 space-y-1">
+                          <p className="truncate text-sm font-medium">{row.name}</p>
+                          <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                            <PlatformIcon className="size-3" />
+                            <BreadcrumbTooltip label={row.adAccount.name} />
+                            {row.campaignName ? (
+                              <>
+                                <span aria-hidden="true">/</span>
+                                <BreadcrumbTooltip label={row.campaignName} />
+                              </>
+                            ) : null}
+                            {row.adSetName ? (
+                              <>
+                                <span aria-hidden="true">/</span>
+                                <BreadcrumbTooltip label={row.adSetName} />
+                              </>
+                            ) : null}
+                            <span aria-hidden="true">/</span>
+                            <span className="shrink-0 whitespace-nowrap capitalize">
+                              {formatCampaignStatus(row.status)}
+                            </span>
+                          </div>
+                        </div>
                       </div>
                     </div>
                     <div className="shrink-0 text-right">
@@ -429,18 +432,21 @@ const PerformanceDetailView = ({
   const [searchByLevel, setSearchByLevel] = useState<PerformanceSectionState<string>>({
     campaign: '',
     adSet: '',
+    ad: '',
   });
   const [selectedAdAccountIdsByLevel, setSelectedAdAccountIdsByLevel] = useState<
     PerformanceSectionState<string[]>
   >({
     campaign: [],
     adSet: [],
+    ad: [],
   });
   const [selectedStatusesByLevel, setSelectedStatusesByLevel] = useState<
     PerformanceSectionState<CampaignStatus[]>
   >({
     campaign: [],
     adSet: [],
+    ad: [],
   });
   const [selectedColumnIdsByLevel, setSelectedColumnIdsByLevel] = useState<
     PerformanceSectionState<PerformanceColumnId[]>
@@ -465,6 +471,7 @@ const PerformanceDetailView = ({
       row.id.toLowerCase().includes(normalizedSearchValue) ||
       row.adAccount.name.toLowerCase().includes(normalizedSearchValue) ||
       row.campaignName?.toLowerCase().includes(normalizedSearchValue) ||
+      row.adSetName?.toLowerCase().includes(normalizedSearchValue) ||
       formatCampaignStatus(row.status).includes(normalizedSearchValue);
 
     const matchesAdAccount =
@@ -476,11 +483,8 @@ const PerformanceDetailView = ({
 
     return matchesSearch && matchesAdAccount && matchesStatus;
   });
-  const title = level === 'campaign' ? 'Campaign Performance' : 'Ad Set Performance';
-  const description =
-    level === 'campaign'
-      ? 'Search campaigns, refine filters, and customize visible columns in the full performance table.'
-      : 'Search ad sets, refine filters, and customize visible columns in the full performance table.';
+  const title = getPerformanceDetailTitle(level);
+  const description = getPerformanceDetailDescription(level);
 
   return (
     <Sheet>
@@ -695,7 +699,7 @@ const PerformanceTable = ({
         <TableHeader className="dark:bg-card bg-muted">
           <TableRow>
             <TableHead className="dark:bg-card bg-muted md:after:bg-border/80 h-14 min-w-80 px-5 text-sm font-semibold md:sticky md:left-0 md:z-20 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
-              {level === 'campaign' ? 'Campaign' : 'Ad Set'}
+              {level === 'campaign' ? 'Campaign' : level === 'adSet' ? 'Ad Set' : 'Ad'}
             </TableHead>
             {isStatusVisible ? (
               <TableHead className="h-14 min-w-40 px-5 text-sm font-semibold">
@@ -729,22 +733,37 @@ const PerformanceTable = ({
             return (
               <TableRow key={row.id} className="group">
                 <TableCell className="bg-card group-hover:bg-muted dark:bg-muted dark:group-hover:bg-muted md:after:bg-border/80 min-w-80 px-5 py-4 align-top whitespace-normal md:sticky md:left-0 md:z-10 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
-                  <div className="space-y-1.5">
-                    <p className="text-foreground text-sm font-medium">
-                      {row.name}
-                    </p>
+                  <div className={cn('space-y-1.5', level === 'ad' && 'flex items-start gap-3 space-y-0')}>
+                    {level === 'ad' ? (
+                      <img
+                        src={getPerformanceRowThumbnail(row)}
+                        alt=""
+                        className="size-10 min-w-10 shrink-0 rounded-md object-cover"
+                      />
+                    ) : null}
+                    <div className="min-w-0 space-y-1.5">
+                      <p className="text-foreground text-sm font-medium">
+                        {row.name}
+                      </p>
                     {isAdAccountVisible ? (
                       <div className="text-muted-foreground flex items-center gap-2 text-xs">
                         <PlatformIcon className="size-3.5" />
-                        <span>{row.adAccount.name}</span>
+                        <BreadcrumbTooltip label={row.adAccount.name} />
                         {row.campaignName ? (
                           <>
                             <span aria-hidden="true">/</span>
-                            <span className="truncate">{row.campaignName}</span>
+                            <BreadcrumbTooltip label={row.campaignName} />
+                          </>
+                        ) : null}
+                        {row.adSetName ? (
+                          <>
+                            <span aria-hidden="true">/</span>
+                            <BreadcrumbTooltip label={row.adSetName} />
                           </>
                         ) : null}
                       </div>
                     ) : null}
+                    </div>
                   </div>
                 </TableCell>
                 {isStatusVisible ? (
@@ -803,7 +822,15 @@ function toggleSelection<T extends string>(items: T[], value: T) {
 }
 
 function getLevelLabel(level: PerformanceLevel) {
-  return level === 'campaign' ? 'campaigns' : 'ad sets';
+  if (level === 'campaign') {
+    return 'campaigns';
+  }
+
+  if (level === 'adSet') {
+    return 'ad sets';
+  }
+
+  return 'ads';
 }
 
 function createAdAccountBreakdown(
@@ -877,6 +904,31 @@ function createCampaignBreakdown(rows: MetricsPerformanceRow[], totalRows: numbe
     .sort((left, right) => right.value - left.value);
 }
 
+function createAdSetBreakdown(rows: MetricsPerformanceRow[], totalRows: number) {
+  const breakdownByAdSet = new Map<string, number>();
+
+  rows.forEach((row) => {
+    if (!row.adSetName) {
+      return;
+    }
+
+    breakdownByAdSet.set(
+      row.adSetName,
+      (breakdownByAdSet.get(row.adSetName) ?? 0) + 1
+    );
+  });
+
+  return Array.from(breakdownByAdSet.entries())
+    .map(([adSetName, value], index) => ({
+      id: adSetName,
+      label: adSetName,
+      value,
+      fill: CAMPAIGN_COLORS[index % CAMPAIGN_COLORS.length],
+      percentage: totalRows === 0 ? 0 : (value / totalRows) * 100,
+    }))
+    .sort((left, right) => right.value - left.value);
+}
+
 function createStatusBreakdown(rows: MetricsPerformanceRow[], totalRows: number) {
   const statusCounts = new Map<CampaignStatus, number>();
 
@@ -919,3 +971,114 @@ function formatPercentage(value: number) {
 function toTitleCase(value: string) {
   return value.replace(/\b\w/g, (character) => character.toUpperCase());
 }
+
+function getBreakdownSummaryLabel(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Total campaigns in the current breakdown';
+  }
+
+  if (level === 'adSet') {
+    return 'Total ad sets in the current breakdown';
+  }
+
+  return 'Total ads in the current breakdown';
+}
+
+function getCompositionChartTitle(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Campaigns by Ad Account';
+  }
+
+  if (level === 'adSet') {
+    return 'Ad Sets by Campaign';
+  }
+
+  return 'Ads by Ad Set';
+}
+
+function getCompositionChartDescription(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'See how campaign volume is distributed across connected ad accounts.';
+  }
+
+  if (level === 'adSet') {
+    return 'See which campaigns are carrying the largest ad set footprint right now.';
+  }
+
+  return 'See which ad sets are carrying the highest ad volume in the current mix.';
+}
+
+function getStatusChartTitle(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Campaigns by Status';
+  }
+
+  if (level === 'adSet') {
+    return 'Ad Sets by Status';
+  }
+
+  return 'Ads by Status';
+}
+
+function getStatusChartDescription(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Track the current campaign mix across active, paused, ended, and issue states.';
+  }
+
+  if (level === 'adSet') {
+    return 'Track the current ad set mix across active, paused, ended, and issue states.';
+  }
+
+  return 'Track the current ad mix across active, paused, ended, and issue states.';
+}
+
+function getPerformanceDetailTitle(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Campaign Performance';
+  }
+
+  if (level === 'adSet') {
+    return 'Ad Set Performance';
+  }
+
+  return 'Ad Performance';
+}
+
+function getPerformanceDetailDescription(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Search campaigns, refine filters, and customize visible columns in the full performance table.';
+  }
+
+  if (level === 'adSet') {
+    return 'Search ad sets, refine filters, and customize visible columns in the full performance table.';
+  }
+
+  return 'Search ads, refine filters, and customize visible columns in the full performance table.';
+}
+
+function getPerformanceRowThumbnail(row: MetricsPerformanceRow) {
+  if (!row.previewMedia) {
+    return '';
+  }
+
+  if (row.previewMedia.type === 'video') {
+    return row.previewMedia.posterSrc ?? row.previewMedia.src;
+  }
+
+  return row.previewMedia.src;
+}
+
+interface BreadcrumbTooltipProps {
+  label: string;
+}
+
+const BreadcrumbTooltip = ({ label }: BreadcrumbTooltipProps) => {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="truncate">{label}</span>
+      </TooltipTrigger>
+      <TooltipContent sideOffset={6}>{label}</TooltipContent>
+    </Tooltip>
+  );
+};

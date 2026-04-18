@@ -1,6 +1,5 @@
 'use client';
 
-import { CreativeInsightsSection } from '@/app/(protected)/metrics/components/creative-insights-section';
 import { MetricCard } from '@/app/(protected)/metrics/components/metric-card';
 import { MetricToolbar } from '@/app/(protected)/metrics/components/metric-toolbar';
 import { MetricsAccountStructureSection } from '@/app/(protected)/metrics/components/metrics-account-structure-section';
@@ -66,8 +65,6 @@ export default function MetricsPage() {
       </section>
       <Separator className="my-10" />
       <MetricsAccountStructureSection />
-      <Separator className="my-10" />
-      <CreativeInsightsSection />
     </div>
   );
 }

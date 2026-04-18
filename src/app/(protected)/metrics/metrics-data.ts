@@ -26,6 +26,8 @@ export interface MetricsPerformanceRow {
   metrics: MockPerformanceMetrics;
   adAccount: MockAdAccount;
   campaignName?: string;
+  adSetName?: string;
+  previewMedia?: MockCreativeMedia;
 }
 
 export interface CreativeInsightRow extends MockAd {
@@ -129,10 +131,30 @@ export const CREATIVE_INSIGHT_ROWS: CreativeInsightRow[] = MOCK_ADS.flatMap((ad)
   ];
 });
 
+export const AD_PERFORMANCE_ROWS: MetricsPerformanceRow[] = CREATIVE_INSIGHT_ROWS.map(
+  (ad) => ({
+    id: ad.id,
+    level: 'ad',
+    name: ad.name,
+    status: ad.status,
+    metrics: ad.metrics,
+    adAccount: ad.adAccount,
+    campaignName: ad.campaign.name,
+    adSetName: ad.adSet.name,
+    previewMedia: ad.previewMedia,
+  })
+);
+
 export function getPerformanceRows(level: PerformanceLevel) {
-  return level === 'campaign'
-    ? CAMPAIGN_PERFORMANCE_ROWS
-    : AD_SET_PERFORMANCE_ROWS;
+  if (level === 'campaign') {
+    return CAMPAIGN_PERFORMANCE_ROWS;
+  }
+
+  if (level === 'adSet') {
+    return AD_SET_PERFORMANCE_ROWS;
+  }
+
+  return AD_PERFORMANCE_ROWS;
 }
 
 export function getMetricLabel(metricId: CoreMetricId) {
