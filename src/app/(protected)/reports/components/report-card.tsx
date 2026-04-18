@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import type { MockReport } from '@/mock-data/reports';
 import { XIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 interface ReportCardProps {
@@ -19,11 +20,7 @@ interface ReportCardProps {
 const TITLE_CLASS_NAME =
   'block w-full truncate bg-transparent p-0 text-sm font-medium leading-5 outline-none';
 
-export const ReportCard = ({
-  report,
-  onRename,
-  onDelete,
-}: ReportCardProps) => {
+export const ReportCard = ({ report, onRename, onDelete }: ReportCardProps) => {
   const { theme } = useTheme();
   const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
@@ -110,8 +107,16 @@ export const ReportCard = ({
         }}
         onDelete={() => setIsDeleteDialogOpen(true)}
       />
-      <div className="bg-card border-border/50 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300">
-        <div className="bg-muted/50 border-border/50 dark:bg-muted/90 h-40 overflow-hidden border-b px-3 pt-3">
+      <Link
+        href={`/reports/${report.id}`}
+        onClick={(event) => {
+          if (isEditing) {
+            event.preventDefault();
+          }
+        }}
+        className="bg-card border-border/50 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300"
+      >
+        <div className="bg-background border-border/50 dark:bg-muted/95 h-40 overflow-hidden border-b px-3 pt-3">
           {previewBlocks.length > 0 ? (
             <div
               className="origin-top-left space-y-3"
@@ -158,7 +163,7 @@ export const ReportCard = ({
             <span className={TITLE_CLASS_NAME}>{report.title}</span>
           )}
         </div>
-      </div>
+      </Link>
     </div>
   );
 };

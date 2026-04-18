@@ -10,6 +10,7 @@ import {
   getStandardConversation,
   getStudioConversation,
 } from '@/mock-data/conversations';
+import { getReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
 import { PanelLeftIcon, Share2Icon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
@@ -21,6 +22,10 @@ function getChatTitle(chatId: string) {
 
 function getStudioTitle(projectId: string) {
   return getStudioConversation(projectId)?.title ?? 'Project';
+}
+
+function getReportTitle(reportId: string) {
+  return getReport(reportId)?.title ?? 'Report';
 }
 
 export function getChatDetailId(pathname: string) {
@@ -35,6 +40,12 @@ export function getStudioDetailId(pathname: string) {
   if (match?.[1] === 'new') {
     return null;
   }
+
+  return match?.[1] ?? null;
+}
+
+export function getReportDetailId(pathname: string) {
+  const match = pathname.match(/^\/reports\/([^/]+)$/);
 
   return match?.[1] ?? null;
 }
@@ -63,6 +74,12 @@ function getProtectedHeaderTitle(pathname: string) {
 
   if (studioDetailId) {
     return getStudioTitle(studioDetailId);
+  }
+
+  const reportDetailId = getReportDetailId(pathname);
+
+  if (reportDetailId) {
+    return getReportTitle(reportDetailId);
   }
 
   if (pathname === '/chat') {
@@ -98,12 +115,13 @@ export const ProtectedHeader = () => {
 
   const chatDetailId = getChatDetailId(pathname);
   const studioDetailId = getStudioDetailId(pathname);
+  const reportDetailId = getReportDetailId(pathname);
 
   const studioProject = studioDetailId
     ? getStudioConversation(studioDetailId)
     : undefined;
 
-  const detailId = chatDetailId ?? studioDetailId;
+  const detailId = chatDetailId ?? studioDetailId ?? reportDetailId;
 
   const [studioProjectValuesById, setStudioProjectValuesById] = useState<
     Record<string, ProjectFormValues>
@@ -145,7 +163,16 @@ export const ProtectedHeader = () => {
           copySuccessMessage: 'Public project link copied to clipboard',
           copyErrorMessage: 'Failed to copy project link',
         }
-      : null;
+      : reportDetailId
+        ? {
+            title: 'Share report',
+            description:
+              'Make this report public or private. Public reports can be viewed by anyone with the link.',
+            sharePath: `/reports/${reportDetailId}`,
+            copySuccessMessage: 'Public report link copied to clipboard',
+            copyErrorMessage: 'Failed to copy report link',
+          }
+        : null;
 
   return (
     <header

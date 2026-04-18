@@ -17,6 +17,7 @@ import { useBrowserShare } from '@/hooks/use-browser-share';
 import type { MockReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
 import { GlobeIcon, LinkIcon, LockIcon } from 'lucide-react';
+import Link from 'next/link';
 import { useEffect, useRef, useState } from 'react';
 
 interface ReportTableProps {
@@ -110,25 +111,34 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
           tabIndex={-1}
         />
       </ShareDialog>
-      <TableCell>
+      <TableCell className="p-0">
         {isEditing ? (
-          <input
-            ref={inputRef}
-            defaultValue={report.title}
-            className="w-full min-w-0 bg-transparent text-sm font-medium outline-none"
-            onBlur={commitRename}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                event.preventDefault();
-                commitRename();
-              } else if (event.key === 'Escape') {
-                event.preventDefault();
-                setIsEditing(false);
-              }
-            }}
-          />
+          <div className="p-2">
+            <input
+              ref={inputRef}
+              defaultValue={report.title}
+              className="w-full min-w-0 bg-transparent text-sm font-medium outline-none"
+              onBlur={commitRename}
+              onKeyDown={(event) => {
+                if (event.key === 'Enter') {
+                  event.preventDefault();
+                  commitRename();
+                } else if (event.key === 'Escape') {
+                  event.preventDefault();
+                  setIsEditing(false);
+                }
+              }}
+            />
+          </div>
         ) : (
-          <span className="truncate text-sm font-medium">{report.title}</span>
+          <Link
+            href={`/reports/${report.id}`}
+            className="group block p-2"
+          >
+            <span className="truncate text-sm font-medium group-hover:underline">
+              {report.title}
+            </span>
+          </Link>
         )}
       </TableCell>
       <TableCell>
