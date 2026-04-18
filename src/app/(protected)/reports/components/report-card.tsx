@@ -111,7 +111,7 @@ export const ReportCard = ({
         onDelete={() => setIsDeleteDialogOpen(true)}
       />
       <div className="bg-card border-border/50 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300">
-        <div className="bg-background border-border/50 h-40 overflow-hidden border-b px-3 pt-3">
+        <div className="bg-muted/50 border-border/50 dark:bg-muted/90 h-40 overflow-hidden border-b px-3 pt-3">
           {previewBlocks.length > 0 ? (
             <div
               className="origin-top-left space-y-3"
