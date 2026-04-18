@@ -7,7 +7,7 @@ import {
 import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { STUDIO_ASPECT_RATIO_OPTIONS } from '@/app/(protected)/studio/utils';
 import { SearchBar } from '@/components/search-bar';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import {
   DropdownMenu,
@@ -21,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getStudioConversations } from '@/mock-data/conversations';
+import { cn } from '@/utils/utils';
 import { useAtom } from 'jotai';
 import {
   ArrowUpDownIcon,
@@ -190,12 +191,10 @@ export default function StudioPage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 py-6 sm:py-8">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Projects</h1>
-        <Button asChild>
-          <Link href="/studio/new">
-            <PlusIcon />
-            New Project
-          </Link>
-        </Button>
+        <Link href="/studio/new" className={cn(buttonVariants())}>
+          <PlusIcon />
+          New Project
+        </Link>
       </div>
       <div className="flex gap-2">
         <SearchBar
@@ -233,11 +232,7 @@ export default function StudioPage() {
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button
-                variant="outline"
-                size="icon"
-                aria-label="Sort projects"
-              >
+              <Button variant="outline" size="icon" aria-label="Sort projects">
                 <ArrowUpDownIcon />
               </Button>
             </DropdownMenuTrigger>
