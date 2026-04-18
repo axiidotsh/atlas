@@ -299,7 +299,7 @@ export const MetricsShareButton = ({
                   type="button"
                   variant="ghost"
                   className={cn(
-                    'h-10 rounded-none border-x-0 border-t-0 border-b-[3px] px-0 pr-5 text-sm font-medium shadow-none hover:bg-transparent',
+                    'h-10 rounded-none border-x-0 border-t-0 border-b-[3px] bg-transparent! px-0 pr-5 text-sm font-medium shadow-none',
                     isActive
                       ? 'border-primary text-foreground hover:text-foreground'
                       : 'text-muted-foreground hover:text-muted-foreground border-transparent'

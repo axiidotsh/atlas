@@ -73,10 +73,10 @@ export const PlatformBreakdownGrid = () => {
   const minContentWidth = columnMinWidth * (platformSummaries.length + 1);
 
   return (
-    <Card className="gap-4">
+    <Card>
       <ScrollArea>
         <div style={{ minWidth: minContentWidth }}>
-          <CardHeader>
+          <CardHeader className="pb-4">
             <div
               className="grid items-center gap-4 px-2"
               style={{ gridTemplateColumns: gridTemplate }}
