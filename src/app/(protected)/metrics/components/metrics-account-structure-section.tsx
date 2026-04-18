@@ -7,8 +7,10 @@ import {
   getCampaignStatusClassName,
 } from '@/app/(protected)/metrics/campaign-performance.utils';
 import {
+  CREATIVE_INSIGHT_ROWS,
   getMetricLabel,
   getPerformanceRows,
+  type CreativeInsightRow,
   type MetricsPerformanceRow,
 } from '@/app/(protected)/metrics/metrics-data';
 import { MetricsChartCard } from '@/app/(protected)/metrics/components/metrics-chart-card';
@@ -21,9 +23,11 @@ import { ButtonGroup } from '@/components/ui/button-group';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Separator } from '@/components/ui/separator';
 import {
   ChartContainer,
   ChartTooltip,
@@ -74,6 +78,8 @@ import {
   ChevronDownIcon,
   Columns3CogIcon,
   FunnelIcon,
+  ImageIcon,
+  PlayIcon,
 } from 'lucide-react';
 import { useState } from 'react';
 import { Cell, Pie, PieChart } from 'recharts';
@@ -101,6 +107,11 @@ interface BreakdownDatum {
   platform?: AdPlatform;
 }
 
+interface DetailRow {
+  label: string;
+  value: React.ReactNode;
+}
+
 const DISPLAY_LIMIT = 5;
 
 const META_ACCOUNT_COLORS = ['var(--chart-1)', 'var(--chart-2)'] as const;
@@ -124,12 +135,10 @@ const STATUS_COLORS: Record<CampaignStatus, string> = {
 };
 
 const CAMPAIGN_DIMENSION_COLUMNS: PerformanceColumnOption[] = [
-  { id: 'adAccount', label: 'Ad Account', type: 'dimension' },
   { id: 'status', label: 'Status', type: 'dimension' },
 ];
 
 const AD_SET_DIMENSION_COLUMNS: PerformanceColumnOption[] = [
-  { id: 'adAccount', label: 'Ad Account', type: 'dimension' },
   { id: 'status', label: 'Status', type: 'dimension' },
 ];
 
@@ -139,11 +148,19 @@ const METRIC_COLUMNS: PerformanceColumnOption[] = MOCK_METRICS.map((metric) => (
   type: 'metric',
 }));
 
+const DEFAULT_METRIC_COLUMN_IDS = MOCK_METRICS.map(
+  (metric) => metric.id
+) satisfies CoreMetricId[];
+
 const DEFAULT_VISIBLE_COLUMN_IDS: PerformanceSectionState<PerformanceColumnId[]> = {
-  campaign: ['adAccount', 'status', 'impressions', 'spend', 'revenue', 'roas'],
-  adSet: ['adAccount', 'status', 'impressions', 'spend', 'revenue', 'roas'],
-  ad: ['adAccount', 'status', 'impressions', 'spend', 'revenue', 'roas'],
+  campaign: ['status', ...DEFAULT_METRIC_COLUMN_IDS],
+  adSet: ['status', ...DEFAULT_METRIC_COLUMN_IDS],
+  ad: ['status', ...DEFAULT_METRIC_COLUMN_IDS],
 };
+
+const creativeInsightRowsById = new Map(
+  CREATIVE_INSIGHT_ROWS.map((creative) => [creative.id, creative])
+);
 
 export const MetricsAccountStructureSection = () => {
   const [level, setLevel] = useState<PerformanceLevel>('campaign');
@@ -170,29 +187,31 @@ export const MetricsAccountStructureSection = () => {
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
-        <MetricsChartCard
-          title={getCompositionChartTitle(level)}
-          description={getCompositionChartDescription(level)}
-          summary={String(totalRows)}
-          summaryLabel={summaryLabel}
-        >
-          <BreakdownPieCard
-            data={compositionBreakdown}
-            config={createChartConfig(compositionBreakdown)}
-          />
-        </MetricsChartCard>
-        <MetricsChartCard
-          title={getStatusChartTitle(level)}
-          description={getStatusChartDescription(level)}
-          summary={String(totalRows)}
-          summaryLabel={summaryLabel}
-        >
-          <BreakdownPieCard
-            data={statusBreakdown}
-            config={createChartConfig(statusBreakdown)}
-          />
-        </MetricsChartCard>
+      <div className="flex flex-col gap-4">
+        <div className="grid grid-cols-1 gap-4 xl:grid-cols-2">
+          <MetricsChartCard
+            title={getCompositionChartTitle(level)}
+            description={getCompositionChartDescription(level)}
+            summary={String(totalRows)}
+            summaryLabel={summaryLabel}
+          >
+            <BreakdownPieCard
+              data={compositionBreakdown}
+              config={createChartConfig(compositionBreakdown)}
+            />
+          </MetricsChartCard>
+          <MetricsChartCard
+            title={getStatusChartTitle(level)}
+            description={getStatusChartDescription(level)}
+            summary={String(totalRows)}
+            summaryLabel={summaryLabel}
+          >
+            <BreakdownPieCard
+              data={statusBreakdown}
+              config={createChartConfig(statusBreakdown)}
+            />
+          </MetricsChartCard>
+        </div>
         <PerformanceListCard level={level} tone="top" />
         <PerformanceListCard level={level} tone="bottom" />
       </div>
@@ -298,6 +317,84 @@ const BreakdownLabel = ({ slice }: BreakdownLabelProps) => {
   return <span className="truncate">{slice.label}</span>;
 };
 
+interface PerformanceItemDetailSheetProps {
+  row: MetricsPerformanceRow | null;
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+}
+
+const PerformanceItemDetailSheet = ({
+  row,
+  open,
+  onOpenChange,
+}: PerformanceItemDetailSheetProps) => {
+  if (!row) {
+    return null;
+  }
+
+  const creative = row.level === 'ad' ? creativeInsightRowsById.get(row.id) : null;
+  const sheetDescription = getPerformanceItemSheetDescription(row.level);
+  const contextRows = getPerformanceContextRows(row, creative);
+  const metricRows = getPerformanceMetricRows(row, creative);
+  const adCopyRows = creative ? getAdCopyRows(creative) : [];
+
+  return (
+    <Sheet open={open} onOpenChange={onOpenChange}>
+      <SheetContent
+        className="bg-background w-full gap-0 data-[side=right]:w-screen sm:data-[side=right]:w-[min(96vw,1120px)] sm:data-[side=right]:max-w-[1120px]"
+        onOpenAutoFocus={(event) => event.preventDefault()}
+      >
+        <SheetHeader className="border-b pr-14">
+          <SheetTitle>{row.name}</SheetTitle>
+          <SheetDescription>{sheetDescription}</SheetDescription>
+        </SheetHeader>
+        <div className="min-h-0 flex-1 overflow-auto">
+          <div className="space-y-6 p-4 sm:p-6">
+            <DetailRowsCard
+              title={getPerformanceDetailsCardTitle(row.level)}
+              description={`Structure, status, and hierarchy for this ${getPerformanceItemLabel(row.level)}.`}
+              rows={contextRows}
+            />
+            <DetailRowsCard
+              title="Metrics"
+              description={`Current performance metrics for this ${getPerformanceItemLabel(row.level)}.`}
+              rows={metricRows}
+            />
+            {creative ? (
+              <DetailRowsCard
+                title="Ad Copy"
+                description="Copy and messaging used in this ad."
+                rows={adCopyRows}
+              />
+            ) : null}
+            {creative ? (
+              <Card className="gap-4 py-5">
+                <CardHeader className="px-5">
+                  <div className="space-y-1">
+                    <CardTitle className="text-sm">Ad Gallery</CardTitle>
+                    <CardDescription>
+                      Assets used in this ad creative.
+                    </CardDescription>
+                  </div>
+                </CardHeader>
+                <CardContent className="px-5">
+                  <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                    {creative.media.map((media) => (
+                      <div key={media.id}>
+                        <MediaDetail media={media} title={media.title} />
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            ) : null}
+          </div>
+        </div>
+      </SheetContent>
+    </Sheet>
+  );
+};
+
 interface PerformanceListCardProps {
   level: PerformanceLevel;
   tone: 'top' | 'bottom';
@@ -305,6 +402,7 @@ interface PerformanceListCardProps {
 
 const PerformanceListCard = ({ level, tone }: PerformanceListCardProps) => {
   const [selectedMetricId, setSelectedMetricId] = useState<CoreMetricId>('roas');
+  const [selectedRow, setSelectedRow] = useState<MetricsPerformanceRow | null>(null);
   const selectedMetricLabel = getMetricLabel(selectedMetricId);
   const rows = getPerformanceRows(level);
   const rankedRows = [...rows].sort((leftRow, rightRow) =>
@@ -317,106 +415,128 @@ const PerformanceListCard = ({ level, tone }: PerformanceListCardProps) => {
   const title = tone === 'top' ? 'Top Performers' : 'Bottom Performers';
 
   return (
-    <Card className="gap-4">
-      <CardHeader>
-        <div className="flex items-center justify-between gap-2">
-          <CardTitle className="text-muted-foreground text-sm">{title}</CardTitle>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                size="sm"
-                className="text-muted-foreground h-7 text-xs"
-              >
-                {selectedMetricLabel}
-                <ChevronDownIcon />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end" className="w-48 min-w-48">
-              <DropdownMenuLabel>Performance Metric</DropdownMenuLabel>
-              <DropdownMenuRadioGroup
-                value={selectedMetricId}
-                onValueChange={(value) =>
-                  setSelectedMetricId(value as CoreMetricId)
-                }
-              >
-                {MOCK_METRICS.map((metric) => (
-                  <DropdownMenuRadioItem key={metric.id} value={metric.id}>
-                    {metric.title}
-                  </DropdownMenuRadioItem>
-                ))}
-              </DropdownMenuRadioGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {displayRows.length === 0 ? (
-          <p className="text-muted-foreground text-sm">
-            No performance data is available right now.
-          </p>
-        ) : (
-          <div className="px-2">
-            {displayRows.map((row, index) => {
-              const PlatformIcon = getCampaignPlatformIcon(row.adAccount.platform);
+    <>
+      <Card className="gap-4">
+        <CardHeader>
+          <div className="flex items-center justify-between gap-2">
+            <CardTitle className="text-muted-foreground text-sm">{title}</CardTitle>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="text-muted-foreground h-7 text-xs"
+                >
+                  {selectedMetricLabel}
+                  <ChevronDownIcon />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-48 min-w-48">
+                <DropdownMenuLabel>Performance Metric</DropdownMenuLabel>
+                <DropdownMenuRadioGroup
+                  value={selectedMetricId}
+                  onValueChange={(value) =>
+                    setSelectedMetricId(value as CoreMetricId)
+                  }
+                >
+                  {MOCK_METRICS.map((metric) => (
+                    <DropdownMenuRadioItem key={metric.id} value={metric.id}>
+                      {metric.title}
+                    </DropdownMenuRadioItem>
+                  ))}
+                </DropdownMenuRadioGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
+        </CardHeader>
+        <CardContent>
+          {displayRows.length === 0 ? (
+            <p className="text-muted-foreground text-sm">
+              No performance data is available right now.
+            </p>
+          ) : (
+            <div className="px-2">
+              {displayRows.map((row, index) => {
+                const PlatformIcon = getCampaignPlatformIcon(row.adAccount.platform);
 
-              return (
-                <div key={row.id}>
-                  {index > 0 ? <div className="bg-border h-px w-full" /> : null}
-                  <div className="flex items-center justify-between gap-6 py-3">
-                    <div className="min-w-0">
-                      <div className="flex items-center gap-3">
-                        {level === 'ad' ? (
-                          <img
-                            src={getPerformanceRowThumbnail(row)}
-                            alt=""
-                            className="size-10 min-w-10 shrink-0 rounded-md object-cover"
-                          />
-                        ) : null}
-                        <div className="min-w-0 space-y-1">
-                          <p className="truncate text-sm font-medium">{row.name}</p>
-                          <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
-                            <PlatformIcon className="size-3" />
-                            <BreadcrumbTooltip label={row.adAccount.name} />
-                            {row.campaignName ? (
-                              <>
-                                <span aria-hidden="true">/</span>
-                                <BreadcrumbTooltip label={row.campaignName} />
-                              </>
-                            ) : null}
-                            {row.adSetName ? (
-                              <>
-                                <span aria-hidden="true">/</span>
-                                <BreadcrumbTooltip label={row.adSetName} />
-                              </>
-                            ) : null}
-                            <span aria-hidden="true">/</span>
-                            <span className="shrink-0 whitespace-nowrap capitalize">
-                              {formatCampaignStatus(row.status)}
-                            </span>
+                return (
+                  <div key={row.id}>
+                    {index > 0 ? <div className="bg-border h-px w-full" /> : null}
+                    <div
+                      role="button"
+                      tabIndex={0}
+                      onClick={() => setSelectedRow(row)}
+                      onKeyDown={(event) => {
+                        if (event.key === 'Enter' || event.key === ' ') {
+                          event.preventDefault();
+                          setSelectedRow(row);
+                        }
+                      }}
+                      className="-mx-5 flex cursor-pointer items-center justify-between gap-6 rounded-xl px-5 py-3 transition-colors hover:bg-accent/70 dark:hover:bg-accent/40"
+                    >
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-3">
+                          {level === 'ad' ? (
+                            <img
+                              src={getPerformanceRowThumbnail(row)}
+                              alt=""
+                              className="size-10 min-w-10 shrink-0 rounded-md object-cover"
+                            />
+                          ) : null}
+                          <div className="min-w-0 space-y-1">
+                            <p className="truncate text-sm font-medium">{row.name}</p>
+                            <div className="text-muted-foreground flex items-center gap-1.5 text-xs">
+                              <PlatformIcon className="size-3" />
+                              <BreadcrumbTooltip label={row.adAccount.name} />
+                              {row.campaignName ? (
+                                <>
+                                  <span aria-hidden="true">/</span>
+                                  <BreadcrumbTooltip label={row.campaignName} />
+                                </>
+                              ) : null}
+                              {row.adSetName ? (
+                                <>
+                                  <span aria-hidden="true">/</span>
+                                  <BreadcrumbTooltip label={row.adSetName} />
+                                </>
+                              ) : null}
+                              <span aria-hidden="true">/</span>
+                              <span className="shrink-0 whitespace-nowrap capitalize">
+                                {formatCampaignStatus(row.status)}
+                              </span>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
-                    <div className="shrink-0 text-right">
-                      <p
-                        className={cn(
-                          'text-sm font-medium tabular-nums',
-                          tone === 'bottom' &&
-                            'text-destructive dark:text-red-300'
-                        )}
-                      >
-                        {row.metrics[selectedMetricId]}
-                      </p>
+                      <div className="shrink-0 text-right">
+                        <p
+                          className={cn(
+                            'text-sm font-medium tabular-nums',
+                            tone === 'bottom' &&
+                              'text-destructive dark:text-red-300'
+                          )}
+                        >
+                          {row.metrics[selectedMetricId]}
+                        </p>
+                      </div>
                     </div>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </CardContent>
-    </Card>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      <PerformanceItemDetailSheet
+        row={selectedRow}
+        open={selectedRow !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedRow(null);
+          }
+        }}
+      />
+    </>
   );
 };
 
@@ -687,112 +807,141 @@ const PerformanceTable = ({
   visibleColumnIds,
   visibleMetrics,
 }: PerformanceTableProps) => {
+  const [selectedRow, setSelectedRow] = useState<MetricsPerformanceRow | null>(null);
   const visibleColumnIdSet = new Set(visibleColumnIds);
-  const isAdAccountVisible = visibleColumnIdSet.has('adAccount');
   const isStatusVisible = visibleColumnIdSet.has('status');
 
   const columnCount = 1 + Number(isStatusVisible) + visibleMetrics.length;
 
   return (
-    <div className="dark:bg-muted bg-card overflow-auto rounded-xl border">
-      <Table>
-        <TableHeader className="dark:bg-card bg-muted">
-          <TableRow>
-            <TableHead className="dark:bg-card bg-muted md:after:bg-border/80 h-14 min-w-80 px-5 text-sm font-semibold md:sticky md:left-0 md:z-20 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
-              {level === 'campaign' ? 'Campaign' : level === 'adSet' ? 'Ad Set' : 'Ad'}
-            </TableHead>
-            {isStatusVisible ? (
-              <TableHead className="h-14 min-w-40 px-5 text-sm font-semibold">
-                Status
-              </TableHead>
-            ) : null}
-            {visibleMetrics.map((metricId) => (
-              <TableHead
-                key={metricId}
-                className="h-14 px-7 text-right text-sm font-semibold"
-              >
-                {getMetricLabel(metricId)}
-              </TableHead>
-            ))}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {rows.length === 0 ? (
+    <>
+      <div className="dark:bg-muted bg-card overflow-auto rounded-xl border">
+        <Table>
+          <TableHeader className="dark:bg-card bg-muted">
             <TableRow>
-              <TableCell
-                colSpan={columnCount}
-                className="text-muted-foreground px-5 py-10 text-center text-sm"
-              >
-                No {getLevelLabel(level)} match the current filters.
-              </TableCell>
+              <TableHead className="dark:bg-card bg-muted md:after:bg-border/80 h-14 min-w-80 px-5 text-sm font-semibold md:sticky md:left-0 md:z-20 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
+                {level === 'campaign' ? 'Campaign' : level === 'adSet' ? 'Ad Set' : 'Ad'}
+              </TableHead>
+              {isStatusVisible ? (
+                <TableHead className="h-14 min-w-40 px-5 text-sm font-semibold">
+                  Status
+                </TableHead>
+              ) : null}
+              {visibleMetrics.map((metricId) => (
+                <TableHead
+                  key={metricId}
+                  className="h-14 px-7 text-right text-sm font-semibold"
+                >
+                  {getMetricLabel(metricId)}
+                </TableHead>
+              ))}
             </TableRow>
-          ) : null}
-          {rows.map((row) => {
-            const PlatformIcon = getCampaignPlatformIcon(row.adAccount.platform);
-
-            return (
-              <TableRow key={row.id} className="group">
-                <TableCell className="bg-card group-hover:bg-muted dark:bg-muted dark:group-hover:bg-muted md:after:bg-border/80 min-w-80 px-5 py-4 align-top whitespace-normal md:sticky md:left-0 md:z-10 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
-                  <div className={cn('space-y-1.5', level === 'ad' && 'flex items-start gap-3 space-y-0')}>
-                    {level === 'ad' ? (
-                      <img
-                        src={getPerformanceRowThumbnail(row)}
-                        alt=""
-                        className="size-10 min-w-10 shrink-0 rounded-md object-cover"
-                      />
-                    ) : null}
-                    <div className="min-w-0 space-y-1.5">
-                      <p className="text-foreground text-sm font-medium">
-                        {row.name}
-                      </p>
-                    {isAdAccountVisible ? (
-                      <div className="text-muted-foreground flex items-center gap-2 text-xs">
-                        <PlatformIcon className="size-3.5" />
-                        <BreadcrumbTooltip label={row.adAccount.name} />
-                        {row.campaignName ? (
-                          <>
-                            <span aria-hidden="true">/</span>
-                            <BreadcrumbTooltip label={row.campaignName} />
-                          </>
-                        ) : null}
-                        {row.adSetName ? (
-                          <>
-                            <span aria-hidden="true">/</span>
-                            <BreadcrumbTooltip label={row.adSetName} />
-                          </>
-                        ) : null}
-                      </div>
-                    ) : null}
-                    </div>
-                  </div>
+          </TableHeader>
+          <TableBody>
+            {rows.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={columnCount}
+                  className="text-muted-foreground px-5 py-10 text-center text-sm"
+                >
+                  No {getLevelLabel(level)} match the current filters.
                 </TableCell>
-                {isStatusVisible ? (
-                  <TableCell className="min-w-40 px-5 py-4">
-                    <Badge
-                      variant="outline"
+              </TableRow>
+            ) : null}
+            {rows.map((row) => {
+              const PlatformIcon = getCampaignPlatformIcon(row.adAccount.platform);
+
+              return (
+                <TableRow
+                  key={row.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setSelectedRow(row)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      setSelectedRow(row);
+                    }
+                  }}
+                  className="group cursor-pointer"
+                >
+                  <TableCell className="bg-card dark:bg-muted md:after:bg-border/80 min-w-80 px-5 py-4 align-top whitespace-normal transition-colors group-hover:bg-accent/70 dark:group-hover:bg-accent/40 md:sticky md:left-0 md:z-10 md:after:absolute md:after:inset-y-0 md:after:right-0 md:after:w-px">
+                    <div
                       className={cn(
-                        'capitalize',
-                        getCampaignStatusClassName(row.status)
+                        'space-y-1.5',
+                        level === 'ad' && 'flex items-start gap-3 space-y-0'
                       )}
                     >
-                      {formatCampaignStatus(row.status)}
-                    </Badge>
+                      {level === 'ad' ? (
+                        <img
+                          src={getPerformanceRowThumbnail(row)}
+                          alt=""
+                          className="size-10 min-w-10 shrink-0 rounded-md object-cover"
+                        />
+                      ) : null}
+                      <div className="min-w-0 flex-1 space-y-1.5">
+                        <div className="flex items-start justify-between gap-3">
+                          <p className="text-foreground min-w-0 text-sm font-medium">
+                            {row.name}
+                          </p>
+                          <ArrowUpRightIcon className="text-muted-foreground size-4 shrink-0" />
+                        </div>
+                        <div className="text-muted-foreground flex items-center gap-2 text-xs">
+                          <PlatformIcon className="size-3.5" />
+                          <BreadcrumbTooltip label={row.adAccount.name} />
+                          {row.campaignName ? (
+                            <>
+                              <span aria-hidden="true">/</span>
+                              <BreadcrumbTooltip label={row.campaignName} />
+                            </>
+                          ) : null}
+                          {row.adSetName ? (
+                            <>
+                              <span aria-hidden="true">/</span>
+                              <BreadcrumbTooltip label={row.adSetName} />
+                            </>
+                          ) : null}
+                        </div>
+                      </div>
+                    </div>
                   </TableCell>
-                ) : null}
-                {visibleMetrics.map((metricId) => (
-                  <TableCell
-                    key={metricId}
-                    className="px-7 py-4 text-right text-sm tabular-nums"
-                  >
-                    {row.metrics[metricId]}
-                  </TableCell>
-                ))}
-              </TableRow>
-            );
-          })}
-        </TableBody>
-      </Table>
-    </div>
+                  {isStatusVisible ? (
+                    <TableCell className="min-w-40 px-5 py-4 transition-colors group-hover:bg-accent/70 dark:group-hover:bg-accent/40">
+                      <Badge
+                        variant="outline"
+                        className={cn(
+                          'capitalize',
+                          getCampaignStatusClassName(row.status)
+                        )}
+                      >
+                        {formatCampaignStatus(row.status)}
+                      </Badge>
+                    </TableCell>
+                  ) : null}
+                  {visibleMetrics.map((metricId) => (
+                    <TableCell
+                      key={metricId}
+                      className="px-7 py-4 text-right text-sm tabular-nums transition-colors group-hover:bg-accent/70 dark:group-hover:bg-accent/40"
+                    >
+                      {row.metrics[metricId]}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+      <PerformanceItemDetailSheet
+        row={selectedRow}
+        open={selectedRow !== null}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedRow(null);
+          }
+        }}
+      />
+    </>
   );
 };
 
@@ -1068,6 +1217,144 @@ function getPerformanceRowThumbnail(row: MetricsPerformanceRow) {
   return row.previewMedia.src;
 }
 
+interface AdAccountPlatformIconProps {
+  platform: AdPlatform;
+}
+
+const AdAccountPlatformIcon = ({ platform }: AdAccountPlatformIconProps) => {
+  return platform === 'google' ? (
+    <GoogleAdsLogo className="h-4 w-auto" />
+  ) : (
+    <MetaLogo className="h-3 w-auto" />
+  );
+};
+
+function getPerformanceItemLabel(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'campaign';
+  }
+
+  if (level === 'adSet') {
+    return 'ad set';
+  }
+
+  return 'ad';
+}
+
+function getPerformanceItemSheetDescription(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Review the full performance snapshot and account context for this campaign.';
+  }
+
+  if (level === 'adSet') {
+    return 'Review the full performance snapshot and campaign context for this ad set.';
+  }
+
+  return 'Review the full performance snapshot, hierarchy, and creative assets for this ad.';
+}
+
+function getPerformanceDetailsCardTitle(level: PerformanceLevel) {
+  if (level === 'campaign') {
+    return 'Campaign Details';
+  }
+
+  if (level === 'adSet') {
+    return 'Ad Set Details';
+  }
+
+  return 'Ad Details';
+}
+
+function getPerformanceContextRows(
+  row: MetricsPerformanceRow,
+  creative: CreativeInsightRow | null | undefined
+) {
+  const rows: DetailRow[] = [
+    {
+      label: 'Status',
+      value: (
+        <Badge
+          variant="outline"
+          className={cn('capitalize', getCampaignStatusClassName(row.status))}
+        >
+          {formatCampaignStatus(row.status)}
+        </Badge>
+      ),
+    },
+    {
+      label: 'ID',
+      value: row.id,
+    },
+    {
+      label: toTitleCase(getPerformanceItemLabel(row.level)),
+      value: row.name,
+    },
+    {
+      label: 'Ad Account',
+      value: (
+        <div className="flex items-center gap-2">
+          <AdAccountPlatformIcon platform={row.adAccount.platform} />
+          <span>{row.adAccount.name}</span>
+        </div>
+      ),
+    },
+  ];
+
+  if (row.campaignName) {
+    rows.push({
+      label: 'Campaign',
+      value: row.campaignName,
+    });
+  }
+
+  if (row.adSetName) {
+    rows.push({
+      label: 'Ad Set',
+      value: row.adSetName,
+    });
+  }
+
+  if (creative) {
+    rows.push({
+      label: 'Destination',
+      value: creative.destination,
+    });
+  }
+
+  return rows;
+}
+
+function getPerformanceMetricRows(
+  row: MetricsPerformanceRow,
+  creative: CreativeInsightRow | null | undefined
+) {
+  const coreRows: DetailRow[] = MOCK_METRICS.map((metric) => ({
+    label: metric.title,
+    value: row.metrics[metric.id],
+  }));
+
+  const detailRows: DetailRow[] =
+    creative?.detailMetrics.map((metric) => ({
+      label: metric.label,
+      value: metric.value,
+    })) ?? [];
+
+  return [...coreRows, ...detailRows];
+}
+
+function getAdCopyRows(creative: CreativeInsightRow) {
+  return [
+    {
+      label: 'Headline',
+      value: creative.headline,
+    },
+    {
+      label: 'Primary Text',
+      value: creative.primaryText,
+    },
+  ] satisfies DetailRow[];
+}
+
 interface BreadcrumbTooltipProps {
   label: string;
 }
@@ -1080,5 +1367,89 @@ const BreadcrumbTooltip = ({ label }: BreadcrumbTooltipProps) => {
       </TooltipTrigger>
       <TooltipContent sideOffset={6}>{label}</TooltipContent>
     </Tooltip>
+  );
+};
+
+interface DetailRowsCardProps {
+  title: string;
+  description: string;
+  rows: DetailRow[];
+}
+
+const DetailRowsCard = ({
+  title,
+  description,
+  rows,
+}: DetailRowsCardProps) => {
+  const gridTemplate = 'minmax(160px,0.45fr) minmax(0,1fr)';
+
+  return (
+    <Card className="gap-4 py-5">
+      <CardHeader className="px-5">
+        <div className="space-y-1">
+          <CardTitle className="text-sm">{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
+        </div>
+      </CardHeader>
+      <CardContent className="px-5">
+        <div className="px-2">
+          {rows.map((row, index) => (
+            <div key={`${row.label}-${index}`}>
+              {index > 0 ? <Separator /> : null}
+              <div
+                className="grid items-start gap-4 py-3"
+                style={{ gridTemplateColumns: gridTemplate }}
+              >
+                <p className="text-muted-foreground text-sm">{row.label}</p>
+                <div className="text-sm leading-6 break-words">{row.value}</div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+interface MediaDetailProps {
+  media: CreativeInsightRow['media'][number];
+  title: string;
+}
+
+const MediaDetail = ({ media, title }: MediaDetailProps) => {
+  return (
+    <div className="group relative h-56 overflow-hidden rounded-xl">
+      <div className="absolute inset-0 z-10 bg-linear-to-b from-black/5 via-transparent to-black/70" />
+      <div className="absolute inset-x-0 bottom-0 z-20 p-4 text-white">
+        <div className="flex items-center gap-2">
+          {media.type === 'video' ? (
+            <PlayIcon className="size-4 fill-current" />
+          ) : (
+            <ImageIcon className="size-4" />
+          )}
+          <p className="truncate text-sm font-medium">{title}</p>
+        </div>
+      </div>
+      <div className="bg-muted size-full">
+        {media.type === 'video' ? (
+          <video
+            src={media.src}
+            poster={media.posterSrc}
+            className="size-full object-cover"
+            autoPlay
+            loop
+            muted
+            playsInline
+            preload="metadata"
+          />
+        ) : (
+          <img
+            src={media.src}
+            alt={title}
+            className="size-full object-cover"
+          />
+        )}
+      </div>
+    </div>
   );
 };
