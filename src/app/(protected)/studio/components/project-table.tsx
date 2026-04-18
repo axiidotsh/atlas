@@ -53,7 +53,6 @@ const StackedImages = ({ images }: { images: MockConversationImage[] }) => {
     <div className="flex items-center gap-2">
       <div className="flex items-center">
         {displayImages.map((image, index) => (
-          // eslint-disable-next-line @next/next/no-img-element
           <img
             key={image.id}
             src={image.src}
@@ -102,7 +101,6 @@ const ProjectTableRow = ({
   }, [isEditing]);
 
   const thumbnail = previewImage ? (
-    // eslint-disable-next-line @next/next/no-img-element
     <img
       src={previewImage}
       alt=""

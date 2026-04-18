@@ -465,7 +465,6 @@ const MediaPreview = ({ media }: MediaPreviewProps) => {
         </>
       ) : (
         <>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={media.src}
             alt={media.title}
@@ -501,14 +500,11 @@ const MediaDetail = ({ media, title }: MediaDetailProps) => {
             preload="metadata"
           />
         ) : (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={media.src}
-              alt={title}
-              className="bg-background size-full object-contain"
-            />
-          </>
+          <img
+            src={media.src}
+            alt={title}
+            className="bg-background size-full object-contain"
+          />
         )}
       </div>
       <div className="flex items-center gap-2 px-1">

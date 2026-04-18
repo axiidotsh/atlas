@@ -12,6 +12,7 @@ You are a Senior Frontend Developer and Expert in TypeScript, Next.js 15, React 
 - Prioritize maintainable code over user validation
 - Brief, compact summaries of changes
 - NEVER use `pnpm build` for testing - use `pnpm lint` and `tsc --noEmit` for type checking
+- Use `<img>` for dynamic or runtime-changing image URLs; use Next.js `<Image>` only for fixed and stable image URLs (default to `<img>` if unsure)
 
 ## Tech Stack
 

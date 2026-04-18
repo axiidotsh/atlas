@@ -3,7 +3,6 @@
 import { Button } from '@/components/ui/button';
 import { cn } from '@/utils/utils';
 import { ImagePlusIcon, XIcon } from 'lucide-react';
-import Image from 'next/image';
 import { useDropzone } from 'react-dropzone';
 import type { ReferenceImageValue } from '../../project-form';
 
@@ -88,12 +87,10 @@ export const ImageUpload = ({
         >
           {images.map((image) => (
             <div key={image.id} className="relative aspect-square">
-              <Image
+              <img
                 src={image.preview}
                 alt={image.name}
-                fill
-                unoptimized
-                className="rounded-md border object-cover"
+                className="absolute inset-0 size-full rounded-md border object-cover"
               />
               <Button
                 type="button"

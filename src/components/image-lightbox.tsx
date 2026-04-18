@@ -10,6 +10,7 @@ import {
   DialogDescription,
   DialogTitle,
 } from '@/components/ui/dialog';
+import { cn } from '@/utils/utils';
 import {
   ChevronLeftIcon,
   ChevronRightIcon,
@@ -74,6 +75,8 @@ export const ImageLightbox = ({
   }
 
   const dimensions = getLightboxImageDimensions(activeImage.aspectRatio);
+
+  const isBelowMaxZoom = zoom < MAX_ZOOM;
 
   const handleOpenChange = (nextOpen: boolean) => {
     if (!nextOpen) {
@@ -140,6 +143,14 @@ export const ImageLightbox = ({
 
     if (event.key === '0') {
       event.preventDefault();
+      handleResetZoom();
+    }
+  };
+
+  const handleImageClick = () => {
+    if (isBelowMaxZoom) {
+      handleZoomIn();
+    } else {
       handleResetZoom();
     }
   };
@@ -221,7 +232,6 @@ export const ImageLightbox = ({
         <div className="relative min-h-0 overflow-hidden px-4 py-4">
           <div className="size-full overflow-auto overscroll-contain">
             <div className="flex min-h-full min-w-full items-center justify-center p-2 sm:p-4">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img
                 key={activeImage.id}
                 src={activeImage.src}
@@ -230,13 +240,17 @@ export const ImageLightbox = ({
                 height={dimensions.height}
                 loading="eager"
                 decoding="async"
-                className="shrink-0 object-contain transition-[width] duration-200 ease-out"
+                className={cn(
+                  'shrink-0 object-contain transition-[width] duration-200 ease-out',
+                  isBelowMaxZoom ? 'cursor-zoom-in' : 'cursor-zoom-out'
+                )}
                 style={{
                   width: `${dimensions.width * zoom}px`,
                   height: 'auto',
                   maxWidth: zoom === MIN_ZOOM ? '100%' : 'none',
                   maxHeight: zoom === MIN_ZOOM ? '100%' : 'none',
                 }}
+                onClick={handleImageClick}
               />
             </div>
           </div>

@@ -66,14 +66,11 @@ export const ProjectCard = ({
     <>
       <div className="h-40 overflow-hidden">
         {previewImage ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={previewImage}
-              alt=""
-              className="border-border/50 size-full border-b object-cover transition-transform duration-300"
-            />
-          </>
+          <img
+            src={previewImage}
+            alt=""
+            className="border-border/50 size-full border-b object-cover transition-transform duration-300"
+          />
         ) : (
           <div className="bg-muted border-border/50 flex size-full items-center justify-center border-b">
             <ImageOffIcon className="text-muted-foreground size-5" />

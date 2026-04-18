@@ -1,12 +1,12 @@
 'use client';
 
+import { ImageLightbox } from '@/components/image-lightbox';
 import { Button } from '@/components/ui/button';
 import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
 } from '@/components/ui/collapsible';
-import { ImageLightbox } from '@/components/ui/image-lightbox';
 import type {
   MockStudioConversation,
   MockStudioImage,
@@ -19,7 +19,6 @@ import {
   Link2Icon,
   PencilIcon,
 } from 'lucide-react';
-import Image from 'next/image';
 import { useState } from 'react';
 
 interface StudioProjectWorkspaceProps {
@@ -37,17 +36,14 @@ const StudioImageCard = ({ image, onOpen }: StudioImageCardProps) => {
       <div className="relative aspect-square overflow-hidden">
         <button
           type="button"
-          className="absolute inset-0 z-10 cursor-zoom-in"
+          className="absolute inset-0 z-10 cursor-pointer"
           onClick={onOpen}
           aria-label={`Open ${image.title}`}
         />
-        <Image
+        <img
           src={image.src}
           alt={image.title}
-          fill
-          unoptimized
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover transition duration-300 group-focus-within/image:scale-[1.02] group-hover/image:scale-[1.02]"
+          className="absolute inset-0 size-full object-cover transition duration-300 group-focus-within/image:scale-[1.02] group-hover/image:scale-[1.02]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100" />
         <div className="absolute right-3 bottom-3 z-20 flex items-center gap-1 opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100">
