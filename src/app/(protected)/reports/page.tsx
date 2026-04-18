@@ -4,6 +4,7 @@ import {
   reportsViewAtom,
   type ReportsView,
 } from '@/app/(protected)/reports/atoms';
+import { CreateReportDialog } from '@/app/(protected)/reports/components/create-report-dialog';
 import { ReportCard } from '@/app/(protected)/reports/components/report-card';
 import { ReportTable } from '@/app/(protected)/reports/components/report-table';
 import { SearchBar } from '@/components/search-bar';
@@ -149,10 +150,12 @@ export default function ReportsPage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 py-6 sm:py-8">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Reports</h1>
-        <Button>
-          <PlusIcon />
-          New Report
-        </Button>
+        <CreateReportDialog>
+          <Button>
+            <PlusIcon />
+            New Report
+          </Button>
+        </CreateReportDialog>
       </div>
       <div className="flex gap-2">
         <SearchBar
