@@ -49,6 +49,7 @@ function renderPlatformIcon(platform: AdPlatform) {
 interface AdAccountSelectorProps {
   selectedAdAccountIds: MockAdAccount['id'][];
   onSelectedAdAccountIdsChange: (adAccountIds: MockAdAccount['id'][]) => void;
+  className?: string;
   variant?: ButtonVariant;
   size?: ButtonSize;
 }
@@ -56,6 +57,7 @@ interface AdAccountSelectorProps {
 export const AdAccountSelector = ({
   selectedAdAccountIds,
   onSelectedAdAccountIdsChange,
+  className,
   variant = 'default',
   size = 'sm',
 }: AdAccountSelectorProps) => {
@@ -103,7 +105,8 @@ export const AdAccountSelector = ({
           className={cn(
             'min-w-0 justify-between gap-2 font-normal',
             hasSelectedAdAccounts ? 'text-foreground' : 'text-muted-foreground',
-            size === 'sm' && 'text-xs'
+            size === 'sm' && 'text-xs',
+            className
           )}
         >
           {selectedAdAccount ? (

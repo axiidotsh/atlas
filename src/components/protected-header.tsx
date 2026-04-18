@@ -1,6 +1,7 @@
 'use client';
 
 import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
+import { MetricsShareButton } from '@/components/metrics-share-button';
 import { type ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
@@ -191,6 +192,9 @@ export const ProtectedHeader = () => {
               <span>Share</span>
             </Button>
           </ShareDialog>
+        ) : null}
+        {pathname === '/metrics' ? (
+          <MetricsShareButton size="sm" />
         ) : null}
       </div>
     </header>
