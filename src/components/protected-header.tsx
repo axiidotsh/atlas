@@ -12,7 +12,7 @@ import {
 } from '@/mock-data/conversations';
 import { getReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
-import { PanelLeftIcon, Share2Icon } from 'lucide-react';
+import { BookOpenIcon, PanelLeftIcon, PencilIcon, Share2Icon } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
@@ -127,6 +127,8 @@ export const ProtectedHeader = () => {
     Record<string, ProjectFormValues>
   >({});
 
+  const [reportMode, setReportMode] = useState<'reading' | 'editing'>('reading');
+
   const studioProjectValues = studioDetailId
     ? studioProjectValuesById[studioDetailId]
     : undefined;
@@ -200,6 +202,31 @@ export const ProtectedHeader = () => {
             initialValues={studioProjectValues ?? studioProject.settings}
             onProjectUpdate={handleStudioProjectUpdate}
           />
+        ) : null}
+        {reportDetailId ? (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            className="shrink-0"
+            tooltip={
+              reportMode === 'reading'
+                ? 'Switch to editing mode'
+                : 'Switch to reading mode'
+            }
+            onClick={() =>
+              setReportMode((mode) =>
+                mode === 'reading' ? 'editing' : 'reading'
+              )
+            }
+          >
+            {reportMode === 'reading' ? <PencilIcon /> : <BookOpenIcon />}
+            <span className="sr-only">
+              {reportMode === 'reading'
+                ? 'Switch to editing mode'
+                : 'Switch to reading mode'}
+            </span>
+          </Button>
         ) : null}
         {resolvedShareConfig ? (
           <ShareDialog
