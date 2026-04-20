@@ -1,6 +1,7 @@
 'use client';
 
 import { ChatActionsDropdown } from '@/components/chat-actions-dropdown';
+import { Button } from '@/components/ui/button';
 import {
   Sidebar,
   SidebarContent,
@@ -16,14 +17,15 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar';
 import { getStandardConversations } from '@/mock-data/conversations';
+import type { MockStandardConversation } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
 import {
   CircleGaugeIcon,
   ClipboardListIcon,
   ImagePlusIcon,
-  MegaphoneIcon,
   MessageCirclePlusIcon,
   PanelLeftIcon,
+  XIcon,
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -52,11 +54,6 @@ const NAV_ITEMS = [
     label: 'Creative Studio',
     href: '/studio',
     icon: ImagePlusIcon,
-  },
-  {
-    label: 'Campaign Launcher',
-    href: '/campaign-launcher',
-    icon: MegaphoneIcon,
   },
 ];
 
@@ -171,17 +168,12 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <SidebarGroup className={cn('pt-0', transitionClassname)}>
           <SidebarMenu>
             {chats.map((chat) => (
-              <SidebarMenuItem key={chat.id}>
-                <SidebarMenuButton
-                  asChild
-                  isActive={isNavItemActive(`/chat/${chat.id}`)}
-                >
-                  <Link href={`/chat/${chat.id}`} onClick={handleNavigate}>
-                    <span>{chat.title}</span>
-                  </Link>
-                </SidebarMenuButton>
-                <ChatActionsDropdown chatTitle={chat.title} />
-              </SidebarMenuItem>
+              <ChatMenuItem
+                key={chat.id}
+                chat={chat}
+                isActive={isNavItemActive(`/chat/${chat.id}`)}
+                onNavigate={handleNavigate}
+              />
             ))}
           </SidebarMenu>
         </SidebarGroup>
@@ -191,5 +183,88 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <UserMenu />
       </SidebarFooter>
     </Sidebar>
+  );
+}
+
+interface ChatMenuItemProps {
+  chat: MockStandardConversation;
+  isActive: boolean;
+  onNavigate: () => void;
+}
+
+function ChatMenuItem({ chat, isActive, onNavigate }: ChatMenuItemProps) {
+  const [isEditing, setIsEditing] = React.useState(false);
+  const inputRef = React.useRef<HTMLInputElement>(null);
+  const shouldKeepInputFocusedRef = React.useRef(false);
+
+  React.useEffect(() => {
+    if (!isEditing) {
+      return;
+    }
+
+    const frameId = requestAnimationFrame(() => {
+      inputRef.current?.focus();
+      inputRef.current?.select();
+    });
+
+    return () => cancelAnimationFrame(frameId);
+  }, [isEditing]);
+
+  return (
+    <SidebarMenuItem>
+      {isEditing ? (
+        <div className="bg-sidebar-accent text-sidebar-accent-foreground relative flex h-8 w-full items-center overflow-hidden rounded-md p-2 pr-9 text-sm">
+          <input
+            ref={inputRef}
+            defaultValue={chat.title}
+            className="block w-full truncate bg-transparent p-0 text-sm outline-none"
+            onBlur={() => setIsEditing(false)}
+            onKeyDown={(event) => {
+              if (event.key === 'Enter' || event.key === 'Escape') {
+                event.preventDefault();
+                setIsEditing(false);
+              }
+            }}
+          />
+          <Button
+            variant="destructive"
+            size="icon-xs"
+            className="absolute top-1/2 right-1 -translate-y-1/2"
+            onMouseDown={(event) => event.preventDefault()}
+            onClick={() => setIsEditing(false)}
+          >
+            <XIcon />
+          </Button>
+        </div>
+      ) : (
+        <>
+          <SidebarMenuButton asChild isActive={isActive}>
+            <Link href={`/chat/${chat.id}`} onClick={onNavigate}>
+              <span>{chat.title}</span>
+            </Link>
+          </SidebarMenuButton>
+          <ChatActionsDropdown
+            chatTitle={chat.title}
+            onCloseAutoFocus={(event) => {
+              if (!shouldKeepInputFocusedRef.current) {
+                return;
+              }
+
+              event.preventDefault();
+              shouldKeepInputFocusedRef.current = false;
+
+              requestAnimationFrame(() => {
+                inputRef.current?.focus();
+                inputRef.current?.select();
+              });
+            }}
+            onRename={() => {
+              shouldKeepInputFocusedRef.current = true;
+              setIsEditing(true);
+            }}
+          />
+        </>
+      )}
+    </SidebarMenuItem>
   );
 }
