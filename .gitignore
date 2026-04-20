@@ -23,6 +23,7 @@
 # misc
 .DS_Store
 *.pem
+.husky/_
 
 # debug
 npm-debug.log*
