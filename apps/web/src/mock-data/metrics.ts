@@ -1,0 +1,74 @@
+import type { MockMetric } from '@/mock-data/types';
+
+export const MOCK_METRICS: MockMetric[] = [
+  {
+    id: 'impressions',
+    title: 'Impressions',
+    description: 'Total times your ads were shown across all active channels.',
+    value: '3.8M',
+    percentageChange: 12.4,
+    trend: 'positive',
+  },
+  {
+    id: 'clicks',
+    title: 'Clicks',
+    description:
+      'Combined ad clicks generated from prospecting and retargeting.',
+    value: '94.2K',
+    percentageChange: 8.7,
+    trend: 'positive',
+  },
+  {
+    id: 'spend',
+    title: 'Spend',
+    description:
+      'Total media spend delivered over the current reporting window.',
+    value: '$128.4K',
+    percentageChange: 3.2,
+    trend: 'negative',
+  },
+  {
+    id: 'reach',
+    title: 'Reach',
+    description: 'Unique people who saw at least one ad from your campaigns.',
+    value: '1.6M',
+    percentageChange: 6.1,
+    trend: 'positive',
+  },
+  {
+    id: 'revenue',
+    title: 'Revenue',
+    description:
+      'Attributed revenue tied back to tracked ad-driven conversions.',
+    value: '$412.7K',
+    percentageChange: 15.9,
+    trend: 'positive',
+  },
+  {
+    id: 'ctr',
+    title: 'CTR',
+    description:
+      'Average click-through rate across all currently selected campaigns.',
+    value: '2.46%',
+    percentageChange: 1.8,
+    trend: 'positive',
+  },
+  {
+    id: 'cpc',
+    title: 'CPC',
+    description:
+      'Average cost per click paid across the selected traffic sources.',
+    value: '$1.36',
+    percentageChange: 4.5,
+    trend: 'negative',
+  },
+  {
+    id: 'roas',
+    title: 'ROAS',
+    description:
+      'Return on ad spend based on attributed revenue and media cost.',
+    value: '3.21x',
+    percentageChange: 0,
+    trend: 'neutral',
+  },
+];
