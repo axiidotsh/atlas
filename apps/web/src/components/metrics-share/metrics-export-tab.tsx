@@ -6,6 +6,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useMetricsPdfExport } from '@/hooks/use-metrics-pdf-export';
+import { sanitizePdfFileName } from '@/utils/pdf';
 import { cn } from '@/utils/utils';
 import { format } from 'date-fns';
 import { useSetAtom } from 'jotai';
@@ -40,15 +41,6 @@ const ACCOUNT_BREAKDOWN_LEVEL_MAP = {
 
 function getDefaultPdfFileName(): string {
   return `Metrics - ${format(new Date(), 'LLL dd, y')}`;
-}
-
-function sanitizeFileName(fileName: string): string {
-  const normalized = (fileName.trim() || getDefaultPdfFileName()).replace(
-    /\.pdf$/i,
-    ''
-  );
-
-  return normalized.replace(/[<>:"/\\|?*\u0000-\u001F]/g, '-');
 }
 
 interface MetricsExportTabProps {
@@ -107,7 +99,7 @@ export const MetricsExportTab = ({ align }: MetricsExportTabProps) => {
     ).map((section) => ACCOUNT_BREAKDOWN_LEVEL_MAP[section.id]);
 
     const didExport = await exportPdf({
-      fileName: sanitizeFileName(fileName),
+      fileName: sanitizePdfFileName(fileName, getDefaultPdfFileName()),
       selectedSections: {
         coreMetrics: selectedSections['core-metrics'],
         platformBreakdown: selectedSections['platform-breakdown'],

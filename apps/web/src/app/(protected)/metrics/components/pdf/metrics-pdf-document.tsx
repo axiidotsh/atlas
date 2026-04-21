@@ -1,29 +1,17 @@
 'use client';
 
 import {
-  formatCampaignStatus,
-  type CampaignPerformanceRow,
-} from '@/app/(protected)/metrics/config/campaign-performance.config';
-import {
-  PLATFORM_BREAKDOWN_METRIC_LABELS,
-  type PlatformBreakdownMetricKey,
-} from '@/app/(protected)/metrics/config/platform-breakdown.config';
-import {
-  getPerformanceRows,
-  type MetricsPerformanceRow,
-} from '@/app/(protected)/metrics/metrics-data';
-import {
   AreaTrendSvg,
   BarLineTrendSvg,
   DonutChartSvg,
   DualLineTrendSvg,
-} from '@/app/(protected)/metrics/pdf/pdf-charts';
+} from '@/app/(protected)/metrics/components/pdf/pdf-charts';
 import {
   CHART_COLORS,
   DISPLAY_ROW_LIMIT,
   SECTION_GAP,
   pdfStyles as styles,
-} from '@/app/(protected)/metrics/pdf/pdf-design';
+} from '@/app/(protected)/metrics/components/pdf/pdf-design';
 import {
   PLATFORM_BREAKDOWN_METRIC_KEYS,
   chunkItems,
@@ -46,7 +34,19 @@ import {
   getStatusChartTitle,
   type PieSlice,
   type PlatformMetricSummary,
-} from '@/app/(protected)/metrics/pdf/pdf-formatters';
+} from '@/app/(protected)/metrics/components/pdf/pdf-formatters';
+import {
+  formatCampaignStatus,
+  type CampaignPerformanceRow,
+} from '@/app/(protected)/metrics/config/campaign-performance.config';
+import {
+  PLATFORM_BREAKDOWN_METRIC_LABELS,
+  type PlatformBreakdownMetricKey,
+} from '@/app/(protected)/metrics/config/platform-breakdown.config';
+import {
+  getPerformanceRows,
+  type MetricsPerformanceRow,
+} from '@/app/(protected)/metrics/metrics-data';
 import { MOCK_METRIC_TRENDS } from '@/mock-data/metric-trends';
 import { MOCK_METRICS } from '@/mock-data/metrics';
 import type { AdPlatform, PerformanceLevel } from '@/mock-data/types';

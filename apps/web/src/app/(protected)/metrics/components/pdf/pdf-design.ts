@@ -1,7 +1,10 @@
 import type { AdPlatform, CampaignStatus } from '@/mock-data/types';
-import { Font, StyleSheet } from '@react-pdf/renderer';
+import { PDF_FONT_FAMILY, registerPdfFonts } from '@/utils/pdf-fonts';
+import { StyleSheet } from '@react-pdf/renderer';
 
-export const FONT_FAMILY = 'Inter';
+registerPdfFonts();
+
+export const FONT_FAMILY = PDF_FONT_FAMILY;
 export const PAGE_PADDING = 24;
 export const CARD_RADIUS = 12;
 export const SECTION_GAP = 14;
@@ -55,28 +58,6 @@ export const CHART_COLORS = {
   roas: CHART_2,
   spend: CHART_3,
 };
-
-Font.register({
-  family: FONT_FAMILY,
-  fonts: [
-    {
-      src: 'https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-400-normal.woff',
-      fontWeight: 400,
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-500-normal.woff',
-      fontWeight: 500,
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-600-normal.woff',
-      fontWeight: 600,
-    },
-    {
-      src: 'https://cdn.jsdelivr.net/npm/@fontsource/inter/files/inter-latin-700-normal.woff',
-      fontWeight: 700,
-    },
-  ],
-});
 
 export const compactNumberFormatter = new Intl.NumberFormat('en-US', {
   notation: 'compact',

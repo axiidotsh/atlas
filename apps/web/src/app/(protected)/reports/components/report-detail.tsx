@@ -1,41 +1,16 @@
 'use client';
 
 import { ReportBlockRenderer } from '@/app/(protected)/reports/components/report-blocks';
-import type { MockReport, ReportBlock } from '@/mock-data/reports';
+import { groupReportBlocks } from '@/app/(protected)/reports/report-block-utils';
+import type { MockReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
 
 interface ReportDetailProps {
   report: MockReport;
 }
 
-interface BlockGroup {
-  type: ReportBlock['type'];
-  blocks: ReportBlock[];
-}
-
-function groupBlocks(blocks: ReportBlock[]): BlockGroup[] {
-  const groups: BlockGroup[] = [];
-
-  for (const block of blocks) {
-    const lastGroup = groups[groups.length - 1];
-
-    if (
-      lastGroup &&
-      lastGroup.type === block.type &&
-      (block.type === 'card' || block.type === 'graph')
-    ) {
-      lastGroup.blocks.push(block);
-      continue;
-    }
-
-    groups.push({ type: block.type, blocks: [block] });
-  }
-
-  return groups;
-}
-
 export const ReportDetail = ({ report }: ReportDetailProps) => {
-  const groups = groupBlocks(report.blocks);
+  const groups = groupReportBlocks(report.blocks);
 
   return (
     <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-6 sm:py-8">

@@ -3,6 +3,7 @@
 import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/project-settings/studio-project-settings-sheet';
 import { type ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { MetricsShareDialog } from '@/components/metrics-share/metrics-share-dialog';
+import { ReportShareDialog } from '@/components/report-share/report-share-dialog';
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
@@ -125,6 +126,7 @@ export const ProtectedHeader = () => {
   const studioProject = studioDetailId
     ? getStudioConversation(studioDetailId)
     : undefined;
+  const report = reportDetailId ? getReport(reportDetailId) : undefined;
 
   const detailId = chatDetailId ?? studioDetailId ?? reportDetailId;
 
@@ -172,16 +174,7 @@ export const ProtectedHeader = () => {
           copySuccessMessage: 'Public project link copied to clipboard',
           copyErrorMessage: 'Failed to copy project link',
         }
-      : reportDetailId
-        ? {
-            title: 'Share report',
-            description:
-              'Make this report public or private. Public reports can be viewed by anyone with the link.',
-            sharePath: `/reports/${reportDetailId}`,
-            copySuccessMessage: 'Public report link copied to clipboard',
-            copyErrorMessage: 'Failed to copy report link',
-          }
-        : null;
+      : null;
 
   return (
     <header
@@ -254,6 +247,7 @@ export const ProtectedHeader = () => {
             </Button>
           </ShareDialog>
         ) : null}
+        {report ? <ReportShareDialog report={report} size="sm" /> : null}
         {pathname === '/metrics' ? <MetricsShareDialog size="sm" /> : null}
       </div>
     </header>

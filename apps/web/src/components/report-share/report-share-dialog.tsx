@@ -1,43 +1,41 @@
 'use client';
 
-import {
-  metricsShareDialogOpenAtom,
-  metricsShareDialogTabAtom,
-  type MetricsShareDialogTab,
-} from '@/app/(protected)/metrics/atoms';
-import { MetricsExportTab } from '@/components/metrics-share/metrics-export-tab';
+import { ReportExportTab } from '@/components/report-share/report-export-tab';
 import { ShareExportDialog } from '@/components/share/share-export-dialog';
 import { ShareLinkTab } from '@/components/share/share-link-tab';
 import { Button, buttonVariants } from '@/components/ui/button';
+import type { MockReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
 import { type VariantProps } from 'class-variance-authority';
-import { useAtom, useSetAtom } from 'jotai';
 import { Share2Icon } from 'lucide-react';
+import { useState } from 'react';
 
-const METRICS_SHARE_PATH = '/metrics';
+type ReportShareDialogTab = 'share' | 'export';
 
-interface MetricsShareDialogProps {
+interface ReportShareDialogProps {
   align?: 'center' | 'end';
   className?: string;
+  report: MockReport;
   size?: VariantProps<typeof buttonVariants>['size'];
   variant?: VariantProps<typeof buttonVariants>['variant'];
 }
 
-export const MetricsShareDialog = ({
+export const ReportShareDialog = ({
   align = 'end',
   className,
+  report,
   size = 'default',
   variant = 'outline',
-}: MetricsShareDialogProps) => {
-  const [isOpen, setIsOpen] = useAtom(metricsShareDialogOpenAtom);
-  const [activeTab, setActiveTab] = useAtom(metricsShareDialogTabAtom);
-  const resetTab = useSetAtom(metricsShareDialogTabAtom);
+}: ReportShareDialogProps) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [activeTab, setActiveTab] = useState<ReportShareDialogTab>('share');
+  const sharePath = report.sharePath ?? `/share/reports/${report.id}`;
 
   function handleOpenChange(nextOpen: boolean) {
     setIsOpen(nextOpen);
 
     if (!nextOpen) {
-      resetTab('share');
+      setActiveTab('share');
     }
   }
 
@@ -46,18 +44,24 @@ export const MetricsShareDialog = ({
       open={isOpen}
       onOpenChange={handleOpenChange}
       value={activeTab}
-      onTabChange={(tab) => setActiveTab(tab as MetricsShareDialogTab)}
-      title="Share metrics"
-      description="Only the metric values you currently see are shared, and they won't update later."
+      onTabChange={setActiveTab}
+      title="Share report"
+      description="Anyone with the link can view this report, or you can export the full report as a PDF."
       shareContent={
         <ShareLinkTab
           align={align}
-          sharePath={METRICS_SHARE_PATH}
-          successMessage="Share link copied to clipboard"
-          errorMessage="Failed to copy share link"
+          sharePath={sharePath}
+          successMessage="Report link copied to clipboard"
+          errorMessage="Failed to copy report link"
         />
       }
-      exportContent={<MetricsExportTab align={align} />}
+      exportContent={
+        <ReportExportTab
+          align={align}
+          report={report}
+          onExportSuccess={() => setIsOpen(false)}
+        />
+      }
       trigger={
         <Button
           type="button"

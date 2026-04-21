@@ -1,13 +1,4 @@
 import {
-  CAMPAIGN_PERFORMANCE_STATUSES,
-  formatCampaignStatus,
-} from '@/app/(protected)/metrics/config/campaign-performance.config';
-import {
-  PLATFORM_BREAKDOWN_METRIC_KEYS,
-  type PlatformBreakdownMetricKey,
-} from '@/app/(protected)/metrics/config/platform-breakdown.config';
-import type { MetricsPerformanceRow } from '@/app/(protected)/metrics/metrics-data';
-import {
   CAMPAIGN_COLORS,
   GOOGLE_ACCOUNT_COLORS,
   META_ACCOUNT_COLORS,
@@ -16,7 +7,16 @@ import {
   compactCurrencyFormatter,
   compactNumberFormatter,
   unitCurrencyFormatter,
-} from '@/app/(protected)/metrics/pdf/pdf-design';
+} from '@/app/(protected)/metrics/components/pdf/pdf-design';
+import {
+  CAMPAIGN_PERFORMANCE_STATUSES,
+  formatCampaignStatus,
+} from '@/app/(protected)/metrics/config/campaign-performance.config';
+import {
+  PLATFORM_BREAKDOWN_METRIC_KEYS,
+  type PlatformBreakdownMetricKey,
+} from '@/app/(protected)/metrics/config/platform-breakdown.config';
+import type { MetricsPerformanceRow } from '@/app/(protected)/metrics/metrics-data';
 import {
   parseMetricValue,
   toTitleCase,

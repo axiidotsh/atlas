@@ -7,11 +7,11 @@ import {
   DONUT_SIZE,
   FONT_FAMILY,
   MUTED,
-} from '@/app/(protected)/metrics/pdf/pdf-design';
+} from '@/app/(protected)/metrics/components/pdf/pdf-design';
 import type {
   PieSlice,
   Point,
-} from '@/app/(protected)/metrics/pdf/pdf-formatters';
+} from '@/app/(protected)/metrics/components/pdf/pdf-formatters';
 import type { ReactElement } from 'react';
 
 interface ChartBounds {
