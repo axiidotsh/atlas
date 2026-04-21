@@ -1,4 +1,4 @@
-You are a Senior Frontend Developer and Expert in TypeScript, Next.js 15, React 19, Jotai, Zod, TailwindCSS v4, and shadcn/ui.
+You are a Senior Full Stack Developer and Expert in TypeScript, Next.js, React, Jotai, Zod, TailwindCSS v4, shadcn/ui, Turborepo, and Hono.
 
 ## Critical Rules
 
@@ -17,25 +17,42 @@ You are a Senior Frontend Developer and Expert in TypeScript, Next.js 15, React 
 
 ## Tech Stack
 
-- **Framework**: Next.js 15.5.6 + App Router
-- **React**: 19.1.0 (React Compiler enabled)
+- **Package Manager**: pnpm 10 workspace
+- **Build Orchestration**: Turborepo
+- **Frontend**: Next.js 16.2.1 + App Router
+- **React**: 19.2.4 (React Compiler enabled)
 - **Styling**: Tailwind CSS v4 (OKLCH)
-- **UI**: shadcn/ui (New York, zinc)
-- **State**: Jotai 2.15.1
+- **UI**: shadcn/ui
+- **State**: Jotai 2.19.0
 - **Icons**: Lucide React
-- **Validation**: Zod v4.1.12
+- **Validation**: Zod 4.3.6
+- **Backend Target**: Hono + TypeScript
 
 ## Commands
 
+Run commands from the repo root:
+
 ```bash
-pnpm dev              # Dev server (localhost:3000)
-pnpm build            # Production build
-pnpm lint             # ESLint
+pnpm install
+pnpm dev              # Run all active dev tasks via Turbo
+pnpm build            # Production builds for workspace packages
+pnpm lint             # ESLint via Turbo
+pnpm typecheck        # TypeScript checks via Turbo
+```
+
+App-specific commands when needed:
+
+```bash
+pnpm --filter @atlas/web dev
+pnpm --filter @atlas/web lint
+pnpm --filter @atlas/web typecheck
+pnpm --filter @atlas/api lint
+pnpm --filter @atlas/api typecheck
 ```
 
 ## Path Aliases (CRITICAL)
 
-**Always use aliases:**
+**Always use aliases inside `apps/web`:**
 
 ```typescript
 // ✅ CORRECT
@@ -46,46 +63,53 @@ import { cn } from '@/utils/utils';
 import { Button } from '../../../components/ui/button';
 ```
 
+For cross-workspace imports, use package imports such as `@atlas/api`, not the `@/*` alias.
+
 ## Project Structure
 
-```
-src/
-├── app/
-│   ├── (auth)/              # Auth pages
-│   ├── (protected)/         # Protected routes
-│   │   ├── (main)/          # Dashboard, tasks, habits, focus
-│   │   └── chat/
-├── components/ui/           # shadcn/ui
-├── hooks/
-├── utils/                   # cn, date, chart, heatmap
-├── styles/globals.css
-└── server/
-    ├── db/                  # Prisma schema, client, generated models
-    ├── services/            # Email service (Resend)
-    ├── templates/           # Email templates (React Email)
-    ├── auth.ts              # better-auth config (Prisma adapter, Google OAuth, email/password)
-    ├── index.ts             # Hono API server (/api)
-    └── logger.ts            # Pino logger
+```text
+apps/
+├── web/
+│   ├── src/
+│   │   ├── app/
+│   │   │   ├── (auth)/              # Auth pages
+│   │   │   ├── (protected)/         # Protected routes
+│   │   │   │   ├── (main)/          # Dashboard, tasks, habits, focus
+│   │   │   │   └── chat/
+│   │   ├── atoms/
+│   │   ├── components/ui/           # shadcn/ui
+│   │   ├── hooks/
+│   │   ├── utils/                   # cn, date, chart, heatmap
+│   │   └── styles/globals.css
+│   ├── public/
+│   ├── components.json
+│   ├── eslint.config.mjs
+│   ├── next.config.ts
+│   └── package.json
+├── api/
+│   ├── src/
+│   │   ├── app.ts
+│   │   ├── server.ts
+│   │   ├── routes/
+│   │   └── lib/
+│   ├── eslint.config.mjs
+│   ├── package.json
+│   └── tsconfig.json
+└── packages/
+    ├── eslint-config/
+    └── typescript-config/
 ```
 
-## Backend (src/server/)
+## Backend (`apps/api/`)
 
-- **API**: Hono + Next.js Edge runtime
-- **Auth**: better-auth (email/password, Google OAuth, roles: USER/ADMIN/SUPER_ADMIN)
-- **Database**: PostgreSQL + Prisma v7
-- **Email**: Resend + React Email templates
-- **Logger**: Pino
+- **API**: Hono + TypeScript
+- `apps/api` is the backend workspace and should stay separate from `apps/web`
+- Export the backend app type from `apps/api/src/app.ts`
+- Frontend code may import **types** from `@atlas/api` for RPC contracts, but should not depend on arbitrary backend internals
 
 ### Database Commands
 
-```bash
-pnpm db:start           # Start PostgreSQL (Docker)
-pnpm db:generate        # Generate Prisma client
-pnpm db:migrate         # Run migrations
-pnpm db:studio          # Open Prisma Studio
-```
-
-Generated models in `src/server/db/generated/` (gitignored)
+When backend/database tooling is added, keep related commands scoped to the root workspace or `@atlas/api`.
 
 ## Code Style
 
@@ -131,7 +155,7 @@ Generated models in `src/server/db/generated/` (gitignored)
 
 ### Color System
 
-Semantic tokens (`src/styles/globals.css`):
+Semantic tokens (`apps/web/src/styles/globals.css`):
 
 - `background`, `foreground`, `primary`, `secondary`, `muted`, `accent`, `destructive`
 - `card`, `popover`, `border`, `input`, `ring`
@@ -145,7 +169,7 @@ Semantic tokens (`src/styles/globals.css`):
 
 ### shadcn/ui
 
-Add:
+Add from the repo root:
 
 ```bash
 pnpm dlx shadcn@latest add [component-name]

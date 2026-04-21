@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Atlas
+
+Atlas is a Turborepo-managed `pnpm` monorepo with a Next.js frontend in `apps/web` and a scaffolded backend workspace in `apps/api` for a future Hono API.
+
+## Workspace Layout
+
+```text
+.
+├── apps
+│   ├── api
+│   └── web
+├── packages
+│   ├── eslint-config
+│   └── typescript-config
+├── package.json
+├── pnpm-workspace.yaml
+└── turbo.json
+```
+
+## Apps
+
+- `apps/web`: Next.js app router frontend
+- `apps/api`: placeholder backend workspace for the future Hono + TypeScript API
+
+## Packages
+
+- `packages/typescript-config`: shared TypeScript base, Next.js, and API configs
+- `packages/eslint-config`: shared ESLint presets for the workspace
 
 ## Getting Started
 
-First, run the development server:
+Install dependencies once from the repo root:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+pnpm install
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Run the workspace in development mode from the repo root:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm dev
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The frontend is available at [http://localhost:3000](http://localhost:3000).
 
-## Learn More
+## Root Commands
 
-To learn more about Next.js, take a look at the following resources:
+Run these from the repo root:
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+```bash
+pnpm dev
+pnpm build
+pnpm lint
+pnpm typecheck
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## App-Specific Commands
 
-## Deploy on Vercel
+Run commands for a single workspace when needed:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```bash
+pnpm --filter @atlas/web dev
+pnpm --filter @atlas/web lint
+pnpm --filter @atlas/web typecheck
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+pnpm --filter @atlas/api lint
+pnpm --filter @atlas/api typecheck
+```
+
+## Frontend Notes
+
+- Frontend source lives in `apps/web/src`
+- Frontend static assets live in `apps/web/public`
+- The `@/*` alias in `apps/web` points to its local `src/*`
+- `shadcn/ui` config lives in `apps/web/components.json`
+
+## Backend Notes
+
+- `apps/api` is scaffolded but not implemented as a real Hono app yet
+- The current placeholder exports `AppType` from `apps/api/src/app.ts` so the package shape is ready for future RPC integration
+- When the Hono app is added, `web` can consume type-only API contracts from `@atlas/api`
