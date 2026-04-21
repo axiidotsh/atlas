@@ -15,7 +15,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAtom } from 'jotai';
 import { ChevronsUpDownIcon } from 'lucide-react';
-import { STUDIO_ASPECT_RATIO_OPTIONS } from '../utils';
+import { STUDIO_ASPECT_RATIO_OPTIONS } from '../../utils';
 
 export const AspectRatioSelector = () => {
   const [aspectRatios, setAspectRatios] = useAtom(studioAspectRatioAtom);

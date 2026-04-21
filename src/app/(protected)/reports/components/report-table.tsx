@@ -1,7 +1,10 @@
 'use client';
 
-import { DeleteReportDialog } from '@/app/(protected)/reports/components/delete-report-dialog';
-import { ReportActionsDropdown } from '@/app/(protected)/reports/components/report-actions-dropdown';
+import { DeleteEntityDialog } from '@/components/entity/delete-entity-dialog';
+import {
+  EntityActionsDropdown,
+  type EntityAction,
+} from '@/components/entity/entity-actions-dropdown';
 import { ShareDialog } from '@/components/share-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -14,28 +17,25 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { useBrowserShare } from '@/hooks/use-browser-share';
+import { useInlineTitleEdit } from '@/hooks/use-inline-title-edit';
 import type { MockReport } from '@/mock-data/reports';
+import { formatDateShort } from '@/utils/date';
 import { cn } from '@/utils/utils';
-import { GlobeIcon, LinkIcon, LockIcon } from 'lucide-react';
+import {
+  GlobeIcon,
+  LinkIcon,
+  LockIcon,
+  PencilIcon,
+  Share2Icon,
+  Trash2Icon,
+} from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface ReportTableProps {
   reports: MockReport[];
   onRename?: (reportId: string, nextTitle: string) => void;
   onDelete?: (reportId: string) => void;
-}
-
-function formatDate(dateString?: string) {
-  if (!dateString) {
-    return '—';
-  }
-
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 interface ReportTableRowProps {
@@ -44,26 +44,21 @@ interface ReportTableRowProps {
   onDelete?: () => void;
 }
 
-const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => {
-  const [isEditing, setIsEditing] = useState(false);
+const ReportTableRow = ({
+  report,
+  onRename,
+  onDelete,
+}: ReportTableRowProps) => {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const shareTriggerRef = useRef<HTMLButtonElement>(null);
-  const shouldKeepInputFocusedRef = useRef(false);
+  const {
+    isEditing,
+    inputRef,
+    startEditing,
+    stopEditing,
+    handleDropdownCloseAutoFocus,
+  } = useInlineTitleEdit();
   const { copyText } = useBrowserShare();
-
-  useEffect(() => {
-    if (!isEditing) {
-      return;
-    }
-
-    const frameId = requestAnimationFrame(() => {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    });
-
-    return () => cancelAnimationFrame(frameId);
-  }, [isEditing]);
 
   function commitRename() {
     const nextTitle = inputRef.current?.value.trim();
@@ -72,7 +67,7 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
       onRename?.(nextTitle);
     }
 
-    setIsEditing(false);
+    stopEditing();
   }
 
   async function copyPublicLink() {
@@ -88,12 +83,34 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
     });
   }
 
+  const actions: EntityAction[] = [
+    { id: 'rename', label: 'Rename', icon: PencilIcon, onSelect: startEditing },
+    {
+      id: 'share',
+      label: 'Share',
+      icon: Share2Icon,
+      onSelect: () => {
+        requestAnimationFrame(() => {
+          shareTriggerRef.current?.click();
+        });
+      },
+    },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: Trash2Icon,
+      variant: 'destructive',
+      onSelect: () => setIsDeleteDialogOpen(true),
+    },
+  ];
+
   return (
     <TableRow>
-      <DeleteReportDialog
+      <DeleteEntityDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        reportTitle={report.title}
+        entityLabel="report"
+        entityTitle={report.title}
         onConfirm={() => onDelete?.()}
       />
       <ShareDialog
@@ -125,16 +142,13 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
                   commitRename();
                 } else if (event.key === 'Escape') {
                   event.preventDefault();
-                  setIsEditing(false);
+                  stopEditing();
                 }
               }}
             />
           </div>
         ) : (
-          <Link
-            href={`/reports/${report.id}`}
-            className="group block p-2"
-          >
+          <Link href={`/reports/${report.id}`} className="group block p-2">
             <span className="truncate text-sm font-medium group-hover:underline">
               {report.title}
             </span>
@@ -159,7 +173,7 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
         </Badge>
       </TableCell>
       <TableCell className="text-muted-foreground">
-        {formatDate(report.createdAt)}
+        {formatDateShort(report.createdAt)}
       </TableCell>
       <TableCell>
         <div className="flex items-center justify-end gap-1">
@@ -174,30 +188,10 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
               <span className="sr-only">Copy public link</span>
             </Button>
           ) : null}
-          <ReportActionsDropdown
-            onCloseAutoFocus={(event) => {
-              if (!shouldKeepInputFocusedRef.current) {
-                return;
-              }
-
-              event.preventDefault();
-              shouldKeepInputFocusedRef.current = false;
-
-              requestAnimationFrame(() => {
-                inputRef.current?.focus();
-                inputRef.current?.select();
-              });
-            }}
-            onRename={() => {
-              shouldKeepInputFocusedRef.current = true;
-              setIsEditing(true);
-            }}
-            onShare={() => {
-              requestAnimationFrame(() => {
-                shareTriggerRef.current?.click();
-              });
-            }}
-            onDelete={() => setIsDeleteDialogOpen(true)}
+          <EntityActionsDropdown
+            actions={actions}
+            triggerLabel="Open report actions"
+            onCloseAutoFocus={handleDropdownCloseAutoFocus}
           />
         </div>
       </TableCell>
@@ -205,7 +199,11 @@ const ReportTableRow = ({ report, onRename, onDelete }: ReportTableRowProps) => 
   );
 };
 
-export const ReportTable = ({ reports, onRename, onDelete }: ReportTableProps) => {
+export const ReportTable = ({
+  reports,
+  onRename,
+  onDelete,
+}: ReportTableProps) => {
   return (
     <Table>
       <TableHeader>

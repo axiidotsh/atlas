@@ -1,4 +1,4 @@
-import { ProtectedLayoutContent } from '@/components/protected-layout';
+import { ProtectedLayoutContent } from '@/components/layout/protected-layout';
 
 export default function ProtectedLayout({
   children,

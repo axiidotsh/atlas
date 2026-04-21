@@ -1,15 +1,25 @@
 'use client';
 
-import { DeleteProjectDialog } from '@/app/(protected)/studio/components/delete-project-dialog';
-import { ProjectActionsDropdown } from '@/app/(protected)/studio/components/project-actions-dropdown';
-import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
+import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/project-settings/studio-project-settings-sheet';
 import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
+import { DeleteEntityDialog } from '@/components/entity/delete-entity-dialog';
+import {
+  EntityActionsDropdown,
+  type EntityAction,
+} from '@/components/entity/entity-actions-dropdown';
 import { Button } from '@/components/ui/button';
+import { useInlineTitleEdit } from '@/hooks/use-inline-title-edit';
 import { cn } from '@/utils/utils';
-import { ImageOffIcon, XIcon } from 'lucide-react';
-import Link from 'next/link';
+import {
+  CogIcon,
+  ImageOffIcon,
+  PencilIcon,
+  Trash2Icon,
+  XIcon,
+} from 'lucide-react';
 import { useTheme } from 'next-themes';
-import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
+import { useState } from 'react';
 
 interface ProjectImageProps {
   id: string;
@@ -30,6 +40,9 @@ interface ProjectCardProps {
 const TITLE_CLASS_NAME =
   'block w-full truncate bg-transparent p-0 text-sm font-medium leading-5 outline-none';
 
+const CARD_CLASS_NAME =
+  'bg-card border-border/50 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300';
+
 export const ProjectCard = ({
   id,
   title,
@@ -39,28 +52,33 @@ export const ProjectCard = ({
   onProjectUpdate,
 }: ProjectCardProps) => {
   const { theme } = useTheme();
-  const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const shouldKeepInputFocusedRef = useRef(false);
+  const {
+    isEditing,
+    inputRef,
+    startEditing,
+    stopEditing,
+    handleDropdownCloseAutoFocus,
+  } = useInlineTitleEdit();
   const previewImage = coverImage ?? images[0]?.src;
 
-  useEffect(() => {
-    if (!isEditing) {
-      return;
-    }
-
-    const frameId = requestAnimationFrame(() => {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    });
-
-    return () => cancelAnimationFrame(frameId);
-  }, [isEditing]);
-
-  const cardClassName =
-    'bg-card border-border/50 hover:bg-muted flex cursor-pointer flex-col overflow-hidden rounded-xl border transition-colors duration-300';
+  const actions: EntityAction[] = [
+    { id: 'rename', label: 'Rename', icon: PencilIcon, onSelect: startEditing },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: CogIcon,
+      onSelect: () => setIsSettingsSheetOpen(true),
+    },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: Trash2Icon,
+      variant: 'destructive',
+      onSelect: () => setIsDeleteDialogOpen(true),
+    },
+  ];
 
   const cardContent = (
     <>
@@ -84,11 +102,11 @@ export const ProjectCard = ({
               ref={inputRef}
               defaultValue={title}
               className={TITLE_CLASS_NAME}
-              onBlur={() => setIsEditing(false)}
+              onBlur={stopEditing}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === 'Escape') {
                   event.preventDefault();
-                  setIsEditing(false);
+                  stopEditing();
                 }
               }}
             />
@@ -97,7 +115,7 @@ export const ProjectCard = ({
               size="icon-xs"
               className="absolute top-1/2 right-3 -translate-y-1/2"
               onMouseDown={(event) => event.preventDefault()}
-              onClick={() => setIsEditing(false)}
+              onClick={stopEditing}
             >
               <XIcon />
             </Button>
@@ -111,10 +129,11 @@ export const ProjectCard = ({
 
   return (
     <div className="group relative">
-      <DeleteProjectDialog
+      <DeleteEntityDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        projectTitle={title}
+        entityLabel="project"
+        entityTitle={title}
         onConfirm={() => {}}
       />
       <StudioProjectSettingsSheet
@@ -123,34 +142,18 @@ export const ProjectCard = ({
         initialValues={settings}
         onProjectUpdate={onProjectUpdate}
       />
-      <ProjectActionsDropdown
+      <EntityActionsDropdown
+        actions={actions}
+        triggerLabel="Open project actions"
         triggerVariant={theme === 'dark' ? 'secondary' : 'outline'}
         triggerSize="icon-xs"
         triggerClassName="absolute top-2 right-2 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100"
-        onCloseAutoFocus={(event) => {
-          if (!shouldKeepInputFocusedRef.current) {
-            return;
-          }
-
-          event.preventDefault();
-          shouldKeepInputFocusedRef.current = false;
-
-          requestAnimationFrame(() => {
-            inputRef.current?.focus();
-            inputRef.current?.select();
-          });
-        }}
-        onRename={() => {
-          shouldKeepInputFocusedRef.current = true;
-          setIsEditing(true);
-        }}
-        onSettings={() => setIsSettingsSheetOpen(true)}
-        onDelete={() => setIsDeleteDialogOpen(true)}
+        onCloseAutoFocus={handleDropdownCloseAutoFocus}
       />
       {isEditing ? (
-        <div className={cardClassName}>{cardContent}</div>
+        <div className={CARD_CLASS_NAME}>{cardContent}</div>
       ) : (
-        <Link href={`/studio/${id}`} className={cn(cardClassName)}>
+        <Link href={`/studio/${id}`} className={cn(CARD_CLASS_NAME)}>
           {cardContent}
         </Link>
       )}

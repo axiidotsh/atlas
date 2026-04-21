@@ -1,8 +1,8 @@
 'use client';
 
-import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
-import { MetricsShareButton } from '@/components/metrics-share-button';
+import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/project-settings/studio-project-settings-sheet';
 import { type ProjectFormValues } from '@/app/(protected)/studio/project-form';
+import { MetricsShareDialog } from '@/components/metrics-share/metrics-share-dialog';
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
@@ -12,7 +12,12 @@ import {
 } from '@/mock-data/conversations';
 import { getReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
-import { BookOpenIcon, PanelLeftIcon, PencilIcon, Share2Icon } from 'lucide-react';
+import {
+  BookOpenIcon,
+  PanelLeftIcon,
+  PencilIcon,
+  Share2Icon,
+} from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
 
@@ -127,7 +132,9 @@ export const ProtectedHeader = () => {
     Record<string, ProjectFormValues>
   >({});
 
-  const [reportMode, setReportMode] = useState<'reading' | 'editing'>('reading');
+  const [reportMode, setReportMode] = useState<'reading' | 'editing'>(
+    'reading'
+  );
 
   const studioProjectValues = studioDetailId
     ? studioProjectValuesById[studioDetailId]
@@ -247,9 +254,7 @@ export const ProtectedHeader = () => {
             </Button>
           </ShareDialog>
         ) : null}
-        {pathname === '/metrics' ? (
-          <MetricsShareButton size="sm" />
-        ) : null}
+        {pathname === '/metrics' ? <MetricsShareDialog size="sm" /> : null}
       </div>
     </header>
   );

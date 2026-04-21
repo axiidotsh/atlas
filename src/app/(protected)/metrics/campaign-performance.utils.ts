@@ -20,25 +20,3 @@ export function getCampaignStatusClassName(status: CampaignStatus) {
 
   return 'border-border bg-secondary text-secondary-foreground';
 }
-
-export function parseCampaignMetricValue(value: string) {
-  const normalizedValue = value.replace(/[$,%x,]/g, '').trim();
-
-  if (normalizedValue.length === 0) {
-    return 0;
-  }
-
-  const suffix = normalizedValue.at(-1);
-  const multiplier =
-    suffix === 'K'
-      ? 1_000
-      : suffix === 'M'
-        ? 1_000_000
-        : suffix === 'B'
-          ? 1_000_000_000
-          : 1;
-  const numericPortion =
-    multiplier === 1 ? normalizedValue : normalizedValue.slice(0, -1);
-
-  return Number(numericPortion) * multiplier;
-}

@@ -115,11 +115,7 @@ export const ChatInput = ({
           </div>
           <div className="flex items-center gap-3">
             {rightActions}
-            <Button
-              aria-label="Send message"
-              size="icon-sm"
-              onClick={onSubmit}
-            >
+            <Button aria-label="Send message" size="icon-sm" onClick={onSubmit}>
               <ArrowUpIcon />
             </Button>
           </div>

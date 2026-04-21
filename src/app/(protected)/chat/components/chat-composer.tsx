@@ -2,7 +2,7 @@
 
 import { queryAtom } from '@/app/(protected)/chat/atoms';
 import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
-import { ChatInput } from '@/components/chat-input';
+import { ChatInput } from '@/components/chat/chat-input';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
 import {
   MOCK_AD_ACCOUNTS,

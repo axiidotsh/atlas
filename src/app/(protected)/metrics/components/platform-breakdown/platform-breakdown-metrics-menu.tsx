@@ -5,7 +5,7 @@ import {
   PLATFORM_BREAKDOWN_METRIC_KEYS,
   PLATFORM_BREAKDOWN_METRIC_LABELS,
   type PlatformBreakdownMetricKey,
-} from '@/app/(protected)/metrics/platform-breakdown.config';
+} from '@/app/(protected)/metrics/config/platform-breakdown.config';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -38,7 +38,11 @@ export const PlatformBreakdownMetricsMenu = () => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" size="sm" className="justify-between sm:w-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          className="justify-between sm:w-auto"
+        >
           Metrics
           <ChevronDownIcon />
         </Button>

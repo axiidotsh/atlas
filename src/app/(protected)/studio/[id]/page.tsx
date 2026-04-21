@@ -1,6 +1,6 @@
 import { StudioProjectWorkspace } from '@/app/(protected)/studio/components/studio-project-workspace';
+import { getStudioConversation } from '@/mock-data/conversations';
 import { notFound } from 'next/navigation';
-import { getStudioProject } from '../utils';
 
 interface ProjectPageProps {
   params: Promise<{
@@ -10,7 +10,7 @@ interface ProjectPageProps {
 
 export default async function ProjectPage({ params }: ProjectPageProps) {
   const { id } = await params;
-  const project = getStudioProject(id);
+  const project = getStudioConversation(id);
 
   if (!project) {
     notFound();

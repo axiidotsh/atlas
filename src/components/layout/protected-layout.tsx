@@ -1,12 +1,12 @@
 'use client';
 
-import { AppSidebar } from '@/components/app-sidebar';
+import { ScrollToBottom } from '@/components/chat/scroll-to-bottom';
+import { AppSidebar } from '@/components/layout/app-sidebar';
 import {
   getChatDetailId,
   getStudioDetailId,
   ProtectedHeader,
-} from '@/components/protected-header';
-import { ScrollToBottom } from '@/components/scroll-to-bottom';
+} from '@/components/layout/protected-header';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { cn } from '@/utils/utils';
 import { usePathname } from 'next/navigation';

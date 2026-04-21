@@ -11,27 +11,29 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 
-interface DeleteChatDialogProps {
+interface DeleteEntityDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  chatTitle: string;
+  entityLabel: string;
+  entityTitle: string;
   onConfirm: () => void;
 }
 
-export const DeleteChatDialog = ({
+export const DeleteEntityDialog = ({
   open,
   onOpenChange,
-  chatTitle,
+  entityLabel,
+  entityTitle,
   onConfirm,
-}: DeleteChatDialogProps) => {
+}: DeleteEntityDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent showCloseButton={false}>
         <DialogHeader>
-          <DialogTitle>Delete chat</DialogTitle>
+          <DialogTitle>Delete {entityLabel}</DialogTitle>
           <DialogDescription>
             Are you sure you want to delete{' '}
-            <span className="font-medium text-foreground">{chatTitle}</span>?
+            <span className="text-foreground font-medium">{entityTitle}</span>?
             This action cannot be undone.
           </DialogDescription>
         </DialogHeader>

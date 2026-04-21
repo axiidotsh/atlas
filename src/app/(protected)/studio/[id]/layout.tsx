@@ -1,7 +1,7 @@
 'use client';
 
 import { StudioComposer } from '@/app/(protected)/studio/components/studio-composer';
-import { getStudioProject } from '@/app/(protected)/studio/utils';
+import { getStudioConversation } from '@/mock-data/conversations';
 import { useParams } from 'next/navigation';
 
 interface StudioProjectLayoutProps {
@@ -12,7 +12,7 @@ export default function StudioProjectLayout({
   children,
 }: StudioProjectLayoutProps) {
   const params = useParams<{ id: string }>();
-  const project = getStudioProject(params.id);
+  const project = getStudioConversation(params.id);
 
   if (!project) {
     return (

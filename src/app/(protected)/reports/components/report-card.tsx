@@ -1,15 +1,19 @@
 'use client';
 
-import { DeleteReportDialog } from '@/app/(protected)/reports/components/delete-report-dialog';
-import { ReportActionsDropdown } from '@/app/(protected)/reports/components/report-actions-dropdown';
 import { ReportBlockRenderer } from '@/app/(protected)/reports/components/report-blocks';
+import { DeleteEntityDialog } from '@/components/entity/delete-entity-dialog';
+import {
+  EntityActionsDropdown,
+  type EntityAction,
+} from '@/components/entity/entity-actions-dropdown';
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
-import type { MockReport } from '@/mock-data/reports';
-import { XIcon } from 'lucide-react';
+import { useInlineTitleEdit } from '@/hooks/use-inline-title-edit';
+import type { MockReport, ReportBlock } from '@/mock-data/reports';
+import { PencilIcon, Share2Icon, Trash2Icon, XIcon } from 'lucide-react';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 
 interface ReportCardProps {
   report: MockReport;
@@ -20,31 +24,24 @@ interface ReportCardProps {
 const TITLE_CLASS_NAME =
   'block w-full truncate bg-transparent p-0 text-sm font-medium leading-5 outline-none';
 
+function getReportPreviewBlocks(blocks: ReportBlock[]): ReportBlock[] {
+  const firstBlockType = blocks[0]?.type;
+  const isShortBlock = firstBlockType === 'card' || firstBlockType === 'table';
+  return blocks.slice(0, isShortBlock ? 2 : 1);
+}
+
 export const ReportCard = ({ report, onRename, onDelete }: ReportCardProps) => {
   const { theme } = useTheme();
-  const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
   const shareTriggerRef = useRef<HTMLButtonElement>(null);
-  const shouldKeepInputFocusedRef = useRef(false);
-  const firstBlockType = report.blocks[0]?.type;
-  const previewBlocks =
-    firstBlockType === 'card' || firstBlockType === 'table'
-      ? report.blocks.slice(0, 2)
-      : report.blocks.slice(0, 1);
-
-  useEffect(() => {
-    if (!isEditing) {
-      return;
-    }
-
-    const frameId = requestAnimationFrame(() => {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    });
-
-    return () => cancelAnimationFrame(frameId);
-  }, [isEditing]);
+  const {
+    isEditing,
+    inputRef,
+    startEditing,
+    stopEditing,
+    handleDropdownCloseAutoFocus,
+  } = useInlineTitleEdit();
+  const previewBlocks = getReportPreviewBlocks(report.blocks);
 
   function commitRename() {
     const nextTitle = inputRef.current?.value.trim();
@@ -53,15 +50,37 @@ export const ReportCard = ({ report, onRename, onDelete }: ReportCardProps) => {
       onRename?.(nextTitle);
     }
 
-    setIsEditing(false);
+    stopEditing();
   }
+
+  const actions: EntityAction[] = [
+    { id: 'rename', label: 'Rename', icon: PencilIcon, onSelect: startEditing },
+    {
+      id: 'share',
+      label: 'Share',
+      icon: Share2Icon,
+      onSelect: () => {
+        requestAnimationFrame(() => {
+          shareTriggerRef.current?.click();
+        });
+      },
+    },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: Trash2Icon,
+      variant: 'destructive',
+      onSelect: () => setIsDeleteDialogOpen(true),
+    },
+  ];
 
   return (
     <div className="group relative">
-      <DeleteReportDialog
+      <DeleteEntityDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        reportTitle={report.title}
+        entityLabel="report"
+        entityTitle={report.title}
         onConfirm={() => onDelete?.()}
       />
       <ShareDialog
@@ -79,33 +98,13 @@ export const ReportCard = ({ report, onRename, onDelete }: ReportCardProps) => {
           tabIndex={-1}
         />
       </ShareDialog>
-      <ReportActionsDropdown
+      <EntityActionsDropdown
+        actions={actions}
+        triggerLabel="Open report actions"
         triggerVariant={theme === 'dark' ? 'secondary' : 'outline'}
         triggerSize="icon-xs"
         triggerClassName="absolute top-2 right-2 z-10 opacity-0 group-hover:opacity-100 data-open:opacity-100 max-lg:opacity-100"
-        onCloseAutoFocus={(event) => {
-          if (!shouldKeepInputFocusedRef.current) {
-            return;
-          }
-
-          event.preventDefault();
-          shouldKeepInputFocusedRef.current = false;
-
-          requestAnimationFrame(() => {
-            inputRef.current?.focus();
-            inputRef.current?.select();
-          });
-        }}
-        onRename={() => {
-          shouldKeepInputFocusedRef.current = true;
-          setIsEditing(true);
-        }}
-        onShare={() => {
-          requestAnimationFrame(() => {
-            shareTriggerRef.current?.click();
-          });
-        }}
-        onDelete={() => setIsDeleteDialogOpen(true)}
+        onCloseAutoFocus={handleDropdownCloseAutoFocus}
       />
       <Link
         href={`/reports/${report.id}`}
@@ -145,7 +144,7 @@ export const ReportCard = ({ report, onRename, onDelete }: ReportCardProps) => {
                     commitRename();
                   } else if (event.key === 'Escape') {
                     event.preventDefault();
-                    setIsEditing(false);
+                    stopEditing();
                   }
                 }}
               />
@@ -154,7 +153,7 @@ export const ReportCard = ({ report, onRename, onDelete }: ReportCardProps) => {
                 size="icon-xs"
                 className="absolute top-1/2 right-3 -translate-y-1/2"
                 onMouseDown={(event) => event.preventDefault()}
-                onClick={() => setIsEditing(false)}
+                onClick={stopEditing}
               >
                 <XIcon />
               </Button>

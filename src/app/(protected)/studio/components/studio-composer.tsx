@@ -1,30 +1,18 @@
 'use client';
 
-import { studioQueryAtom } from '@/app/(protected)/studio/atoms';
 import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
-import { ChatInput } from '@/components/chat-input';
+import { studioQueryAtom } from '@/app/(protected)/studio/atoms';
+import { ChatInput } from '@/components/chat/chat-input';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
-import {
-  MOCK_AD_ACCOUNTS,
-  MOCK_AD_SETS,
-  MOCK_ADS,
-  MOCK_CAMPAIGNS,
-} from '@/mock-data/ad-data';
+import { MENTION_OPTIONS } from '@/mock-data/mention-data';
 import { useAtom } from 'jotai';
 import { type ReactNode, useRef } from 'react';
-import { AspectRatioSelector } from './aspect-ratio-selector';
+import { AspectRatioSelector } from './aspect-ratio/aspect-ratio-selector';
 
 interface StudioComposerProps {
   caption?: ReactNode;
   placeholder?: string;
 }
-
-const MENTION_DATA = [
-  ...MOCK_AD_ACCOUNTS.map((item) => ({ ...item, type: 'ad-account' })),
-  ...MOCK_CAMPAIGNS.map((item) => ({ ...item, type: 'campaign' })),
-  ...MOCK_AD_SETS.map((item) => ({ ...item, type: 'ad-set' })),
-  ...MOCK_ADS.map((item) => ({ ...item, type: 'ad' })),
-];
 
 export const StudioComposer = ({
   caption,
@@ -42,7 +30,7 @@ export const StudioComposer = ({
       placeholder={placeholder}
       caption={caption}
       textareaRef={inputRef}
-      mentionData={MENTION_DATA}
+      mentionData={MENTION_OPTIONS}
       shouldShowAttachment
       leftActions={<AspectRatioSelector />}
       rightActions={<TokenUsage usedTokens={20} maxTokens={100} />}

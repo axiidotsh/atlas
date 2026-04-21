@@ -5,7 +5,7 @@ import {
   DateRangePicker,
   getPresetRange,
 } from '@/components/date-range-picker';
-import { MetricsShareButton } from '@/components/metrics-share-button';
+import { MetricsShareDialog } from '@/components/metrics-share/metrics-share-dialog';
 import { MOCK_AD_ACCOUNTS } from '@/mock-data/ad-data';
 import { useState } from 'react';
 import { type DateRange } from 'react-day-picker';
@@ -27,7 +27,7 @@ export const MetricToolbar = () => {
           className="w-full sm:w-fit"
         />
         <div className="flex min-w-0 items-center justify-end gap-2">
-          <MetricsShareButton className="hidden lg:inline-flex" />
+          <MetricsShareDialog className="hidden lg:inline-flex" />
           <DateRangePicker
             date={date}
             onDateChange={setDate}

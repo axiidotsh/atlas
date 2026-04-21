@@ -8,7 +8,8 @@ import {
   PLATFORM_BREAKDOWN_METRIC_KEYS,
   PLATFORM_BREAKDOWN_METRIC_LABELS,
   type PlatformBreakdownMetricKey,
-} from '@/app/(protected)/metrics/platform-breakdown.config';
+} from '@/app/(protected)/metrics/config/platform-breakdown.config';
+import { parseMetricValue } from '@/app/(protected)/metrics/utils/formatters';
 import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -222,28 +223,6 @@ function formatMetric(key: MetricKey, value: number) {
   }
 
   return compactNumberFormatter.format(value);
-}
-
-function parseMetricValue(value: string) {
-  const normalizedValue = value.replace(/[$,%x,]/g, '').trim();
-
-  if (normalizedValue.length === 0) {
-    return 0;
-  }
-
-  const suffix = normalizedValue.at(-1);
-  const multiplier =
-    suffix === 'K'
-      ? 1_000
-      : suffix === 'M'
-        ? 1_000_000
-        : suffix === 'B'
-          ? 1_000_000_000
-          : 1;
-  const numericPortion =
-    multiplier === 1 ? normalizedValue : normalizedValue.slice(0, -1);
-
-  return Number(numericPortion) * multiplier;
 }
 
 function formatPlatformName(platform: AdPlatform) {

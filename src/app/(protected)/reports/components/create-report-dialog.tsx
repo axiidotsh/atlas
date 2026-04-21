@@ -22,11 +22,10 @@ import {
 } from '@/components/ui/mention';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  MOCK_AD_ACCOUNTS,
-  MOCK_AD_SETS,
-  MOCK_ADS,
-  MOCK_CAMPAIGNS,
-} from '@/mock-data/ad-data';
+  formatMentionType,
+  getMentionLabel,
+  MENTION_OPTIONS,
+} from '@/mock-data/mention-data';
 import { type ReactNode, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 
@@ -39,30 +38,6 @@ export interface CreateReportInput {
 interface CreateReportDialogProps {
   children: ReactNode;
   onCreate?: (input: CreateReportInput) => void;
-}
-
-interface MentionOption {
-  id: string;
-  name: string;
-  type: string;
-}
-
-const MENTION_DATA: MentionOption[] = [
-  ...MOCK_AD_ACCOUNTS.map((item) => ({ ...item, type: 'ad-account' })),
-  ...MOCK_CAMPAIGNS.map((item) => ({ ...item, type: 'campaign' })),
-  ...MOCK_AD_SETS.map((item) => ({ ...item, type: 'ad-set' })),
-  ...MOCK_ADS.map((item) => ({ ...item, type: 'ad' })),
-];
-
-function formatMentionType(value: string) {
-  return value
-    .split('-')
-    .map((item) => item[0].toUpperCase().concat(item.substring(1)))
-    .join(' ');
-}
-
-function getMentionLabel(item: MentionOption) {
-  return `${item.name} [${item.id}] (${item.type})`;
 }
 
 export const CreateReportDialog = ({
@@ -146,7 +121,7 @@ export const CreateReportDialog = ({
                 />
               </MentionInput>
               <MentionContent className="max-h-60 w-[var(--radix-popper-anchor-width)] overflow-y-auto">
-                {MENTION_DATA.map((item) => (
+                {MENTION_OPTIONS.map((item) => (
                   <MentionItem
                     key={item.id}
                     label={getMentionLabel(item)}

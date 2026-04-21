@@ -1,6 +1,6 @@
 'use client';
 
-import { ChatActionsDropdown } from '@/components/chat-actions-dropdown';
+import { ChatActionsDropdown } from '@/components/chat/chat-actions-dropdown';
 import { Button } from '@/components/ui/button';
 import {
   Sidebar,
@@ -30,8 +30,8 @@ import {
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import * as React from 'react';
-import { PlaceholderLogo } from './icons';
-import { SearchBar } from './search-bar';
+import { PlaceholderLogo } from '../icons';
+import { SearchBar } from '../search-bar';
 import { UserMenu } from './user-menu';
 
 const NAV_ITEMS = [

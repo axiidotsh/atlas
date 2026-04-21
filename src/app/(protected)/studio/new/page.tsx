@@ -1,6 +1,6 @@
 'use client';
 
-import { ProjectSettingsForm } from '@/app/(protected)/studio/components/project-settings-form';
+import { ProjectSettingsForm } from '@/app/(protected)/studio/components/project-settings/project-settings-form';
 import {
   createProjectFormValues,
   projectFormSchema,

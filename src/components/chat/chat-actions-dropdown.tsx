@@ -1,6 +1,6 @@
 'use client';
 
-import { DeleteChatDialog } from '@/components/delete-chat-dialog';
+import { DeleteEntityDialog } from '@/components/entity/delete-entity-dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -51,10 +51,11 @@ export const ChatActionsDropdown = ({
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      <DeleteChatDialog
+      <DeleteEntityDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        chatTitle={chatTitle}
+        entityLabel="chat"
+        entityTitle={chatTitle}
         onConfirm={() => onDelete?.()}
       />
     </>

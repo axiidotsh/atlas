@@ -1,9 +1,12 @@
 'use client';
 
-import { DeleteProjectDialog } from '@/app/(protected)/studio/components/delete-project-dialog';
-import { ProjectActionsDropdown } from '@/app/(protected)/studio/components/project-actions-dropdown';
-import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/studio-project-settings-sheet';
+import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/project-settings/studio-project-settings-sheet';
 import type { ProjectFormValues } from '@/app/(protected)/studio/project-form';
+import { DeleteEntityDialog } from '@/components/entity/delete-entity-dialog';
+import {
+  EntityActionsDropdown,
+  type EntityAction,
+} from '@/components/entity/entity-actions-dropdown';
 import {
   Table,
   TableBody,
@@ -12,11 +15,13 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import { useInlineTitleEdit } from '@/hooks/use-inline-title-edit';
 import type { MockConversationImage } from '@/mock-data/types';
+import { formatDateShort } from '@/utils/date';
 import { cn } from '@/utils/utils';
-import { ImageOffIcon } from 'lucide-react';
+import { CogIcon, ImageOffIcon, PencilIcon, Trash2Icon } from 'lucide-react';
 import Link from 'next/link';
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 
 interface ProjectTableProject {
   id: string;
@@ -30,15 +35,6 @@ interface ProjectTableProject {
 
 interface ProjectTableProps {
   projects: ProjectTableProject[];
-}
-
-function formatDate(dateString?: string) {
-  if (!dateString) return '—';
-  return new Date(dateString).toLocaleDateString('en-US', {
-    month: 'short',
-    day: 'numeric',
-    year: 'numeric',
-  });
 }
 
 const StackedImages = ({ images }: { images: MockConversationImage[] }) => {
@@ -58,7 +54,7 @@ const StackedImages = ({ images }: { images: MockConversationImage[] }) => {
             src={image.src}
             alt={image.title}
             className={cn(
-              'relative h-8 w-8 min-w-8 cursor-pointer rounded-md border-2 border-background object-cover hover:z-10',
+              'border-background relative size-8 min-w-8 cursor-pointer rounded-md border-2 object-cover hover:z-10',
               index > 0 && '-ml-3'
             )}
           />
@@ -82,42 +78,53 @@ const ProjectTableRow = ({
   settings,
   onProjectUpdate,
 }: ProjectTableProject) => {
-  const [isEditing, setIsEditing] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isSettingsSheetOpen, setIsSettingsSheetOpen] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const shouldKeepInputFocusedRef = useRef(false);
+  const {
+    isEditing,
+    inputRef,
+    startEditing,
+    stopEditing,
+    handleDropdownCloseAutoFocus,
+  } = useInlineTitleEdit();
   const previewImage = coverImage ?? images[0]?.src;
 
-  useEffect(() => {
-    if (!isEditing) return;
-
-    const frameId = requestAnimationFrame(() => {
-      inputRef.current?.focus();
-      inputRef.current?.select();
-    });
-
-    return () => cancelAnimationFrame(frameId);
-  }, [isEditing]);
+  const actions: EntityAction[] = [
+    { id: 'rename', label: 'Rename', icon: PencilIcon, onSelect: startEditing },
+    {
+      id: 'settings',
+      label: 'Settings',
+      icon: CogIcon,
+      onSelect: () => setIsSettingsSheetOpen(true),
+    },
+    {
+      id: 'delete',
+      label: 'Delete',
+      icon: Trash2Icon,
+      variant: 'destructive',
+      onSelect: () => setIsDeleteDialogOpen(true),
+    },
+  ];
 
   const thumbnail = previewImage ? (
     <img
       src={previewImage}
       alt=""
-      className="h-10 w-10 min-w-10 shrink-0 rounded-md object-cover"
+      className="size-10 min-w-10 shrink-0 rounded-md object-cover"
     />
   ) : (
-    <div className="bg-muted flex h-10 w-10 min-w-10 shrink-0 items-center justify-center rounded-md">
+    <div className="bg-muted flex size-10 min-w-10 shrink-0 items-center justify-center rounded-md">
       <ImageOffIcon className="text-muted-foreground size-4" />
     </div>
   );
 
   return (
     <TableRow>
-      <DeleteProjectDialog
+      <DeleteEntityDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
-        projectTitle={title}
+        entityLabel="project"
+        entityTitle={title}
         onConfirm={() => {}}
       />
       <StudioProjectSettingsSheet
@@ -134,11 +141,11 @@ const ProjectTableRow = ({
               ref={inputRef}
               defaultValue={title}
               className="w-full min-w-0 bg-transparent text-sm font-medium outline-none"
-              onBlur={() => setIsEditing(false)}
+              onBlur={stopEditing}
               onKeyDown={(event) => {
                 if (event.key === 'Enter' || event.key === 'Escape') {
                   event.preventDefault();
-                  setIsEditing(false);
+                  stopEditing();
                 }
               }}
             />
@@ -157,27 +164,13 @@ const ProjectTableRow = ({
         <StackedImages images={images} />
       </TableCell>
       <TableCell className="text-muted-foreground">
-        {formatDate(createdAt)}
+        {formatDateShort(createdAt)}
       </TableCell>
       <TableCell>
-        <ProjectActionsDropdown
-          onCloseAutoFocus={(event) => {
-            if (!shouldKeepInputFocusedRef.current) return;
-
-            event.preventDefault();
-            shouldKeepInputFocusedRef.current = false;
-
-            requestAnimationFrame(() => {
-              inputRef.current?.focus();
-              inputRef.current?.select();
-            });
-          }}
-          onSettings={() => setIsSettingsSheetOpen(true)}
-          onRename={() => {
-            shouldKeepInputFocusedRef.current = true;
-            setIsEditing(true);
-          }}
-          onDelete={() => setIsDeleteDialogOpen(true)}
+        <EntityActionsDropdown
+          actions={actions}
+          triggerLabel="Open project actions"
+          onCloseAutoFocus={handleDropdownCloseAutoFocus}
         />
       </TableCell>
     </TableRow>

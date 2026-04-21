@@ -1,4 +1,3 @@
-import { getStudioConversation } from '@/mock-data/conversations';
 import {
   CropIcon,
   RectangleVerticalIcon,
@@ -7,10 +6,6 @@ import {
   type LucideIcon,
 } from 'lucide-react';
 import { StudioAspectRatio } from './atoms';
-
-export function getStudioProject(projectId: string) {
-  return getStudioConversation(projectId);
-}
 
 interface StudioAspectRatioOption {
   value: StudioAspectRatio;
@@ -50,4 +45,3 @@ export const STUDIO_ASPECT_RATIO_OPTIONS: StudioAspectRatioOption[] = [
     icon: SmartphoneIcon,
   },
 ];
-
