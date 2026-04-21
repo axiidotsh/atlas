@@ -100,8 +100,8 @@ export const pdfStyles = StyleSheet.create({
     fontWeight: 500,
   },
   cardValue: {
-    fontSize: 20,
-    fontWeight: 700,
+    fontSize: 16,
+    fontWeight: 600,
     marginTop: 12,
   },
   cardFooter: {

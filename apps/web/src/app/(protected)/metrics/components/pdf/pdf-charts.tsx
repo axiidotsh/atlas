@@ -12,6 +12,7 @@ import type {
   PieSlice,
   Point,
 } from '@/app/(protected)/metrics/components/pdf/pdf-formatters';
+import { Circle, Line, Path, Rect, Svg, Text } from '@react-pdf/renderer';
 import type { ReactElement } from 'react';
 
 interface ChartBounds {
@@ -190,11 +191,11 @@ function renderGrid(bounds: ChartBounds, labels: string[]): ReactElement {
         const y = bounds.top + (bounds.height / (gridLines - 1)) * index;
 
         return (
-          <line
+          <Line
             key={`grid-${index}`}
             stroke={CHART_COLORS.grid}
-            strokeDasharray="3 3"
-            strokeWidth="1"
+            strokeDasharray="3"
+            strokeWidth={1}
             x1={bounds.left}
             x2={bounds.right}
             y1={y}
@@ -206,11 +207,10 @@ function renderGrid(bounds: ChartBounds, labels: string[]): ReactElement {
         const x = bounds.left + step * index;
 
         return (
-          <text
+          <Text
             key={label}
             fill={CHART_COLORS.labels}
-            fontFamily={FONT_FAMILY}
-            fontSize="9"
+            style={{ fontFamily: FONT_FAMILY, fontSize: 9 }}
             textAnchor={
               index === 0
                 ? 'start'
@@ -222,7 +222,7 @@ function renderGrid(bounds: ChartBounds, labels: string[]): ReactElement {
             y={CHART_HEIGHT - 8}
           >
             {label}
-          </text>
+          </Text>
         );
       })}
     </>
@@ -265,12 +265,12 @@ export const DonutChartSvg = ({ data }: { data: PieSlice[] }) => {
   }, []);
 
   return (
-    <svg
+    <Svg
+      width={DONUT_SIZE}
       height={DONUT_SIZE}
       viewBox={`0 0 ${DONUT_SIZE} ${DONUT_SIZE}`}
-      width={DONUT_SIZE}
     >
-      <circle
+      <Circle
         cx={center}
         cy={center}
         fill="none"
@@ -279,9 +279,9 @@ export const DonutChartSvg = ({ data }: { data: PieSlice[] }) => {
         strokeWidth={outerRadius - innerRadius}
       />
       {slices.map((slice) => (
-        <path key={slice.label} d={slice.path} fill={slice.color} />
+        <Path key={slice.label} d={slice.path} fill={slice.color} />
       ))}
-    </svg>
+    </Svg>
   );
 };
 
@@ -305,27 +305,27 @@ export const AreaTrendSvg = ({
   );
 
   return (
-    <svg
+    <Svg
+      width={CHART_WIDTH}
       height={CHART_HEIGHT}
       viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
-      width={CHART_WIDTH}
     >
       {renderGrid(
         bounds,
         data.map((item) => item.label)
       )}
-      <path
+      <Path
         d={createAreaPath(points, bounds.bottom)}
         fill={fillColor}
-        fillOpacity="0.35"
+        fillOpacity={0.35}
       />
-      <path
+      <Path
         d={createLinePath(points)}
         fill="none"
         stroke={color}
-        strokeWidth="2.5"
+        strokeWidth={2.5}
       />
-    </svg>
+    </Svg>
   );
 };
 
@@ -350,28 +350,28 @@ export const DualLineTrendSvg = ({
   const secondaryPoints = createChartPoints(secondaryValues, bounds, range);
 
   return (
-    <svg
+    <Svg
+      width={CHART_WIDTH}
       height={CHART_HEIGHT}
       viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
-      width={CHART_WIDTH}
     >
       {renderGrid(
         bounds,
         data.map((item) => item.label)
       )}
-      <path
+      <Path
         d={createLinePath(primaryPoints)}
         fill="none"
         stroke={primaryColor}
-        strokeWidth="2.5"
+        strokeWidth={2.5}
       />
-      <path
+      <Path
         d={createLinePath(secondaryPoints)}
         fill="none"
         stroke={secondaryColor}
-        strokeWidth="2.5"
+        strokeWidth={2.5}
       />
-    </svg>
+    </Svg>
   );
 };
 
@@ -403,10 +403,10 @@ export const BarLineTrendSvg = ({
   );
 
   return (
-    <svg
+    <Svg
+      width={CHART_WIDTH}
       height={CHART_HEIGHT}
       viewBox={`0 0 ${CHART_WIDTH} ${CHART_HEIGHT}`}
-      width={CHART_WIDTH}
     >
       {renderGrid(
         bounds,
@@ -424,24 +424,24 @@ export const BarLineTrendSvg = ({
         const height = bounds.bottom - y;
 
         return (
-          <rect
+          <Rect
             key={item.label}
             fill={barColor}
             height={Math.max(4, height)}
-            rx="6"
-            ry="6"
+            rx={6}
+            ry={6}
             width={barWidth}
             x={x}
             y={y}
           />
         );
       })}
-      <path
+      <Path
         d={createLinePath(linePoints)}
         fill="none"
         stroke={lineColor}
-        strokeWidth="2.5"
+        strokeWidth={2.5}
       />
-    </svg>
+    </Svg>
   );
 };

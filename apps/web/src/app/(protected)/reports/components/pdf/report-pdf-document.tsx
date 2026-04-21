@@ -18,7 +18,6 @@ import type {
   ReportTextBlock,
 } from '@/mock-data/reports';
 import { Document, Page, Text, View } from '@react-pdf/renderer';
-import ReactPDFChart from 'react-pdf-charts';
 
 interface ReportPdfDocumentProps {
   fileName: string;
@@ -139,9 +138,7 @@ const ReportGraphBlockPdf = ({ block }: { block: ReportGraphBlock }) => {
       ) : null}
       <View style={styles.graphSvgWrap}>
         <View style={styles.chartContainer}>
-          <ReactPDFChart>
-            <ReportAreaChartSvg data={block.data} />
-          </ReactPDFChart>
+          <ReportAreaChartSvg data={block.data} />
         </View>
       </View>
       <View style={styles.graphLabels}>

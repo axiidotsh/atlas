@@ -64,7 +64,6 @@ import {
   View,
 } from '@react-pdf/renderer';
 import type { ReactElement } from 'react';
-import ReactPDFChart from 'react-pdf-charts';
 
 interface MetricsPdfDocumentProps {
   campaignRows: CampaignPerformanceRow[];
@@ -461,9 +460,7 @@ const ChartBlock = ({
 }) => {
   return (
     <View>
-      <View style={styles.chartContainer}>
-        <ReactPDFChart>{chart}</ReactPDFChart>
-      </View>
+      <View style={styles.chartContainer}>{chart}</View>
       {legend?.length ? (
         <View style={styles.pieLegend}>
           {legend.map((item) => (
@@ -496,9 +493,7 @@ const PieChartBlock = ({
   return (
     <View>
       <View style={styles.chartContainer}>
-        <ReactPDFChart>
-          <DonutChartSvg data={data} />
-        </ReactPDFChart>
+        <DonutChartSvg data={data} />
       </View>
       <View style={styles.pieLegend}>
         {legends.map((item) => (

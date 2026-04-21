@@ -13,7 +13,7 @@ export const ReportDetail = ({ report }: ReportDetailProps) => {
   const groups = groupReportBlocks(report.blocks);
 
   return (
-    <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 py-6 sm:py-8">
+    <div className="mx-auto flex w-full max-w-198.5 flex-col gap-6 py-6 sm:py-8">
       {groups.map((group, index) => {
         if (group.type === 'card') {
           const count = group.blocks.length;
