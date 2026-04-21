@@ -8,7 +8,7 @@ import type { MockReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
 import { type VariantProps } from 'class-variance-authority';
 import { Share2Icon } from 'lucide-react';
-import { useState } from 'react';
+import { type ReactNode, useState } from 'react';
 
 type ReportShareDialogTab = 'share' | 'export';
 
@@ -17,6 +17,7 @@ interface ReportShareDialogProps {
   className?: string;
   report: MockReport;
   size?: VariantProps<typeof buttonVariants>['size'];
+  trigger?: ReactNode;
   variant?: VariantProps<typeof buttonVariants>['variant'];
 }
 
@@ -25,6 +26,7 @@ export const ReportShareDialog = ({
   className,
   report,
   size = 'default',
+  trigger,
   variant = 'outline',
 }: ReportShareDialogProps) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -63,15 +65,17 @@ export const ReportShareDialog = ({
         />
       }
       trigger={
-        <Button
-          type="button"
-          variant={variant}
-          size={size}
-          className={cn('shrink-0', className)}
-        >
-          <Share2Icon />
-          <span>Share</span>
-        </Button>
+        trigger ?? (
+          <Button
+            type="button"
+            variant={variant}
+            size={size}
+            className={cn('shrink-0', className)}
+          >
+            <Share2Icon />
+            <span>Share</span>
+          </Button>
+        )
       }
     />
   );

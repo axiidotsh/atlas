@@ -5,7 +5,7 @@ import {
   EntityActionsDropdown,
   type EntityAction,
 } from '@/components/entity/entity-actions-dropdown';
-import { ShareDialog } from '@/components/share-dialog';
+import { ReportShareDialog } from '@/components/report-share/report-share-dialog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -113,21 +113,18 @@ const ReportTableRow = ({
         entityTitle={report.title}
         onConfirm={() => onDelete?.()}
       />
-      <ShareDialog
-        title="Share report"
-        description="Anyone with the link can view this report."
-        copySuccessMessage="Report link copied to clipboard"
-        copyErrorMessage="Failed to copy report link"
-        sharePath={report.sharePath ?? `/share/reports/${report.id}`}
-      >
-        <button
-          ref={shareTriggerRef}
-          type="button"
-          className="hidden"
-          aria-hidden="true"
-          tabIndex={-1}
-        />
-      </ShareDialog>
+      <ReportShareDialog
+        report={report}
+        trigger={
+          <button
+            ref={shareTriggerRef}
+            type="button"
+            className="hidden"
+            aria-hidden="true"
+            tabIndex={-1}
+          />
+        }
+      />
       <TableCell className="p-0">
         {isEditing ? (
           <div className="p-2">
