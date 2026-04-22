@@ -1,4 +1,4 @@
-import { MentionOption } from '@/components/chat/chat-input';
+import { MentionPickerOption } from '@/components/chat/editor/mentions-plugin';
 import { PlatformIcon } from '@/components/platform-icon';
 import {
   MOCK_AD_ACCOUNTS,
@@ -43,24 +43,29 @@ function createAdMention({
   name: string;
   type: MentionEntityType;
   platform: AdPlatform;
-}): MentionOption {
+}): MentionPickerOption {
   return {
     id,
-    label: `${name} [${id}] (${type})`,
-    searchValue: name + id,
+    name,
+    searchValue: `${name} ${id}`,
     content: (
       <>
         <PlatformIcon platform={platform} />
-        <span className="truncate text-sm">{name}</span>
+        <span className="min-w-0 flex-1 truncate text-sm">{name}</span>
         <span className="text-muted-foreground ml-auto shrink-0 rounded-sm bg-transparent px-1.5 py-0.5 text-[11px] leading-none">
           {MENTION_TYPE_LABELS[type]}
         </span>
       </>
     ),
+    mentionPayload: {
+      mentionId: id,
+      name,
+      platform,
+    },
   };
 }
 
-export const MENTION_OPTIONS: MentionOption[] = [
+export const MENTION_OPTIONS: MentionPickerOption[] = [
   ...MOCK_AD_ACCOUNTS.map((item) =>
     createAdMention({
       id: item.id,

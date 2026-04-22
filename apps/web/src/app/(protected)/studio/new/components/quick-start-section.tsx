@@ -1,5 +1,6 @@
 'use client';
 
+import { RichTextEditor } from '@/components/chat/editor/rich-text-editor';
 import {
   Field,
   FieldDescription,
@@ -7,8 +8,9 @@ import {
   FieldLabel,
 } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
+import { MENTION_OPTIONS } from '@/mock-data/mention-data';
 import { SparklesIcon } from 'lucide-react';
+import { useRef } from 'react';
 import { Controller, useFormContext } from 'react-hook-form';
 import type { ProjectFormValues } from '../../project-form';
 import { ImageUpload } from './image-upload';
@@ -55,6 +57,7 @@ export const ProjectIdentityFields = () => {
 
 export const ProjectDescriptionField = () => {
   const { control } = useFormContext<ProjectFormValues>();
+  const mentionMenuContainerRef = useRef<HTMLDivElement>(null);
 
   return (
     <Controller
@@ -66,11 +69,18 @@ export const ProjectDescriptionField = () => {
             <SparklesIcon className="text-primary size-3.5" />
             Describe Your Brand or Creative Project
           </FieldLabel>
-          <Textarea
-            {...field}
-            placeholder="A luxury skincare brand creating a spring launch creative project with paid social ads, retargeting variations, and minimalist lifestyle visuals..."
-            className="bg-background dark:bg-input/30 min-h-32 resize-none"
-          />
+          <div ref={mentionMenuContainerRef} className="relative">
+            <div className="border-input bg-background dark:bg-input/30 rounded-md border shadow-xs">
+              <RichTextEditor
+                value={field.value ?? ''}
+                onValueChange={field.onChange}
+                placeholder="A luxury skincare brand creating a spring launch creative project with paid social ads, retargeting variations, and minimalist lifestyle visuals..."
+                mentionOptions={MENTION_OPTIONS}
+                mentionMenuContainerRef={mentionMenuContainerRef}
+                className="min-h-32 overflow-y-auto px-3 py-2 text-sm outline-none"
+              />
+            </div>
+          </div>
           <FieldDescription>
             We&apos;ll auto-populate any empty project details from your
             description. You can fine-tune everything below.

@@ -3,22 +3,15 @@
 import { RefObject } from 'react';
 import { useHotkeys } from 'react-hotkeys-hook';
 
-export const useFocusOnSlash = (
-  inputRef: RefObject<HTMLTextAreaElement | null>
-) => {
+interface Focusable {
+  focus: () => void;
+}
+
+export const useFocusOnSlash = (inputRef: RefObject<Focusable | null>) => {
   useHotkeys(
     'slash',
     () => {
-      const input = inputRef.current;
-
-      if (!input) {
-        return;
-      }
-
-      input.focus();
-
-      const cursorPosition = input.value.length;
-      input.setSelectionRange(cursorPosition, cursorPosition);
+      inputRef.current?.focus();
     },
     {
       enabled: (event) =>

@@ -2,7 +2,7 @@
 
 import { queryAtom } from '@/app/(protected)/chat/atoms';
 import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
-import { ChatInput } from '@/components/chat/chat-input';
+import { ChatInput, EditorHandle } from '@/components/chat/chat-input';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
 import { MOCK_AD_ACCOUNTS } from '@/mock-data/ad-data';
 import { MENTION_OPTIONS } from '@/mock-data/mention-data';
@@ -25,17 +25,27 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
   const pathname = usePathname();
 
   const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
-  const inputRef = useRef<HTMLTextAreaElement>(null);
+  const inputRef = useRef<EditorHandle>(null);
 
   useFocusOnSlash(inputRef);
+
+  function handleSubmit() {
+    const trimmed = query.trim();
+    if (!trimmed) {
+      return;
+    }
+    console.log('[chat] submit', trimmed);
+    setQuery('');
+  }
 
   return (
     <ChatInput
       value={query}
       onValueChange={setQuery}
+      onSubmit={handleSubmit}
       placeholder={placeholder}
       caption={isChatDetailPage ? undefined : caption}
-      textareaRef={inputRef}
+      editorRef={inputRef}
       mentionData={MENTION_OPTIONS}
       leftActions={
         <>

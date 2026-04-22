@@ -1,5 +1,6 @@
 'use client';
 
+import { RichTextEditor } from '@/components/chat/editor/rich-text-editor';
 import { DateRangePicker } from '@/components/date-range-picker';
 import { Button } from '@/components/ui/button';
 import {
@@ -14,15 +15,8 @@ import {
 import { Input } from '@/components/ui/input';
 import { Kbd } from '@/components/ui/kbd';
 import { Label } from '@/components/ui/label';
-import {
-  Mention,
-  MentionContent,
-  MentionInput,
-  MentionItem,
-} from '@/components/ui/mention';
-import { Textarea } from '@/components/ui/textarea';
 import { MENTION_OPTIONS } from '@/mock-data/mention-data';
-import { type ReactNode, useState } from 'react';
+import { type ReactNode, useRef, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 
 export interface CreateReportInput {
@@ -44,6 +38,7 @@ export const CreateReportDialog = ({
   const [title, setTitle] = useState('');
   const [instructions, setInstructions] = useState('');
   const [dateRange, setDateRange] = useState<DateRange | undefined>();
+  const mentionMenuContainerRef = useRef<HTMLDivElement>(null);
 
   function resetForm() {
     setTitle('');
@@ -103,32 +98,21 @@ export const CreateReportDialog = ({
           </div>
           <div className="flex flex-col gap-3">
             <Label htmlFor="report-instructions">Instructions</Label>
-            <Mention
-              trigger="@"
-              inputValue={instructions}
-              onInputValueChange={setInstructions}
-            >
-              <MentionInput asChild>
-                <Textarea
-                  id="report-instructions"
+            <div ref={mentionMenuContainerRef} className="relative">
+              <div
+                id="report-instructions"
+                className="border-input rounded-md border bg-transparent shadow-xs"
+              >
+                <RichTextEditor
                   value={instructions}
+                  onValueChange={setInstructions}
                   placeholder="Summarize Q1 for @Wod Armour and highlight the top creatives..."
-                  className="min-h-32 resize-none"
+                  mentionOptions={MENTION_OPTIONS}
+                  mentionMenuContainerRef={mentionMenuContainerRef}
+                  className="min-h-32 overflow-y-auto px-3 py-2 text-sm outline-none"
                 />
-              </MentionInput>
-              <MentionContent className="max-h-60 w-[var(--radix-popper-anchor-width)] overflow-y-auto">
-                {MENTION_OPTIONS.map((item) => (
-                  <MentionItem
-                    key={item.id}
-                    label={item.label}
-                    value={item.searchValue}
-                    className="cursor-pointer"
-                  >
-                    {item.content}
-                  </MentionItem>
-                ))}
-              </MentionContent>
-            </Mention>
+              </div>
+            </div>
             <span className="text-muted-foreground inline-flex flex-wrap items-center gap-1 text-xs">
               Tag ad accounts, campaigns, ad sets, or ads with{' '}
               <Kbd className="bg-accent/50">@</Kbd>

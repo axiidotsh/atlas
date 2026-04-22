@@ -1,8 +1,9 @@
 'use client';
 
+import { MentionChip } from '@/components/chat/mention-chip';
 import { Button } from '@/components/ui/button';
 import { useBrowserShare } from '@/hooks/use-browser-share';
-import type { MockChatMessage } from '@/mock-data/types';
+import type { AdPlatform, MockChatMessage } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
 import {
   CheckIcon,
@@ -13,7 +14,7 @@ import {
   ShieldCheckIcon,
 } from 'lucide-react';
 import { useEffect, useState } from 'react';
-import { Streamdown } from 'streamdown';
+import { defaultUrlTransform, Streamdown } from 'streamdown';
 import 'streamdown/styles.css';
 
 interface ChatMessageProps {
@@ -102,7 +103,36 @@ export const Message = ({ message }: ChatMessageProps) => {
           isUserMessage && 'bg-muted rounded-2xl px-4 py-3 shadow-xs'
         )}
       >
-        <Streamdown className="[&_img]:cursor-pointer [&_ol]:list-outside [&_ol]:pl-8 [&_ul]:list-outside [&_ul]:pl-8">
+        <Streamdown
+          className="[&_img]:cursor-pointer [&_ol]:list-outside [&_ol]:pl-8 [&_ul]:list-outside [&_ul]:pl-8"
+          urlTransform={(url, key, node) =>
+            url.startsWith('mention://')
+              ? url
+              : defaultUrlTransform(url, key, node)
+          }
+          components={{
+            a: ({ href, children, ...props }) => {
+              if (href?.startsWith('mention://')) {
+                const withoutProtocol = href.slice('mention://'.length);
+                const [platform] = withoutProtocol.split('/');
+                const name = String(children ?? '').replace(/^@/, '');
+                if (platform === 'meta' || platform === 'google') {
+                  return (
+                    <MentionChip
+                      name={name}
+                      platform={platform as AdPlatform}
+                    />
+                  );
+                }
+              }
+              return (
+                <a href={href} {...props}>
+                  {children}
+                </a>
+              );
+            },
+          }}
+        >
           {message.content}
         </Streamdown>
       </div>
