@@ -53,6 +53,10 @@ export function getStudioDetailId(pathname: string) {
 export function getReportDetailId(pathname: string) {
   const match = pathname.match(/^\/reports\/([^/]+)$/);
 
+  if (match?.[1] === 'new') {
+    return null;
+  }
+
   return match?.[1] ?? null;
 }
 
@@ -98,6 +102,10 @@ function getProtectedHeaderTitle(pathname: string) {
 
   if (pathname === '/reports') {
     return 'Reports';
+  }
+
+  if (pathname === '/reports/new') {
+    return 'New Report';
   }
 
   if (pathname === '/studio') {

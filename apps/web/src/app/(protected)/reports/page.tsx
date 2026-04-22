@@ -4,11 +4,10 @@ import {
   reportsViewAtom,
   type ReportsView,
 } from '@/app/(protected)/reports/atoms';
-import { CreateReportDialog } from '@/app/(protected)/reports/components/create-report-dialog';
 import { ReportCard } from '@/app/(protected)/reports/components/report-card';
 import { ReportTable } from '@/app/(protected)/reports/components/report-table';
 import { SearchBar } from '@/components/search-bar';
-import { Button } from '@/components/ui/button';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { ButtonGroup } from '@/components/ui/button-group';
 import {
   DropdownMenu,
@@ -22,6 +21,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { getReports, type ReportStatus } from '@/mock-data/reports';
+import { cn } from '@/utils/utils';
 import { useAtom } from 'jotai';
 import {
   ArrowUpDownIcon,
@@ -30,6 +30,7 @@ import {
   PlusIcon,
   TableIcon,
 } from 'lucide-react';
+import Link from 'next/link';
 import { useState } from 'react';
 
 type ReportsSortOption =
@@ -148,12 +149,10 @@ export default function ReportsPage() {
     <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 py-6 sm:py-8">
       <div className="flex items-center justify-between gap-3">
         <h1 className="text-xl font-semibold">Your Reports</h1>
-        <CreateReportDialog>
-          <Button>
-            <PlusIcon />
-            New Report
-          </Button>
-        </CreateReportDialog>
+        <Link href="/reports/new" className={cn(buttonVariants())}>
+          <PlusIcon />
+          New Report
+        </Link>
       </div>
       <div className="flex gap-2">
         <SearchBar
