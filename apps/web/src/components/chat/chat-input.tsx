@@ -7,10 +7,11 @@ import { Textarea } from '@/components/ui/textarea';
 import { ArrowUpIcon, PaperclipIcon } from 'lucide-react';
 import { Fragment, ReactNode, Ref, useState } from 'react';
 
-interface MentionOption {
+export interface MentionOption {
   id: string;
-  name: string;
-  type: string;
+  label: string;
+  searchValue: string;
+  content: ReactNode;
 }
 
 interface ChatInputProps {
@@ -25,17 +26,6 @@ interface ChatInputProps {
   textareaRef?: Ref<HTMLTextAreaElement>;
   mentionData?: MentionOption[];
   mentionTrigger?: string;
-}
-
-function formatMentionType(value: string) {
-  return value
-    .split('-')
-    .map((item) => item[0].toUpperCase().concat(item.substring(1)))
-    .join(' ');
-}
-
-function getMentionLabel(item: MentionOption) {
-  return `${item.name} [${item.id}] (${item.type})`;
 }
 
 export const ChatInput = ({
@@ -74,14 +64,11 @@ export const ChatInput = ({
             return (
               <Fragment key={item.id}>
                 <MentionItem
-                  label={getMentionLabel(item)}
-                  value={item.name + item.id}
+                  label={item.label}
+                  value={item.searchValue}
                   className="cursor-pointer rounded-md px-2.5 py-2"
                 >
-                  <span className="truncate text-sm">{item.name}</span>
-                  <span className="text-muted-foreground ml-auto shrink-0 rounded-sm bg-transparent px-1.5 py-0.5 text-[11px] leading-none">
-                    {formatMentionType(item.type)}
-                  </span>
+                  {item.content}
                 </MentionItem>
                 {isLastItem && <div className="h-1 w-full" />}
               </Fragment>

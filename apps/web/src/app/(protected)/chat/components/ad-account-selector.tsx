@@ -1,6 +1,6 @@
 'use client';
 
-import { GoogleAdsLogo, MetaLogo } from '@/components/icons';
+import { PlatformIcon } from '@/components/platform-icon';
 import { SearchBar } from '@/components/search-bar';
 import { Button, buttonVariants } from '@/components/ui/button';
 import {
@@ -12,7 +12,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { MOCK_AD_ACCOUNTS } from '@/mock-data/ad-data';
-import type { AdPlatform, MockAdAccount } from '@/mock-data/types';
+import type { MockAdAccount } from '@/mock-data/types';
 import { cn } from '@/utils/utils';
 import { VariantProps } from 'class-variance-authority';
 import { ChevronsUpDownIcon } from 'lucide-react';
@@ -21,30 +21,6 @@ import { useState } from 'react';
 type ButtonVariants = VariantProps<typeof buttonVariants>;
 type ButtonVariant = NonNullable<ButtonVariants['variant']>;
 type ButtonSize = NonNullable<ButtonVariants['size']>;
-
-function getPlatformIcon(platform: AdPlatform) {
-  return platform === 'google' ? GoogleAdsLogo : MetaLogo;
-}
-
-function toggleSelection(items: string[], value: string) {
-  return items.includes(value)
-    ? items.filter((item) => item !== value)
-    : [...items, value];
-}
-
-function getPlatformIconClassName(platform: AdPlatform) {
-  return cn('w-auto shrink-0', platform === 'google' ? 'h-4' : 'h-3');
-}
-
-function renderPlatformIcon(platform: AdPlatform) {
-  const className = getPlatformIconClassName(platform);
-
-  if (platform === 'google') {
-    return <GoogleAdsLogo className={className} />;
-  }
-
-  return <MetaLogo className={className} />;
-}
 
 interface AdAccountSelectorProps {
   selectedAdAccountIds: MockAdAccount['id'][];
@@ -87,6 +63,12 @@ export const AdAccountSelector = ({
   const hasAllAdAccountsSelected =
     selectedAdAccountIds.length === allAdAccountIds.length;
 
+  function toggleSelection(value: string) {
+    return selectedAdAccountIds.includes(value)
+      ? selectedAdAccountIds.filter((item) => item !== value)
+      : [...selectedAdAccountIds, value];
+  }
+
   return (
     <DropdownMenu
       open={isOpen}
@@ -111,7 +93,7 @@ export const AdAccountSelector = ({
         >
           {selectedAdAccount ? (
             <span className="flex min-w-0 items-center gap-2">
-              {renderPlatformIcon(selectedAdAccount.platform)}
+              <PlatformIcon platform={selectedAdAccount.platform} />
               <span className="truncate">{selectedAdAccount.name}</span>
             </span>
           ) : selectedAdAccounts.length > 1 ? (
@@ -119,7 +101,9 @@ export const AdAccountSelector = ({
               <span className="flex items-center gap-1.5">
                 {selectedPlatforms.map((platform) => {
                   return (
-                    <span key={platform}>{renderPlatformIcon(platform)}</span>
+                    <span key={platform}>
+                      <PlatformIcon platform={platform} />
+                    </span>
                   );
                 })}
               </span>
@@ -160,27 +144,19 @@ export const AdAccountSelector = ({
             No ad accounts found
           </div>
         ) : (
-          filteredAdAccounts.map((adAccount) => {
-            const PlatformIcon = getPlatformIcon(adAccount.platform);
-
-            return (
-              <DropdownMenuCheckboxItem
-                key={adAccount.id}
-                checked={selectedAdAccountIds.includes(adAccount.id)}
-                onSelect={(event) => event.preventDefault()}
-                onCheckedChange={() =>
-                  onSelectedAdAccountIdsChange(
-                    toggleSelection(selectedAdAccountIds, adAccount.id)
-                  )
-                }
-              >
-                <PlatformIcon
-                  className={getPlatformIconClassName(adAccount.platform)}
-                />
-                {adAccount.name}
-              </DropdownMenuCheckboxItem>
-            );
-          })
+          filteredAdAccounts.map((adAccount) => (
+            <DropdownMenuCheckboxItem
+              key={adAccount.id}
+              checked={selectedAdAccountIds.includes(adAccount.id)}
+              onSelect={(event) => event.preventDefault()}
+              onCheckedChange={() =>
+                onSelectedAdAccountIdsChange(toggleSelection(adAccount.id))
+              }
+            >
+              <PlatformIcon platform={adAccount.platform} />
+              {adAccount.name}
+            </DropdownMenuCheckboxItem>
+          ))
         )}
         <DropdownMenuSeparator />
         <DropdownMenuItem

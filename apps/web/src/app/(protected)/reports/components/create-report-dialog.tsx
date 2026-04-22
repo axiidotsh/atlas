@@ -21,11 +21,7 @@ import {
   MentionItem,
 } from '@/components/ui/mention';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  formatMentionType,
-  getMentionLabel,
-  MENTION_OPTIONS,
-} from '@/mock-data/mention-data';
+import { MENTION_OPTIONS } from '@/mock-data/mention-data';
 import { type ReactNode, useState } from 'react';
 import { type DateRange } from 'react-day-picker';
 
@@ -124,14 +120,11 @@ export const CreateReportDialog = ({
                 {MENTION_OPTIONS.map((item) => (
                   <MentionItem
                     key={item.id}
-                    label={getMentionLabel(item)}
-                    value={item.name + item.id}
+                    label={item.label}
+                    value={item.searchValue}
                     className="cursor-pointer"
                   >
-                    <span className="truncate text-sm">{item.name}</span>
-                    <span className="text-muted-foreground ml-auto shrink-0 text-[11px] leading-none">
-                      {formatMentionType(item.type)}
-                    </span>
+                    {item.content}
                   </MentionItem>
                 ))}
               </MentionContent>
