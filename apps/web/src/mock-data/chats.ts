@@ -22,6 +22,14 @@ const SIDEBAR_STATE_IMAGE = getStudioImage('creative_3');
 const ONBOARDING_FLOW_IMAGE = getStudioImage('creative_4');
 const RELEASE_HIGHLIGHTS_IMAGE = getStudioImage('creative_5');
 const CONTENT_CALENDAR_IMAGE = getStudioImage('creative_6');
+const WOD_ARMOUR_ACCOUNT_MENTION =
+  '[@Wod Armour](mention://meta/act_meta_129440001)';
+const HYPERICE_ACCOUNT_MENTION =
+  '[@Hyperice](mention://google/act_google_55821031)';
+const WOD_ARMOUR_SPRING_PROSPECTING_MENTION =
+  '[@Wod Armour | Spring Prospecting](mention://meta/cmp_meta_1001)';
+const HYPERICE_RECOVERY_DEVICE_SHOPPING_MENTION =
+  '[@Hyperice | Recovery Device Shopping](mention://google/cmp_google_3002)';
 
 const CHAT_IMAGES: Record<string, MockConversationImage[]> = {
   '1': [LAUNCH_DASHBOARD_IMAGE],
@@ -76,14 +84,20 @@ I would treat this like a small release: **tracking first**, then creative QA, t
       {
         id: '1-user-2',
         role: 'user',
-        content:
-          '**Make this more useful for a team working across Meta and Google.**\n\n- We need channel-specific checks.\n- The handoff should be easy to paste into Slack.',
+        content: `**Make this more useful for a team working across Meta and Google.**
+
+- We need channel-specific checks for ${WOD_ARMOUR_ACCOUNT_MENTION} and ${HYPERICE_ACCOUNT_MENTION}.
+- The handoff should be easy to paste into Slack.`,
       },
       {
         id: '1-assistant-2',
         role: 'assistant',
-        content:
-          '### Meta and Google version\n- **Meta:** pixel or CAPI events, catalog health, and ad approvals.\n- **Google:** conversion actions, bidding setup, and final destination URLs.\n- **Shared:** naming consistency, owner assignment, launch time, and the first readout window.\n\nIf you want, I can turn this into a copy-paste launch doc with sections for owner, go or no-go, and rollback notes.',
+        content: `### Meta and Google version
+- **Meta:** ${WOD_ARMOUR_ACCOUNT_MENTION} should have pixel or CAPI events, catalog health, and ad approvals locked.
+- **Google:** ${HYPERICE_ACCOUNT_MENTION} should have conversion actions, bidding setup, and final destination URLs confirmed.
+- **Shared:** naming consistency, owner assignment, launch time, and the first readout window.
+
+If you want, I can turn this into a copy-paste launch doc with sections for owner, go or no-go, and rollback notes.`,
       },
     ],
   },
@@ -180,20 +194,46 @@ If local works with the same provider settings, I would compare the deployment l
       {
         id: '4-assistant-1',
         role: 'assistant',
-        content:
-          '#### Weekly readout\n- Click-through improved on prospecting.\n- Remarketing ROAS softened.\n- Spend moved toward the strongest creative cluster.\n\n##### What changed\n1. Top-of-funnel got stronger.\n2. Mid-funnel stayed flat.\n3. Efficiency lagged behind volume.\n   - Watch blended ROAS.\n   - Watch frequency.\n\n| Metric | Last week | This week |\n| --- | --- | --- |\n| CTR | 1.8% | 2.2% |\n| ROAS | 2.4x | 2.1x |\n| Spend share | 41% | 54% |\n\nThe main story is that top-of-funnel engagement looks healthier, but the efficiency gains are not yet flowing through the entire funnel.',
+        content: `#### Weekly readout
+- Click-through improved on ${WOD_ARMOUR_SPRING_PROSPECTING_MENTION}.
+- Remarketing ROAS softened.
+- Spend moved toward ${HYPERICE_RECOVERY_DEVICE_SHOPPING_MENTION}.
+
+##### What changed
+1. Top-of-funnel got stronger.
+2. Mid-funnel stayed flat.
+3. Efficiency lagged behind volume.
+   - Watch blended ROAS.
+   - Watch frequency.
+
+| Metric | Last week | This week |
+| --- | --- | --- |
+| CTR | 1.8% | 2.2% |
+| ROAS | 2.4x | 2.1x |
+| Spend share | 41% | 54% |
+
+The main story is that top-of-funnel engagement looks healthier, but the efficiency gains are not yet flowing through the entire funnel.`,
       },
       {
         id: '4-user-2',
         role: 'user',
-        content:
-          '**Turn that into a short note I can drop into Slack.**\n\n- Keep it tight\n- No jargon\n- Sound confident',
+        content: `**Turn that into a short note I can drop into Slack.**
+
+- Mention ${WOD_ARMOUR_SPRING_PROSPECTING_MENTION} and ${HYPERICE_RECOVERY_DEVICE_SHOPPING_MENTION}.
+- Keep it tight
+- No jargon
+- Sound confident`,
       },
       {
         id: '4-assistant-2',
         role: 'assistant',
-        content:
-          '### Slack-ready note\nThis week we saw stronger top-of-funnel engagement, weaker remarketing efficiency, and a larger share of spend moving behind the top creative set.\n\n### What I would watch next\n- Whether the prospecting lift holds after the learning window\n- Whether remarketing recovers once pacing stabilizes\n- Whether the creative winner keeps outpacing the rest',
+        content: `### Slack-ready note
+This week we saw stronger top-of-funnel engagement in ${WOD_ARMOUR_SPRING_PROSPECTING_MENTION}, weaker remarketing efficiency, and a larger share of spend moving behind ${HYPERICE_RECOVERY_DEVICE_SHOPPING_MENTION}.
+
+### What I would watch next
+- Whether the prospecting lift holds after the learning window
+- Whether remarketing recovers once pacing stabilizes
+- Whether the creative winner keeps outpacing the rest`,
       },
     ],
   },

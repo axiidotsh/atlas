@@ -29,10 +29,31 @@ interface ActionProps {
   isAssistantOnly?: boolean;
 }
 
+const MENTION_MARKDOWN_REGEX =
+  /\[@([^\]]+)\]\(mention:\/\/(meta|google)\/([^\s)]+)\)/g;
+
+function escapeHtmlAttribute(value: string): string {
+  return value
+    .replaceAll('&', '&amp;')
+    .replaceAll('"', '&quot;')
+    .replaceAll("'", '&#39;')
+    .replaceAll('<', '&lt;')
+    .replaceAll('>', '&gt;');
+}
+
+function serializeMentions(content: string): string {
+  return content.replace(
+    MENTION_MARKDOWN_REGEX,
+    (_, name: string, platform: AdPlatform) =>
+      `<mention mention_name="${escapeHtmlAttribute(name)}" mention_platform="${platform}"></mention>`
+  );
+}
+
 export const Message = ({ message }: ChatMessageProps) => {
   const isUserMessage = message.role === 'user';
   const [isCopied, setIsCopied] = useState(false);
   const { copyText } = useBrowserShare();
+  const renderedContent = serializeMentions(message.content);
 
   useEffect(() => {
     if (!isCopied) {
@@ -104,6 +125,9 @@ export const Message = ({ message }: ChatMessageProps) => {
         )}
       >
         <Streamdown
+          allowedTags={{
+            mention: ['mention_name', 'mention_platform'],
+          }}
           className="[&_img]:cursor-pointer [&_ol]:list-outside [&_ol]:pl-8 [&_ul]:list-outside [&_ul]:pl-8"
           urlTransform={(url, key, node) =>
             url.startsWith('mention://')
@@ -111,20 +135,17 @@ export const Message = ({ message }: ChatMessageProps) => {
               : defaultUrlTransform(url, key, node)
           }
           components={{
-            a: ({ href, children, ...props }) => {
-              if (href?.startsWith('mention://')) {
-                const withoutProtocol = href.slice('mention://'.length);
-                const [platform] = withoutProtocol.split('/');
-                const name = String(children ?? '').replace(/^@/, '');
-                if (platform === 'meta' || platform === 'google') {
-                  return (
-                    <MentionChip
-                      name={name}
-                      platform={platform as AdPlatform}
-                    />
-                  );
-                }
+            mention: ({ mention_name: name, mention_platform: platform }) => {
+              if (
+                typeof name === 'string' &&
+                (platform === 'meta' || platform === 'google')
+              ) {
+                return <MentionChip name={name} platform={platform} />;
               }
+
+              return null;
+            },
+            a: ({ href, children, ...props }) => {
               return (
                 <a href={href} {...props}>
                   {children}
@@ -133,7 +154,7 @@ export const Message = ({ message }: ChatMessageProps) => {
             },
           }}
         >
-          {message.content}
+          {renderedContent}
         </Streamdown>
       </div>
       {/* Actions */}
