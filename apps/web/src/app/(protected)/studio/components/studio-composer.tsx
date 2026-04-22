@@ -1,8 +1,8 @@
 'use client';
 
-import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
 import { studioQueryAtom } from '@/app/(protected)/studio/atoms';
 import { ChatInput, EditorHandle } from '@/components/chat/chat-input';
+import { TokenUsage } from '@/components/token-usage';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
 import { MENTION_OPTIONS } from '@/mock-data/mention-data';
 import { useAtom } from 'jotai';

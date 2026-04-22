@@ -30,6 +30,50 @@ interface StudioImageCardProps {
   onOpen: () => void;
 }
 
+function getImageExtension(imageSrc: string) {
+  try {
+    const imageUrl = new URL(imageSrc);
+    const extensionMatch = imageUrl.pathname.match(/\.([a-z0-9]+)$/i);
+    const extension = extensionMatch?.[1]?.toLowerCase();
+
+    if (!extension) {
+      return 'jpg';
+    }
+
+    return extension === 'jpeg' ? 'jpg' : extension;
+  } catch {
+    return 'jpg';
+  }
+}
+
+function getDownloadFileName(image: MockStudioImage) {
+  const sanitizedTitle = image.title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+
+  return `${sanitizedTitle || 'studio-image'}.${getImageExtension(image.src)}`;
+}
+
+async function downloadImage(image: MockStudioImage) {
+  const response = await fetch(image.src);
+
+  if (!response.ok) {
+    throw new Error(`Failed to download image: ${response.status}`);
+  }
+
+  const imageBlob = await response.blob();
+  const objectUrl = URL.createObjectURL(imageBlob);
+  const downloadLink = document.createElement('a');
+
+  downloadLink.href = objectUrl;
+  downloadLink.download = getDownloadFileName(image);
+  document.body.append(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+  URL.revokeObjectURL(objectUrl);
+}
+
 const StudioImageCard = ({ image, onOpen }: StudioImageCardProps) => {
   return (
     <article className="group/image bg-card relative overflow-hidden rounded-2xl border shadow-sm">
@@ -48,21 +92,19 @@ const StudioImageCard = ({ image, onOpen }: StudioImageCardProps) => {
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100" />
         <div className="absolute right-3 bottom-3 z-20 flex items-center gap-1 opacity-0 transition group-focus-within/image:opacity-100 group-hover/image:opacity-100">
           <Button
-            asChild
+            type="button"
             size="icon-sm"
             variant="secondary"
             tooltip="Download image"
             className="bg-background/90 hover:bg-background"
+            aria-label={`Download ${image.title}`}
+            onClick={() => {
+              void downloadImage(image).catch((error: unknown) => {
+                console.error(error);
+              });
+            }}
           >
-            <a
-              href={image.src}
-              download
-              target="_blank"
-              rel="noreferrer"
-              aria-label={`Download ${image.title}`}
-            >
-              <DownloadIcon />
-            </a>
+            <DownloadIcon />
           </Button>
           <Button
             type="button"

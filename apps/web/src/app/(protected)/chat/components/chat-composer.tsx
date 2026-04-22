@@ -1,8 +1,8 @@
 'use client';
 
 import { queryAtom } from '@/app/(protected)/chat/atoms';
-import { TokenUsage } from '@/app/(protected)/chat/components/token-usage';
 import { ChatInput, EditorHandle } from '@/components/chat/chat-input';
+import { TokenUsage } from '@/components/token-usage';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
 import { MOCK_AD_ACCOUNTS } from '@/mock-data/ad-data';
 import { MENTION_OPTIONS } from '@/mock-data/mention-data';
