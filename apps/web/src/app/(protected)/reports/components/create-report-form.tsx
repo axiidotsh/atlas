@@ -49,7 +49,12 @@ export const CreateReportForm = () => {
         control={control}
         render={({ field, fieldState }) => (
           <Field data-invalid={fieldState.invalid || undefined}>
-            <FieldLabel>Instructions</FieldLabel>
+            <FieldLabel>
+              Instructions
+              <span className="text-muted-foreground text-xs font-normal">
+                (optional if you choose a template)
+              </span>
+            </FieldLabel>
             <div ref={mentionMenuContainerRef} className="relative">
               <div className="border-input bg-background dark:bg-input/30 rounded-md border shadow-xs">
                 <RichTextEditor

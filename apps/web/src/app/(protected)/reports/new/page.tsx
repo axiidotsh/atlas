@@ -1,6 +1,7 @@
 'use client';
 
 import { CreateReportForm } from '@/app/(protected)/reports/components/create-report-form';
+import { ReportTemplatePicker } from '@/app/(protected)/reports/components/report-template-picker';
 import {
   createReportFormValues,
   reportFormSchema,
@@ -39,6 +40,14 @@ export default function NewReportPage() {
       <FormProvider {...form}>
         <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
           <CreateReportForm />
+          <div className="relative flex items-center py-2">
+            <div className="flex-1 border-t" />
+            <span className="text-muted-foreground px-3 text-xs font-medium">
+              Or start from a template
+            </span>
+            <div className="flex-1 border-t" />
+          </div>
+          <ReportTemplatePicker />
           <div className="bg-background sticky bottom-0 -mx-1 flex items-center justify-end gap-3 border-t px-1 py-4">
             <Button type="button" variant="outline" asChild>
               <Link href="/reports">Cancel</Link>

@@ -6,17 +6,31 @@ const reportDateRangeSchema: z.ZodType<DateRange> = z.object({
   to: z.union([z.date(), z.undefined()]).optional(),
 });
 
-export const reportFormSchema = z.object({
-  title: z.string().max(100).default(''),
-  instructions: z.string().trim().min(1, 'Instructions are required'),
-  dateRange: reportDateRangeSchema.optional(),
-});
+export const reportFormSchema = z
+  .object({
+    title: z.string().max(100).default(''),
+    instructions: z.string().default(''),
+    templateId: z.string().optional(),
+    dateRange: reportDateRangeSchema.optional(),
+  })
+  .superRefine(({ instructions, templateId }, context) => {
+    if (instructions.trim() || templateId) {
+      return;
+    }
+
+    context.addIssue({
+      code: z.ZodIssueCode.custom,
+      path: ['instructions'],
+      message: 'Add instructions or choose a template',
+    });
+  });
 
 export type ReportFormValues = z.infer<typeof reportFormSchema>;
 
 export const DEFAULT_REPORT_FORM_VALUES: ReportFormValues = {
   title: '',
   instructions: '',
+  templateId: undefined,
   dateRange: undefined,
 };
 

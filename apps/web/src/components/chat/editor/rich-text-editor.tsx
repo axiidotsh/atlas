@@ -11,6 +11,7 @@ import {
   MentionPickerOption,
   MentionsPlugin,
 } from '@/components/chat/editor/mentions-plugin';
+import { cn } from '@/utils/utils';
 import { ListItemNode, ListNode } from '@lexical/list';
 import { LexicalComposer } from '@lexical/react/LexicalComposer';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
@@ -65,6 +66,12 @@ type RichTextEditorProps =
   | RichTextEditorWithMentionsProps
   | RichTextEditorWithoutMentionsProps;
 
+const DEFAULT_EDITOR_CLASS_NAME = 'h-20';
+const EDITOR_TEXT_CLASS_NAME =
+  'overflow-y-auto px-3 py-2 text-base outline-none min-[769px]:text-sm';
+const PLACEHOLDER_CLASS_NAME =
+  'text-muted-foreground pointer-events-none absolute inset-0 px-3 py-2 text-base min-[769px]:text-sm';
+
 export const RichTextEditor = ({
   value,
   onValueChange,
@@ -94,13 +101,14 @@ export const RichTextEditor = ({
           contentEditable={
             <ContentEditable
               autoFocus
-              className={
-                className ??
-                'h-20 overflow-y-auto px-3 py-2 text-sm outline-none'
-              }
+              className={cn(
+                DEFAULT_EDITOR_CLASS_NAME,
+                EDITOR_TEXT_CLASS_NAME,
+                className
+              )}
               aria-placeholder={placeholder || 'Ask me anything'}
               placeholder={
-                <div className="text-muted-foreground pointer-events-none absolute inset-0 px-3 py-2 text-sm">
+                <div className={PLACEHOLDER_CLASS_NAME}>
                   {placeholder || 'Ask me anything'}
                 </div>
               }
