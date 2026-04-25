@@ -1,4 +1,8 @@
 import { config } from 'dotenv';
+import { fileURLToPath } from 'node:url';
 
-config({ path: '.env' });
-config({ path: '.env.local', override: true });
+const envPath = fileURLToPath(new URL('../.env', import.meta.url));
+const localEnvPath = fileURLToPath(new URL('../.env.local', import.meta.url));
+
+config({ path: envPath });
+config({ path: localEnvPath, override: true });

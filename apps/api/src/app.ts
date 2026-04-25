@@ -3,6 +3,7 @@ import { cors } from 'hono/cors';
 import { requestId } from 'hono/request-id';
 import { secureHeaders } from 'hono/secure-headers';
 import { auth } from './auth';
+import './env';
 import { httpLogger } from './logger';
 import { authRateLimiter } from './middleware/rate-limit';
 

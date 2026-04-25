@@ -35,7 +35,7 @@ const STANDARD_HEADERS = 'draft-6' as const;
 const RATE_LIMIT_CONFIG = {
   auth: {
     windowMs: WINDOW_MS,
-    limit: createUserBasedLimit(30, 10),
+    limit: createUserBasedLimit(600, 300),
     standardHeaders: STANDARD_HEADERS,
     keyGenerator: getClientIdentifier,
     message: {

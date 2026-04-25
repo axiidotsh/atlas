@@ -1,10 +1,13 @@
 'use client';
 
+import { useSignInEmail } from '@/app/(auth)/hooks/use-email-sign-in';
+import { useSignInSocial } from '@/app/(auth)/hooks/use-social-sign-in';
 import { GoogleLogo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
+import { Spinner } from '@/components/ui/spinner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { Controller, useForm } from 'react-hook-form';
@@ -21,13 +24,17 @@ const signInSchema = z.object({
 type SignInValues = z.infer<typeof signInSchema>;
 
 export default function SignInPage() {
+  const signInEmail = useSignInEmail();
+  const signInSocial = useSignInSocial();
   const { control, handleSubmit } = useForm<SignInValues>({
     resolver: zodResolver(signInSchema as never) as never,
     defaultValues: { email: '', password: '' },
   });
 
+  const isAuthenticating = signInEmail.isPending || signInSocial.isPending;
+
   function onSubmit(values: SignInValues) {
-    console.log(values);
+    signInEmail.mutate(values);
   }
 
   return (
@@ -39,9 +46,19 @@ export default function SignInPage() {
         </p>
       </div>
       <div className="flex flex-col gap-4">
-        <Button type="button" variant="outline" className="w-full">
-          <GoogleLogo className="size-4" />
-          Continue with Google
+        <Button
+          type="button"
+          variant="outline"
+          className="w-full"
+          disabled={isAuthenticating}
+          onClick={() => signInSocial.mutate({ provider: 'google' })}
+        >
+          {signInSocial.isPending ? (
+            <Spinner />
+          ) : (
+            <GoogleLogo className="size-4" />
+          )}
+          {signInSocial.isPending ? 'Connecting...' : 'Continue with Google'}
         </Button>
         <div className="relative flex items-center">
           <div className="flex-1 border-t" />
@@ -62,6 +79,7 @@ export default function SignInPage() {
                   type="email"
                   autoComplete="email"
                   placeholder="you@example.com"
+                  disabled={isAuthenticating}
                   aria-invalid={fieldState.invalid}
                   className="bg-background dark:bg-input/30"
                 />
@@ -89,6 +107,7 @@ export default function SignInPage() {
                   {...field}
                   autoComplete="current-password"
                   placeholder="Enter your password"
+                  disabled={isAuthenticating}
                   aria-invalid={fieldState.invalid}
                   className="bg-background dark:bg-input/30"
                 />
@@ -98,8 +117,9 @@ export default function SignInPage() {
               </Field>
             )}
           />
-          <Button type="submit" className="w-full">
-            Sign in
+          <Button type="submit" className="w-full" disabled={isAuthenticating}>
+            {signInEmail.isPending && <Spinner />}
+            {signInEmail.isPending ? 'Signing in...' : 'Sign in'}
           </Button>
         </form>
       </div>

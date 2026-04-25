@@ -1,6 +1,5 @@
 import { serve } from '@hono/node-server';
 import { app } from './app';
-import './env';
 import { logger } from './logger';
 
 const DEFAULT_PORT = 8080;

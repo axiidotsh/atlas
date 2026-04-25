@@ -36,6 +36,8 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { useSignOut } from '@/hooks/use-sign-out';
+import { useSession } from '@/lib/auth-client';
 
 type ThemeOption = 'light' | 'dark' | 'system';
 
@@ -63,15 +65,27 @@ const THEME_OPTIONS: ThemeMenuOption[] = [
   },
 ];
 
+function getInitials(name: string) {
+  return name
+    .split(' ')
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part.at(0)?.toUpperCase())
+    .join('');
+}
+
 export const UserMenu = () => {
   const { isMobile } = useSidebar();
   const { theme = 'system', setTheme } = useTheme();
+  const signOut = useSignOut();
+  const { data: session } = useSession();
 
   const user = {
-    avatar: 'https://github.com/axiidotsh.png',
-    name: 'Aditya Kumar',
-    email: 'aditya@example.com',
+    avatar: session?.user.image ?? undefined,
+    name: session?.user.name ?? 'Atlas user',
+    email: session?.user.email ?? 'Signed in',
   };
+  const userInitials = getInitials(user.name) || 'AU';
 
   return (
     <SidebarMenu>
@@ -83,8 +97,12 @@ export const UserMenu = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="size-8 rounded-lg">
-                <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                {user.avatar && (
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                )}
+                <AvatarFallback className="rounded-lg">
+                  {userInitials}
+                </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
@@ -102,8 +120,12 @@ export const UserMenu = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg">
-                  <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-full">CN</AvatarFallback>
+                  {user.avatar && (
+                    <AvatarImage src={user.avatar} alt={user.name} />
+                  )}
+                  <AvatarFallback className="rounded-full">
+                    {userInitials}
+                  </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
@@ -161,9 +183,16 @@ export const UserMenu = () => {
               </DropdownMenuSub>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
-            <DropdownMenuItem variant="destructive">
+            <DropdownMenuItem
+              variant="destructive"
+              disabled={signOut.isPending}
+              onSelect={(event) => {
+                event.preventDefault();
+                signOut.mutate();
+              }}
+            >
               <LogOut />
-              Log out
+              {signOut.isPending ? 'Logging out...' : 'Log out'}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>

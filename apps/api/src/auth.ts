@@ -10,6 +10,12 @@ const RESET_PASSWORD_EXPIRY = 30 * 60; // 30 minutes
 const EMAIL_VERIFICATION_EXPIRY = 24 * 60 * 60; // 24 hours
 const SESSION_CACHE_EXPIRY = 2 * 60 * 60; // 2 hours
 
+function getVerificationUrl(url: string) {
+  const verificationUrl = new URL(url);
+  verificationUrl.searchParams.set('callbackURL', process.env.APP_URL!);
+  return verificationUrl.toString();
+}
+
 export const auth = betterAuth({
   baseURL: process.env.BETTER_AUTH_URL,
   trustedOrigins: [process.env.APP_URL!],
@@ -58,10 +64,14 @@ export const auth = betterAuth({
   },
   emailVerification: {
     sendOnSignUp: true,
-    autoSignInAfterVerification: true,
     expiresIn: EMAIL_VERIFICATION_EXPIRY,
+    autoSignInAfterVerification: true,
     sendVerificationEmail: async ({ user, url }) => {
-      await emailService.sendVerificationEmail(user.email, user.name, url);
+      await emailService.sendVerificationEmail(
+        user.email,
+        user.name,
+        getVerificationUrl(url)
+      );
     },
   },
 });

@@ -1,8 +1,10 @@
 'use client';
 
+import { useRequestPasswordReset } from '@/app/(auth)/hooks/use-request-password-reset';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
+import { Spinner } from '@/components/ui/spinner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
 import { Controller, useForm } from 'react-hook-form';
@@ -18,13 +20,16 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordValues = z.infer<typeof forgotPasswordSchema>;
 
 export default function ForgotPasswordPage() {
-  const { control, handleSubmit } = useForm<ForgotPasswordValues>({
+  const requestPasswordReset = useRequestPasswordReset();
+  const { control, handleSubmit, reset } = useForm<ForgotPasswordValues>({
     resolver: zodResolver(forgotPasswordSchema as never) as never,
     defaultValues: { email: '' },
   });
 
   function onSubmit(values: ForgotPasswordValues) {
-    console.log(values);
+    requestPasswordReset.mutate(values, {
+      onSuccess: () => reset(),
+    });
   }
 
   return (
@@ -47,6 +52,7 @@ export default function ForgotPasswordPage() {
                 type="email"
                 autoComplete="email"
                 placeholder="you@example.com"
+                disabled={requestPasswordReset.isPending}
                 aria-invalid={fieldState.invalid}
                 className="bg-background dark:bg-input/30"
               />
@@ -54,8 +60,13 @@ export default function ForgotPasswordPage() {
             </Field>
           )}
         />
-        <Button type="submit" className="w-full">
-          Send reset link
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={requestPasswordReset.isPending}
+        >
+          {requestPasswordReset.isPending && <Spinner />}
+          {requestPasswordReset.isPending ? 'Sending...' : 'Send reset link'}
         </Button>
       </form>
       <p className="text-muted-foreground text-center text-sm">

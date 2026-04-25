@@ -1,11 +1,15 @@
 'use client';
 
+import { useResetPassword } from '@/app/(auth)/hooks/use-reset-password';
 import { Button } from '@/components/ui/button';
 import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { PasswordInput } from '@/components/ui/password-input';
+import { Spinner } from '@/components/ui/spinner';
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 import { z } from 'zod';
 
 const resetPasswordSchema = z
@@ -21,13 +25,31 @@ const resetPasswordSchema = z
 type ResetPasswordValues = z.infer<typeof resetPasswordSchema>;
 
 export default function ResetPasswordPage() {
-  const { control, handleSubmit } = useForm<ResetPasswordValues>({
+  const searchParams = useSearchParams();
+  const resetPassword = useResetPassword();
+  const token = searchParams.get('token') ?? '';
+  const hasToken = token.length > 0;
+
+  const { control, handleSubmit, reset } = useForm<ResetPasswordValues>({
     resolver: zodResolver(resetPasswordSchema as never) as never,
     defaultValues: { password: '', confirmPassword: '' },
   });
 
   function onSubmit(values: ResetPasswordValues) {
-    console.log(values);
+    if (!hasToken) {
+      toast.error('Password reset link is invalid or expired.');
+      return;
+    }
+
+    resetPassword.mutate(
+      {
+        newPassword: values.password,
+        token,
+      },
+      {
+        onSuccess: () => reset(),
+      }
+    );
   }
 
   return (
@@ -49,6 +71,7 @@ export default function ResetPasswordPage() {
                 {...field}
                 autoComplete="new-password"
                 placeholder="At least 8 characters"
+                disabled={resetPassword.isPending || !hasToken}
                 aria-invalid={fieldState.invalid}
                 className="bg-background dark:bg-input/30"
               />
@@ -66,6 +89,7 @@ export default function ResetPasswordPage() {
                 {...field}
                 autoComplete="new-password"
                 placeholder="Re-enter your new password"
+                disabled={resetPassword.isPending || !hasToken}
                 aria-invalid={fieldState.invalid}
                 className="bg-background dark:bg-input/30"
               />
@@ -73,8 +97,13 @@ export default function ResetPasswordPage() {
             </Field>
           )}
         />
-        <Button type="submit" className="w-full">
-          Reset password
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={resetPassword.isPending || !hasToken}
+        >
+          {resetPassword.isPending && <Spinner />}
+          {resetPassword.isPending ? 'Resetting...' : 'Reset password'}
         </Button>
       </form>
       <p className="text-muted-foreground text-center text-sm">
