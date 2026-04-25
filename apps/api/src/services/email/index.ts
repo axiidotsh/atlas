@@ -11,8 +11,9 @@ import { PasswordResetEmail } from './templates/password-reset';
 import { PasswordResetSuccessEmail } from './templates/password-reset-success';
 import { VerificationEmail } from './templates/verification';
 
-export const resend = new Resend(process.env.RESEND_API_KEY);
 const FROM = `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`;
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 const sendEmail = async (params: SendEmailParams, metadata: EmailMetadata) => {
   const { data, error } = await resend.emails.send({
