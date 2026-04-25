@@ -4,7 +4,10 @@
   "private": true,
   "packageManager": "pnpm@10.33.0",
   "scripts": {
-    "dev": "turbo dev",
+    "dev": "turbo run dev",
+    "dev:tui": "turbo run dev --ui=tui",
+    "dev:web": "turbo run dev --filter @atlas/web",
+    "dev:api": "turbo run dev --filter @atlas/api",
     "build": "turbo build",
     "lint": "turbo lint",
     "lint-staged": "lint-staged",
