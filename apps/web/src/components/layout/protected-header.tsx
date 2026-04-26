@@ -1,5 +1,6 @@
 'use client';
 
+import { useChat } from '@/app/(protected)/chat/hooks/use-chat';
 import { StudioProjectSettingsSheet } from '@/app/(protected)/studio/components/project-settings/studio-project-settings-sheet';
 import { type ProjectFormValues } from '@/app/(protected)/studio/project-form';
 import { MetricsShareDialog } from '@/components/metrics-share/metrics-share-dialog';
@@ -7,10 +8,7 @@ import { ReportShareDialog } from '@/components/report-share/report-share-dialog
 import { ShareDialog } from '@/components/share-dialog';
 import { Button } from '@/components/ui/button';
 import { useSidebar } from '@/components/ui/sidebar';
-import {
-  getStandardConversation,
-  getStudioConversation,
-} from '@/mock-data/conversations';
+import { getStudioConversation } from '@/mock-data/conversations';
 import { getReport } from '@/mock-data/reports';
 import { cn } from '@/utils/utils';
 import {
@@ -21,10 +19,6 @@ import {
 } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import { useState } from 'react';
-
-function getChatTitle(chatId: string) {
-  return getStandardConversation(chatId)?.title ?? 'Chat';
-}
 
 function getStudioTitle(projectId: string) {
   return getStudioConversation(projectId)?.title ?? 'Project';
@@ -74,12 +68,6 @@ function getFallbackTitle(pathname: string) {
 }
 
 function getProtectedHeaderTitle(pathname: string) {
-  const chatDetailId = getChatDetailId(pathname);
-
-  if (chatDetailId) {
-    return getChatTitle(chatDetailId);
-  }
-
   const studioDetailId = getStudioDetailId(pathname);
 
   if (studioDetailId) {
@@ -131,6 +119,7 @@ export const ProtectedHeader = () => {
   const studioDetailId = getStudioDetailId(pathname);
   const reportDetailId = getReportDetailId(pathname);
 
+  const { data: chatDetail } = useChat(chatDetailId ?? '');
   const studioProject = studioDetailId
     ? getStudioConversation(studioDetailId)
     : undefined;
@@ -162,7 +151,9 @@ export const ProtectedHeader = () => {
   }
 
   const resolvedTitle =
-    studioProjectValues?.name ?? getProtectedHeaderTitle(pathname);
+    studioProjectValues?.name ??
+    (chatDetailId ? (chatDetail?.title ?? 'Chat') : null) ??
+    getProtectedHeaderTitle(pathname);
 
   const resolvedShareConfig = chatDetailId
     ? {

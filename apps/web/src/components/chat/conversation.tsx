@@ -1,8 +1,8 @@
-import type { MockChatMessage } from '@/mock-data/types';
+import type { ChatMessage } from '@/types/chat';
 import { Message } from './message';
 
 interface ChatFlowProps {
-  messages: MockChatMessage[];
+  messages: ChatMessage[];
 }
 
 export const Conversation = ({ messages }: ChatFlowProps) => {

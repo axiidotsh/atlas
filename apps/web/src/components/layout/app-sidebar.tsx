@@ -1,5 +1,6 @@
 'use client';
 
+import { useChats } from '@/app/(protected)/chat/hooks/use-chats';
 import { ChatActionsDropdown } from '@/components/chat/chat-actions-dropdown';
 import { Button } from '@/components/ui/button';
 import {
@@ -16,8 +17,7 @@ import {
   SidebarTrigger,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { getStandardConversations } from '@/mock-data/conversations';
-import type { MockStandardConversation } from '@/mock-data/types';
+import { Skeleton } from '@/components/ui/skeleton';
 import { cn } from '@/utils/utils';
 import {
   CircleGaugeIcon,
@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import * as React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PlaceholderLogo } from '../icons';
 import { SearchBar } from '../search-bar';
 import { UserMenu } from './user-menu';
@@ -57,12 +57,23 @@ const NAV_ITEMS = [
   },
 ];
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
-  const [chatQuery, setChatQuery] = React.useState('');
+export const AppSidebar = ({
+  ...props
+}: React.ComponentProps<typeof Sidebar>) => {
+  const pathname = usePathname();
+  const [chatQuery, setChatQuery] = useState('');
   const { open, setOpen, setOpenMobile } = useSidebar();
 
-  const pathname = usePathname();
-  const chats = getStandardConversations();
+  const { data: chats, isLoading: isLoadingChats } = useChats();
+  const hasChats = (chats?.length ?? 0) > 0;
+  const showChatsSection = hasChats || isLoadingChats;
+
+  const normalizedQuery = chatQuery.trim().toLowerCase();
+  const filteredChats = normalizedQuery
+    ? (chats ?? []).filter((chat) =>
+        chat.title.toLowerCase().includes(normalizedQuery)
+      )
+    : (chats ?? []);
 
   const transitionClassname = `transition-opacity duration-200 ease-out ${
     open ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -148,35 +159,57 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
               </SidebarMenuItem>
             ))}
           </SidebarMenu>
-          <SidebarGroupLabel
-            className={cn('mt-4! truncate', transitionClassname)}
-          >
-            Your Chats
-          </SidebarGroupLabel>
-          <div className={cn('mb-2 px-2 pb-1', transitionClassname)}>
-            <SearchBar
-              value={chatQuery}
-              onChange={setChatQuery}
-              placeholder="Search your chats..."
-              variant="ghost"
-              size="sm"
-              containerClassName="pl-0"
-            />
-          </div>
+          {showChatsSection ? (
+            <>
+              <SidebarGroupLabel
+                className={cn('mt-4! truncate', transitionClassname)}
+              >
+                Your Chats
+              </SidebarGroupLabel>
+              {hasChats ? (
+                <div className={cn('mb-2 px-2 pb-1', transitionClassname)}>
+                  <SearchBar
+                    value={chatQuery}
+                    onChange={setChatQuery}
+                    placeholder="Search your chats..."
+                    variant="ghost"
+                    size="sm"
+                    containerClassName="pl-0"
+                  />
+                </div>
+              ) : null}
+            </>
+          ) : null}
         </SidebarGroup>
         {/* chats */}
-        <SidebarGroup className={cn('pt-0', transitionClassname)}>
-          <SidebarMenu>
-            {chats.map((chat) => (
-              <ChatMenuItem
-                key={chat.id}
-                chat={chat}
-                isActive={isNavItemActive(`/chat/${chat.id}`)}
-                onNavigate={handleNavigate}
-              />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
+        {showChatsSection ? (
+          <SidebarGroup className={cn('pt-0', transitionClassname)}>
+            <SidebarMenu>
+              {isLoadingChats ? (
+                Array.from({ length: 5 }).map((_, i) => (
+                  <SidebarMenuItem key={i}>
+                    <div className="px-2">
+                      <Skeleton className="h-9 w-full bg-black/5 dark:bg-black/20" />
+                    </div>
+                  </SidebarMenuItem>
+                ))
+              ) : chatQuery && filteredChats.length === 0 ? (
+                <p className="text-muted-foreground px-2 py-1 text-xs">
+                  No matching chats
+                </p>
+              ) : (
+                filteredChats.map((chat) => (
+                  <ChatMenuItem
+                    key={chat.id}
+                    chat={chat}
+                    isActive={isNavItemActive(`/chat/${chat.id}`)}
+                    onNavigate={handleNavigate}
+                  />
+                ))
+              )}
+            </SidebarMenu>
+          </SidebarGroup>
+        ) : null}
       </SidebarContent>
       <SidebarSeparator className="mx-0" />
       <SidebarFooter>
@@ -184,20 +217,20 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarFooter>
     </Sidebar>
   );
-}
+};
 
 interface ChatMenuItemProps {
-  chat: MockStandardConversation;
+  chat: { id: string; title: string };
   isActive: boolean;
   onNavigate: () => void;
 }
 
-function ChatMenuItem({ chat, isActive, onNavigate }: ChatMenuItemProps) {
-  const [isEditing, setIsEditing] = React.useState(false);
-  const inputRef = React.useRef<HTMLInputElement>(null);
-  const shouldKeepInputFocusedRef = React.useRef(false);
+const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const shouldKeepInputFocusedRef = useRef(false);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (!isEditing) {
       return;
     }
@@ -267,4 +300,4 @@ function ChatMenuItem({ chat, isActive, onNavigate }: ChatMenuItemProps) {
       )}
     </SidebarMenuItem>
   );
-}
+};

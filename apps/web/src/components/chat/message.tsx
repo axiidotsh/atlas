@@ -3,7 +3,8 @@
 import { MentionChip } from '@/components/chat/mention-chip';
 import { Button } from '@/components/ui/button';
 import { useBrowserShare } from '@/hooks/use-browser-share';
-import type { AdPlatform, MockChatMessage } from '@/mock-data/types';
+import type { AdPlatform } from '@/mock-data/types';
+import type { ChatMessage } from '@/types/chat';
 import { cn } from '@/utils/utils';
 import {
   CheckIcon,
@@ -18,7 +19,7 @@ import { defaultUrlTransform, Streamdown } from 'streamdown';
 import 'streamdown/styles.css';
 
 interface ChatMessageProps {
-  message: MockChatMessage;
+  message: ChatMessage;
 }
 
 interface ActionProps {
@@ -50,7 +51,7 @@ function serializeMentions(content: string): string {
 }
 
 export const Message = ({ message }: ChatMessageProps) => {
-  const isUserMessage = message.role === 'user';
+  const isUserMessage = message.role === 'USER';
   const [isCopied, setIsCopied] = useState(false);
   const { copyText } = useBrowserShare();
   const renderedContent = serializeMentions(message.content);
