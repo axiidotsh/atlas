@@ -1,5 +1,6 @@
 'use client';
 
+import { useSetAtom } from 'jotai';
 import {
   Bell,
   ChevronsUpDown,
@@ -15,6 +16,8 @@ import {
 } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
+import { logoutDialogOpenAtom } from '@/atoms/ui-atoms';
+import { LogoutDialog } from '@/components/logout-dialog';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import {
   DropdownMenu,
@@ -36,8 +39,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
-import { useSignOut } from '@/hooks/use-sign-out';
-import { useSession } from '@/lib/auth-client';
+import { useUser } from '@/hooks/use-user';
 
 type ThemeOption = 'light' | 'dark' | 'system';
 
@@ -77,15 +79,10 @@ function getInitials(name: string) {
 export const UserMenu = () => {
   const { isMobile } = useSidebar();
   const { theme = 'system', setTheme } = useTheme();
-  const signOut = useSignOut();
-  const { data: session } = useSession();
+  const setLogoutDialogOpen = useSetAtom(logoutDialogOpenAtom);
+  const { user } = useUser();
 
-  const user = {
-    avatar: session?.user.image ?? undefined,
-    name: session?.user.name ?? 'Atlas user',
-    email: session?.user.email ?? 'Signed in',
-  };
-  const userInitials = getInitials(user.name) || 'AU';
+  const userInitials = getInitials(user?.name || 'A') || 'U';
 
   return (
     <SidebarMenu>
@@ -97,16 +94,16 @@ export const UserMenu = () => {
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
               <Avatar className="size-8 rounded-lg">
-                {user.avatar && (
-                  <AvatarImage src={user.avatar} alt={user.name} />
+                {user?.image && (
+                  <AvatarImage src={user.image} alt={user.name} />
                 )}
                 <AvatarFallback className="rounded-lg">
                   {userInitials}
                 </AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
-                <span className="truncate text-xs">{user.email}</span>
+                <span className="truncate font-medium">{user?.name}</span>
+                <span className="truncate text-xs">{user?.email}</span>
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -120,16 +117,16 @@ export const UserMenu = () => {
             <DropdownMenuLabel className="p-0 font-normal">
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="size-8 rounded-lg">
-                  {user.avatar && (
-                    <AvatarImage src={user.avatar} alt={user.name} />
+                  {user?.image && (
+                    <AvatarImage src={user.image} alt={user.name} />
                   )}
                   <AvatarFallback className="rounded-full">
                     {userInitials}
                   </AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
-                  <span className="truncate text-xs">{user.email}</span>
+                  <span className="truncate font-medium">{user?.name}</span>
+                  <span className="truncate text-xs">{user?.email}</span>
                 </div>
               </div>
             </DropdownMenuLabel>
@@ -185,18 +182,15 @@ export const UserMenu = () => {
             <DropdownMenuSeparator />
             <DropdownMenuItem
               variant="destructive"
-              disabled={signOut.isPending}
-              onSelect={(event) => {
-                event.preventDefault();
-                signOut.mutate();
-              }}
+              onSelect={() => setLogoutDialogOpen(true)}
             >
               <LogOut />
-              {signOut.isPending ? 'Logging out...' : 'Log out'}
+              Log out
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </SidebarMenuItem>
+      <LogoutDialog />
     </SidebarMenu>
   );
 };

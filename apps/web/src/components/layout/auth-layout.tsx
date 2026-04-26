@@ -3,7 +3,7 @@
 import { AuthAppPreview } from '@/app/(auth)/auth-app-preview';
 import { PlaceholderLogo } from '@/components/icons';
 import { ScreenSpinner } from '@/components/screen-spinner';
-import { useSession } from '@/lib/auth-client';
+import { useUser } from '@/hooks/use-user';
 import { AUTH_SUCCESS_REDIRECT } from '@/lib/redirects';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
@@ -13,20 +13,20 @@ export const AuthLayoutContent = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const { data, isPending } = useSession();
+  const { user, isPending } = useUser();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isPending && data) {
+    if (!isPending && user) {
       router.replace(AUTH_SUCCESS_REDIRECT);
     }
-  }, [data, isPending, router]);
+  }, [user, isPending, router]);
 
   if (isPending) {
     return <ScreenSpinner />;
   }
 
-  if (data) {
+  if (user) {
     return <ScreenSpinner />;
   }
 
