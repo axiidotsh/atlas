@@ -1,6 +1,7 @@
 'use client';
 
 import { queryAtom } from '@/app/(protected)/chat/atoms';
+import { useCreateChat } from '@/app/(protected)/chat/hooks/use-create-chat';
 import { ChatInput, EditorHandle } from '@/components/chat/chat-input';
 import { TokenUsage } from '@/components/token-usage';
 import { useFocusOnSlash } from '@/hooks/use-focus-on-slash';
@@ -26,6 +27,7 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
 
   const isChatDetailPage = /^\/chat\/[^/]+$/.test(pathname);
   const inputRef = useRef<EditorHandle>(null);
+  const createChat = useCreateChat();
 
   useFocusOnSlash(inputRef);
 
@@ -34,6 +36,12 @@ export const ChatComposer = ({ caption, placeholder }: ChatComposerProps) => {
     if (!trimmed) {
       return;
     }
+
+    if (!isChatDetailPage) {
+      createChat.mutate();
+      return;
+    }
+
     console.log('[chat] submit', trimmed);
     setQuery('');
   }

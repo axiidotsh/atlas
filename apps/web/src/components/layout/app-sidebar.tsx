@@ -1,6 +1,8 @@
 'use client';
 
 import { useChats } from '@/app/(protected)/chat/hooks/use-chats';
+import { useDeleteChat } from '@/app/(protected)/chat/hooks/use-delete-chat';
+import { useRenameChat } from '@/app/(protected)/chat/hooks/use-rename-chat';
 import { ChatActionsDropdown } from '@/components/chat/chat-actions-dropdown';
 import { Button } from '@/components/ui/button';
 import {
@@ -229,6 +231,10 @@ const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
   const [isEditing, setIsEditing] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const shouldKeepInputFocusedRef = useRef(false);
+  const isCancellingRef = useRef(false);
+
+  const renameChat = useRenameChat();
+  const deleteChat = useDeleteChat();
 
   useEffect(() => {
     if (!isEditing) {
@@ -243,6 +249,17 @@ const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
     return () => cancelAnimationFrame(frameId);
   }, [isEditing]);
 
+  function commitRename() {
+    const nextTitle = inputRef.current?.value.trim() ?? '';
+    setIsEditing(false);
+
+    if (!nextTitle || nextTitle === chat.title) {
+      return;
+    }
+
+    renameChat.mutate({ id: chat.id, title: nextTitle });
+  }
+
   return (
     <SidebarMenuItem>
       {isEditing ? (
@@ -251,10 +268,23 @@ const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
             ref={inputRef}
             defaultValue={chat.title}
             className="block w-full truncate bg-transparent p-0 text-sm outline-none"
-            onBlur={() => setIsEditing(false)}
+            onBlur={() => {
+              if (isCancellingRef.current) {
+                isCancellingRef.current = false;
+                setIsEditing(false);
+                return;
+              }
+              commitRename();
+            }}
             onKeyDown={(event) => {
-              if (event.key === 'Enter' || event.key === 'Escape') {
+              if (event.key === 'Enter') {
                 event.preventDefault();
+                commitRename();
+                return;
+              }
+              if (event.key === 'Escape') {
+                event.preventDefault();
+                isCancellingRef.current = true;
                 setIsEditing(false);
               }
             }}
@@ -264,7 +294,10 @@ const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
             size="icon-xs"
             className="absolute top-1/2 right-1 -translate-y-1/2"
             onMouseDown={(event) => event.preventDefault()}
-            onClick={() => setIsEditing(false)}
+            onClick={() => {
+              isCancellingRef.current = true;
+              setIsEditing(false);
+            }}
           >
             <XIcon />
           </Button>
@@ -295,6 +328,7 @@ const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
               shouldKeepInputFocusedRef.current = true;
               setIsEditing(true);
             }}
+            onDelete={() => deleteChat.mutate(chat.id)}
           />
         </>
       )}
