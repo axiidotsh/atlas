@@ -59,7 +59,7 @@ const REPORT_BARS = [
 export const AuthAppPreview = () => {
   return (
     <div
-      className="bg-muted/40 relative hidden min-h-0 flex-1 overflow-hidden rounded-2xl border lg:block"
+      className="bg-muted/40 relative hidden min-h-0 w-full flex-1 shrink-0 overflow-hidden rounded-2xl border lg:block"
       aria-hidden="true"
     >
       <div className="bg-primary/10 absolute -top-24 -right-28 size-72 rounded-full blur-3xl" />
@@ -150,7 +150,7 @@ export const AuthAppPreview = () => {
                     </div>
                   </div>
 
-                  <div className="bg-background/70 rounded-xl border p-4">
+                  <div className="bg-background/70 mb-4 rounded-xl border p-4">
                     <p className="text-sm font-medium">Performance overview</p>
                     <div className="mt-4 grid grid-cols-3 gap-2">
                       {PREVIEW_METRICS.map((metric) => (
@@ -209,7 +209,6 @@ export const AuthAppPreview = () => {
                     </div>
                   </div>
                 </div>
-
                 <div className="bg-background/80 mt-auto flex items-center gap-3 rounded-xl border p-3">
                   <span className="text-muted-foreground flex-1 px-2 text-sm">
                     Ask a follow-up...
