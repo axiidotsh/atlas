@@ -24,6 +24,8 @@ export const ProtectedLayoutContent = ({
   children: React.ReactNode;
 }) => {
   const { user, error, isPending } = useUser();
+  const isUnauthenticated = !user || Boolean(error);
+
   const pathname = usePathname();
   const router = useRouter();
 
@@ -33,16 +35,12 @@ export const ProtectedLayoutContent = ({
   const contentClassName = 'mx-auto flex w-full flex-1 flex-col px-4 sm:px-8';
 
   useEffect(() => {
-    if (!isPending && (!user || error)) {
+    if (!isPending && isUnauthenticated) {
       router.replace(AUTH_FAILURE_REDIRECT);
     }
-  }, [user, error, isPending, router]);
+  }, [isPending, isUnauthenticated, router]);
 
-  if (isPending) {
-    return <ScreenSpinner />;
-  }
-
-  if (!user || error) {
+  if (isPending || isUnauthenticated) {
     return <ScreenSpinner />;
   }
 

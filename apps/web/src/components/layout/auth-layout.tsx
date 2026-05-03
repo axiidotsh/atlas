@@ -16,17 +16,15 @@ export const AuthLayoutContent = ({
   const { user, isPending } = useUser();
   const router = useRouter();
 
+  const isAuthenticated = Boolean(user);
+
   useEffect(() => {
-    if (!isPending && user) {
+    if (!isPending && isAuthenticated) {
       router.replace(AUTH_SUCCESS_REDIRECT);
     }
-  }, [user, isPending, router]);
+  }, [isPending, isAuthenticated, router]);
 
-  if (isPending) {
-    return <ScreenSpinner />;
-  }
-
-  if (user) {
+  if (isPending || isAuthenticated) {
     return <ScreenSpinner />;
   }
 
