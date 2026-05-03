@@ -311,12 +311,12 @@ const ChatMenuItem = ({ chat, isActive, onNavigate }: ChatMenuItemProps) => {
           </SidebarMenuButton>
           <ChatActionsDropdown
             chatTitle={chat.title}
-            onCloseAutoFocus={(e) => {
+            onCloseAutoFocus={(event) => {
               if (!shouldKeepInputFocusedRef.current) {
                 return;
               }
 
-              e.preventDefault();
+              event.preventDefault();
               shouldKeepInputFocusedRef.current = false;
 
               requestAnimationFrame(() => {

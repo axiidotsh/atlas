@@ -1,8 +1,8 @@
 import { signIn } from '@/lib/auth-client';
-import { getAuthSuccessPath } from '@/lib/redirects';
+import { AUTH_SUCCESS_REDIRECT } from '@/lib/redirects';
 import { getAuthErrorMessage } from '@/utils/auth-error';
 import { useMutation } from '@tanstack/react-query';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface SignInEmailParams {
@@ -12,7 +12,6 @@ interface SignInEmailParams {
 
 export function useSignInEmail() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   return useMutation({
     mutationFn: async ({ email, password }: SignInEmailParams) => {
@@ -29,7 +28,7 @@ export function useSignInEmail() {
       return result.data;
     },
     onSuccess: () => {
-      router.push(getAuthSuccessPath(searchParams.get('callbackURL')));
+      router.push(AUTH_SUCCESS_REDIRECT);
     },
     onError: (error) => {
       toast.error(error.message);

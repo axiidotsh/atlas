@@ -7,9 +7,13 @@ import {
   getStudioDetailId,
   ProtectedHeader,
 } from '@/components/layout/protected-header';
+import { ScreenSpinner } from '@/components/screen-spinner';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
+import { useUser } from '@/hooks/use-user';
+import { AUTH_FAILURE_REDIRECT } from '@/lib/redirects';
 import { cn } from '@/utils/utils';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect } from 'react';
 import { StickToBottom } from 'use-stick-to-bottom';
 
 const SIDEBAR_MOBILE_BREAKPOINT = 1024;
@@ -19,12 +23,28 @@ export const ProtectedLayoutContent = ({
 }: {
   children: React.ReactNode;
 }) => {
+  const { user, error, isPending } = useUser();
   const pathname = usePathname();
+  const router = useRouter();
 
   const isChatDetailPage = Boolean(getChatDetailId(pathname));
   const isStudioDetailPage = Boolean(getStudioDetailId(pathname));
 
   const contentClassName = 'mx-auto flex w-full flex-1 flex-col px-4 sm:px-8';
+
+  useEffect(() => {
+    if (!isPending && (!user || error)) {
+      router.replace(AUTH_FAILURE_REDIRECT);
+    }
+  }, [user, error, isPending, router]);
+
+  if (isPending) {
+    return <ScreenSpinner />;
+  }
+
+  if (!user || error) {
+    return <ScreenSpinner />;
+  }
 
   return (
     <SidebarProvider mobileBreakpoint={SIDEBAR_MOBILE_BREAKPOINT}>
