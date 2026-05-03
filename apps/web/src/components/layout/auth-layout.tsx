@@ -2,7 +2,6 @@
 
 import { AuthAppPreview } from '@/app/(auth)/auth-app-preview';
 import { PlaceholderLogo } from '@/components/icons';
-import { ScreenSpinner } from '@/components/screen-spinner';
 import { useUser } from '@/hooks/use-user';
 import { AUTH_SUCCESS_REDIRECT } from '@/lib/redirects';
 import { useRouter } from 'next/navigation';
@@ -25,7 +24,7 @@ export const AuthLayoutContent = ({
   }, [isPending, isAuthenticated, router]);
 
   if (isPending || isAuthenticated) {
-    return <ScreenSpinner />;
+    return null;
   }
 
   return (

@@ -7,7 +7,6 @@ import {
   getStudioDetailId,
   ProtectedHeader,
 } from '@/components/layout/protected-header';
-import { ScreenSpinner } from '@/components/screen-spinner';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { useUser } from '@/hooks/use-user';
 import { AUTH_FAILURE_REDIRECT } from '@/lib/redirects';
@@ -41,7 +40,7 @@ export const ProtectedLayoutContent = ({
   }, [isPending, isUnauthenticated, router]);
 
   if (isPending || isUnauthenticated) {
-    return <ScreenSpinner />;
+    return null;
   }
 
   return (
