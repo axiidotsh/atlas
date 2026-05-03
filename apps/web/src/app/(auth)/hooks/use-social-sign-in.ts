@@ -1,7 +1,8 @@
 import { signIn } from '@/lib/auth-client';
-import { AUTH_SUCCESS_REDIRECT } from '@/lib/redirects';
+import { getAuthSuccessRedirect } from '@/lib/redirects';
 import { getAuthErrorMessage } from '@/utils/auth-error';
 import { useMutation } from '@tanstack/react-query';
+import { useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
 
 interface SignInSocialParams {
@@ -9,11 +10,13 @@ interface SignInSocialParams {
 }
 
 export function useSignInSocial() {
+  const searchParams = useSearchParams();
+
   return useMutation({
     mutationFn: async ({ provider }: SignInSocialParams) => {
       const result = await signIn.social({
         provider,
-        callbackURL: AUTH_SUCCESS_REDIRECT,
+        callbackURL: getAuthSuccessRedirect(searchParams.get('callbackURL')),
       });
 
       if (result.error) {
